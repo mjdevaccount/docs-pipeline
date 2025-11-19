@@ -1,0 +1,12 @@
+documents:
+  - name: reporting-manager-architecture-proposal
+    md: archive/reporting-manager-docs/ReportingManager_ArchitectureProposal_Enhanced.md
+    profile: reporting-manager
+    title: "Reporting Manager Architecture Proposal (Enhanced)"
+    generate_cover: true
+    generate_toc: true
+    invariants:
+      height_fit: true
+      group_parent_child_diagrams: true
+
+

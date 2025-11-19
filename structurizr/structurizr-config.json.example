@@ -1,0 +1,30 @@
+{
+  "_comment": "Example Structurizr configuration file",
+  "version": "1.0",
+  "workspace": "docs/ReportingManager_Phase0_Architecture.dsl",
+  "output_dir": "docs/diagrams",
+  "formats": [
+    "mermaid",
+    "png",
+    "svg"
+  ],
+  "views": {
+    "systemContext": true,
+    "container": true,
+    "component": true,
+    "deployment": true,
+    "dynamic": true
+  },
+  "docker_image": "structurizr/cli:latest",
+  "docker_lite_image": "structurizr/lite:latest",
+  "options": {
+    "validate_before_export": true,
+    "cleanup_old_exports": false,
+    "parallel_export": false
+  },
+  "serve": {
+    "port": 8080,
+    "auto_open": false
+  }
+}
+

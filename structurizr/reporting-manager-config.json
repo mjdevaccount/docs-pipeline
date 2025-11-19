@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "workspace": "docs/ReportingManager_Phase0_Architecture.dsl",
+  "formats": [
+    "mermaid",
+    "plantuml",
+    "svg"
+  ],
+  "output_dir": "docs/diagrams",
+  "docker_image": "structurizr/cli:latest",
+  "options": {
+    "validate_before_export": true,
+    "cleanup_old_exports": false,
+    "parallel_export": false
+  },
+  "serve": {
+    "port": 8080,
+    "auto_open": false
+  }
+}
