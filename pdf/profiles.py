@@ -39,8 +39,8 @@ PROFILES: Dict[str, DocumentProfile] = {
     # Default profile for the Reporting Manager / REDACTED documentation.
     "reporting-manager": DocumentProfile(
         name="reporting-manager",
-        # Logo lives alongside the Reporting Manager docs in the archive tree.
-        logo=_rel_from_repo_root("archive", "reporting-manager-docs", "REDACTEDLogo.png"),
+        # Logo lives in the reporting-manager proposal assets.
+        logo=_rel_from_repo_root("projects", "reporting-2.0", "proposals", "reporting-manager", "assets", "REDACTEDLogo.png"),
         # Primary Playwright stylesheet with branded colors and typography.
         css=_rel_from_repo_root("tools", "pdf", "custom.css.playwright"),
         theme_config=_rel_from_repo_root("tools", "pdf", "pdf-mermaid-theme.json"),
