@@ -299,6 +299,13 @@ async def _run_single_doc_test(doc_cfg: LayoutDocConfig) -> bool:
         css_file=None,
     )
 
+    # Extract metadata from markdown frontmatter
+    import sys
+    sys.path.insert(0, str(repo_root))
+    from tools.pdf.convert_final import extract_metadata
+    md_content = md_file.read_text(encoding='utf-8')
+    metadata, _ = extract_metadata(md_content)
+    
     # Step 2a: Run automated invariants against the HTML layout.
     invariants_ok = await _check_layout_invariants(html_file, profile, doc_cfg)
 
@@ -306,7 +313,13 @@ async def _run_single_doc_test(doc_cfg: LayoutDocConfig) -> bool:
     config = PdfGenerationConfig(
         html_file=html_file,
         pdf_file=pdf_file,
-        title=doc_cfg.title,
+        title=metadata.get('title', doc_cfg.title),
+        author=metadata.get('author'),
+        organization=metadata.get('organization'),
+        date=metadata.get('date'),
+        type=metadata.get('type'),
+        classification=metadata.get('classification'),
+        version=metadata.get('version'),
         generate_cover=doc_cfg.generate_cover,
         generate_toc=doc_cfg.generate_toc,
         logo_path=Path(profile.logo) if profile and profile.logo else None,

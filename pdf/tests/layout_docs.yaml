@@ -1,8 +1,8 @@
 documents:
   - name: reporting-manager-architecture-proposal
-    md: projects/reporting-2.0/proposals/reporting-manager/source/ReportingManager_ArchitectureProposal_Enhanced.md
+    md: projects/reporting-2.0/proposals/reporting-manager/source/ReportingManager_ArchitectureProposal.md
     profile: reporting-manager
-    title: "Reporting Manager Architecture Proposal (Enhanced)"
+    title: "Reporting Manager Architecture Proposal"
     generate_cover: true
     generate_toc: true
     invariants:
