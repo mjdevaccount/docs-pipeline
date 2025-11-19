@@ -1296,6 +1296,10 @@ def markdown_to_html(md_file, output_html, cache_dir=None, use_cache=True, theme
         toc_match = re.search(r'<nav id="TOC"[^>]*>(.*?)</nav>', html_content, re.DOTALL)
         toc_html = toc_match.group(1) if toc_match else ''
         
+        # Remove TOC from body (we'll put it in sidebar)
+        if toc_match:
+            html_content = html_content.replace(toc_match.group(0), '', 1)
+        
         # Load custom CSS or use default
         if css_file and Path(css_file).exists():
             css_content = Path(css_file).read_text(encoding='utf-8')
@@ -1323,6 +1327,14 @@ def markdown_to_html(md_file, output_html, cache_dir=None, use_cache=True, theme
         # Ensure output directory exists
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(html_content, encoding='utf-8')
+        
+        # Copy diagram files to output directory so they're accessible
+        import shutil
+        for diagram_file in diagram_files:
+            if diagram_file.exists():
+                dest = output_path.parent / diagram_file.name
+                shutil.copy2(diagram_file, dest)
+        
         print(f"[OK] Created: {output_html}")
         
     except Exception as e:
