@@ -1,0 +1,70 @@
+/* Adaptive pagination & diagram handling CSS
+ * -----------------------------------------
+ * This file contains the core pagination and heading/diagram grouping rules
+ * for the Playwright-based PDF pipeline. Having it in a standalone file
+ * keeps layout concerns separate from the Python orchestration code.
+ *
+ * NOTE: This file does NOT set @page margins or body margins - those are
+ * controlled by the custom CSS (e.g., custom.css.playwright) which is loaded
+ * first. This file only handles page-break behavior and diagram grouping.
+ */
+
+/* Generic page-break utilities */
+.page-break {
+  page-break-before: always;
+  break-before: page;
+}
+
+.avoid-break-inside {
+  page-break-inside: avoid;
+  break-inside: avoid-page;
+}
+
+/* Cover & TOC wrappers explicitly form their own pages */
+.cover-page-wrapper {
+  page-break-after: always;
+  break-after: page;
+}
+
+.toc-wrapper {
+  page-break-after: always;
+  break-after: page;
+}
+
+/* Heading + diagram grouping
+ * --------------------------
+ * The JS in layout_transformer.py wraps related headings and diagrams in a
+ * .heading-diagram-block container. These rules ensure that:
+ *   - The block starts cleanly (optionally on a new page)
+ *   - The block never splits across pages
+ *   - Child diagrams can be scaled with CSS transforms without clipping
+ */
+.heading-diagram-block {
+  page-break-inside: avoid;
+  break-inside: avoid-page;
+}
+
+/* When JS decides a block must start on a fresh page, it will set either
+ * pageBreakBefore or breakBefore via inline style. We reinforce that here.
+ */
+.heading-diagram-block[data-parent-heading-group="true"] {
+  page-break-before: always;
+  break-before: page;
+}
+
+/* Diagrams that have been scaled are marked with data-scaled. We ensure
+ * they are block-level and centered so transforms don't cause overflow.
+ */
+svg[data-scaled],
+img[data-scaled] {
+  display: block;
+  margin: 16px auto;
+  transform-origin: top center;
+}
+
+figure[data-diagram-container] {
+  page-break-inside: avoid;
+  break-inside: avoid-page;
+}
+
+

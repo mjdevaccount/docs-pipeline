@@ -1,0 +1,46 @@
+{
+  "files": [
+    {
+      "input": "docs/ReportingManager_Phase0_Foundation.md",
+      "output": "docs/ReportingManager_Phase0_Foundation.pdf",
+      "format": "pdf",
+      "css": null,
+      "logo": "docs/previseLogo.png"
+    },
+    {
+      "input": "docs/ReportingManager_ArchitectureProposal.md",
+      "output": "docs/ReportingManager_ArchitectureProposal.pdf",
+      "format": "pdf"
+    },
+    {
+      "input": "docs/ReportingManager_CurrentState_Notes.md",
+      "output": "docs/ReportingManager_CurrentState_Notes.pdf",
+      "format": "pdf"
+    },
+    {
+      "input": "docs/ReportingManager_ExecutiveArchitecture.md",
+      "output": "docs/ReportingManager_ExecutiveArchitecture.pdf",
+      "format": "pdf"
+    },
+    {
+      "input": "docs/ReportingManagerSpec.md",
+      "output": "docs/ReportingManagerSpec.pdf",
+      "format": "pdf"
+    },
+    {
+      "input": "docs/ReportingManagerSpec-ExecutiveBrief.md",
+      "output": "docs/ReportingManagerSpec-ExecutiveBrief.pdf",
+      "format": "pdf"
+    }
+  ],
+  "output_dir": null,
+  "logo": "docs/previseLogo.png",
+  "css": null,
+  "theme_config": "pdf-tools/pdf-mermaid-theme.json",
+  "reference_docx": null,
+  "cache_dir": "pdf-tools/pdf-diagrams",
+  "cache_diagrams": true,
+  "threads": 2,
+  "_comment": "All paths are relative to the project root (one level up from pdf-tools/)"
+}
+

@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated files (keep DSL, ignore generated diagrams)
+*.mmd
+*.puml
+*.png
+*.svg
+# But keep example outputs if needed
+
+# Config (keep example, ignore local)
+structurizr-config.json
+!structurizr-config.json.example
+

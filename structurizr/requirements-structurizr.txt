@@ -1,0 +1,17 @@
+# Structurizr Tools Requirements
+# Python dependencies for helper scripts (optional)
+
+# Core dependencies (minimal - Structurizr CLI runs in Docker)
+# These are only needed if using Python helper scripts
+
+# Optional: For enhanced CLI experience
+colorama>=0.4.6  # Colored terminal output
+tqdm>=4.65.0     # Progress bars
+
+# Watch mode support (optional)
+watchdog>=3.0.0  # File system monitoring for --watch mode
+
+# Note: Structurizr CLI itself runs in Docker, so no Python dependencies required
+# Docker is the only hard requirement:
+#   docker pull structurizr/cli
+
