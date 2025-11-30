@@ -164,7 +164,7 @@ python pdf-tools/md2pdf.py test-math.md test-math.pdf \
 
 ### Test Web Fonts:
 ```bash
-python pdf-tools/md2pdf.py docs/ReportingManager_ArchitectureProposal_Enhanced.md output.pdf \
+python pdf/md2pdf.py docs/architecture-proposal.md output.pdf \
   --renderer playwright \
   --css pdf-tools/custom.css.playwright \
   --generate-cover \
@@ -177,7 +177,7 @@ python pdf-tools/md2pdf.py docs/ReportingManager_ArchitectureProposal_Enhanced.m
 ### Test PDF Bookmarks:
 ```bash
 # Generate PDF
-python pdf-tools/md2pdf.py docs/ReportingManager_ArchitectureProposal_Enhanced.md output.pdf \
+python pdf/md2pdf.py docs/architecture-proposal.md output.pdf \
   --renderer playwright \
   --generate-cover \
   --generate-toc \

@@ -1,5 +1,5 @@
 # Enhanced Measurement Report
-## PDF Generation: ReportingManager_ArchitectureProposal_Enhanced.pdf
+## PDF Generation: architecture-proposal.pdf
 
 **Generated:** 2025-11-16  
 **Renderer:** Playwright (Chromium)  
@@ -213,7 +213,7 @@ Scale:               0.68x (68%)
 
 ## 📋 Files Generated
 
-- **PDF:** `docs/ReportingManager_ArchitectureProposal_Enhanced.pdf` (589.8 KB)
+- **PDF:** `docs/architecture-proposal.pdf` (589.8 KB)
 - **Verbose Output:** `pdf-tools/enhanced_verbose_output.txt`
 - **This Report:** `pdf-tools/ENHANCED_MEASUREMENT_REPORT.md`
 

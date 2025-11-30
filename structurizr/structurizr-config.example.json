@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "workspace": "docs/ReportingManager_Phase0_Architecture.dsl",
+  "workspace": "docs/architecture.dsl",
   "formats": [
     "mermaid",
     "plantuml",

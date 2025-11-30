@@ -15,7 +15,7 @@ Styling is defined in **four main places**:
 
 ## 1. Mermaid Diagram Colors
 
-**Location:** Inline in Markdown files (e.g., `docs/ReportingManager_ArchitectureProposal_Enhanced.md`)
+**Location:** Inline in Markdown files (e.g., `docs/architecture-proposal.md`)
 
 **Example:**
 ```mermaid

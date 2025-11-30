@@ -158,13 +158,13 @@ Extract metadata for dynamic title pages:
 
 ```markdown
 ---
-title: Reporting Manager – Phase 0 Foundation
-author: Matt Jeffcoat
-organization: Previse Systems
-date: November 2025
+title: System Architecture – Phase 0 Foundation
+author: Your Name
+organization: Your Organization
+date: January 2025
 version: 1.0
 type: Technical Specification
-classification: CONFIDENTIAL – INTERNAL USE ONLY
+classification: INTERNAL USE ONLY
 ---
 
 # Document Title
@@ -173,7 +173,7 @@ classification: CONFIDENTIAL – INTERNAL USE ONLY
 **Metadata Fields:**
 - `title` - Document title (default: first H1)
 - `author` - Author name (default: "Matt Jeffcoat")
-- `organization` - Organization name (default: "Previse Systems")
+- `organization` - Organization name (default: "Your Organization")
 - `date` - Document date (default: "November 2025")
 - `version` - Version number (default: "1.0")
 - `type` - Document type (default: "Technical Specification")
@@ -199,7 +199,7 @@ graph LR
 - And more...
 
 #### Logo Support
-Default logo location: `docs/previseLogo.png` (relative to project root).
+Default logo location: `docs/logo.png` (relative to project root).
 
 To use a different logo:
 ```batch
@@ -269,7 +269,7 @@ markdown_to_pdf('docs/report.md', 'output/report.pdf')
 - Review CSS in `convert_final.py` if custom styling needed
 
 ### Logo not appearing
-- Verify logo path: `docs/previseLogo.png`
+- Verify logo path: `docs/logo.png`
 - Check file permissions
 - Ensure image format is PNG or JPEG
 
@@ -285,7 +285,7 @@ markdown_to_pdf('docs/report.md', 'output/report.pdf')
 │   ├── README.md             # Quick reference
 │   └── pdf-config.json.example  # Example config
 └── docs/
-    ├── previseLogo.png       # Company logo (default location)
+    ├── logo.png              # Company logo (default location)
     └── *.md                  # Markdown source files
 ```
 
@@ -301,7 +301,7 @@ Modify the `custom_css` variable in `convert_final.py` to adjust:
 ### Custom Logo Path
 Edit `pdf-tools/convert_final.py` around line 150:
 ```python
-logo_path = Path(__file__).parent.parent / 'docs' / 'previseLogo.png'
+logo_path = Path(__file__).parent.parent / 'docs' / 'logo.png'
 logo_path = logo_path.resolve()
 ```
 
