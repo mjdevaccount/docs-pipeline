@@ -1,0 +1,40 @@
+﻿graph TB
+    subgraph External["External Systems"]
+        User["User<br/>[Person]"]
+        MarketAPI["Market Data API<br/>[External System]"]
+        TradeSB["Trade Service Bus<br/>[External System]"]
+    end
+    
+    subgraph Portal["Portal Layer"]
+        PortalUI["Web Portal<br/>Angular/React<br/>User interface"]
+        PortalFunc["Portal Function<br/>Azure Function<br/>Validates requests"]
+    end
+    
+    subgraph Manager["Reporting Manager"]
+        API["Heartbeat API<br/>HTTP<br/>Receives heartbeats"]
+        Registry["Job Registry<br/>In-Memory + SQL<br/>Tracks jobs"]
+        Processor["Processor<br/>Background Service<br/>Detects timeouts"]
+        CacheReg["Cache Registry<br/>Redis Tracking<br/>Coordinates cache"]
+    end
+    
+    subgraph Execution["Execution Layer"]
+        TradeFunc["Trade Handler<br/>Azure Function<br/>Processes trade events"]
+        Batch["Azure Batch<br/>Batch Service<br/>Executes workloads"]
+    end
+    
+    subgraph Data["Data Layer"]
+        SQL["SQL Database<br/>Azure SQL<br/>Persists data"]
+        Redis["Redis Cache<br/>Azure Cache<br/>Market data cache"]
+    end
+    
+    User -->|Requests report| PortalUI
+    PortalUI -->|Submits| PortalFunc
+    PortalFunc -->|Registers job| Manager
+    Manager -->|Launches job| Batch
+    Batch -->|Heartbeat 15s| Manager
+    Batch -->|Fetches prices| MarketAPI
+    Batch -->|Caches data| Redis
+    Batch -->|Writes results| SQL
+    TradeSB -->|Trade events| TradeFunc
+    TradeFunc -->|Registers baseline job| Manager
+    TradeFunc -->|Writes baseline| SQL

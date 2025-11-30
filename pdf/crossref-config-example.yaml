@@ -1,0 +1,30 @@
+# Pandoc Cross-Reference Configuration Example
+# Use with --crossref-config crossref-config-example.yaml
+# Requires pandoc-crossref filter: https://github.com/lierdakil/pandoc-crossref
+
+figureTitle: "Figure"
+figureTitleShort: "Fig."
+tableTitle: "Table"
+tableTitleShort: "Tbl."
+listingTitle: "Listing"
+listingTitleShort: "Lst."
+titleDelim: " "
+chapterTitle: "Chapter"
+chapterTitleShort: "Ch."
+eqnPrefix: "Equation"
+eqnPrefixShort: "Eq."
+tblPrefix: "Table"
+figPrefix: "Figure"
+lstPrefix: "Listing"
+figLabels: arabic
+eqnLabels: arabic
+tblLabels: arabic
+lstLabels: arabic
+secLabels: arabic
+chpLabels: arabic
+figPrefixTemplate: "$$figureTitle$$ $$i$$"
+eqnPrefixTemplate: "$$eqnPrefix$$ $$i$$"
+tblPrefixTemplate: "$$tableTitle$$ $$i$$"
+lstPrefixTemplate: "$$listingTitle$$ $$i$$"
+crossrefYaml: "crossref-config-example.yaml"
+
