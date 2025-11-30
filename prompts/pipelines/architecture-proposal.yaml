@@ -1,0 +1,54 @@
+# Architecture Proposal Pipeline Configuration
+# ============================================
+# This pipeline transforms a rough draft architecture proposal
+# into a polished, professional document ready for PDF generation.
+
+pipeline_name: "Architecture Proposal Refinement"
+document_type: "architecture"
+
+# LLM Settings
+default_model: "gpt-4"  # or "claude-3-sonnet-20240229" for Anthropic
+default_temperature: 0.7
+
+# Agent Sequence
+agents:
+  - name: "structure_analyzer"
+    enabled: true
+    prompt_template: "architecture/analyze"
+    temperature: 0.3  # Lower for analytical tasks
+    
+  - name: "content_enhancer"
+    enabled: true
+    prompt_template: "architecture/enhance"
+    temperature: 0.7
+    
+  - name: "technical_reviewer"
+    enabled: true
+    prompt_template: "architecture/review"
+    temperature: 0.3  # Lower for review tasks
+    
+  - name: "style_polisher"
+    enabled: true
+    prompt_template: "architecture/polish"
+    temperature: 0.5  # Moderate for style tasks
+
+# Output Settings
+preserve_history: true  # Save processing history to .history.txt
+generate_diff: true     # Generate diff file showing changes
+
+# Validation Requirements
+require_frontmatter: true
+require_sections:
+  - "Current System Overview"
+  - "Problem Definition"
+  - "Proposed Solution"
+  - "Architecture Vision"
+
+# Notes:
+# - Agents run in sequence, each building on the previous
+# - Structure Analyzer identifies gaps (JSON output)
+# - Content Enhancer expands and clarifies (Markdown output)
+# - Technical Reviewer validates accuracy (JSON output)
+# - Style Polisher ensures consistency (Markdown output)
+# - Final output is ready for md2pdf pipeline
+

@@ -1,0 +1,31 @@
+# Glossary and Acronym Expansion Example
+# Use with --glossary glossary-example.yaml
+
+acronyms:
+  API: Application Programming Interface
+  REST: Representational State Transfer
+  JSON: JavaScript Object Notation
+  XML: Extensible Markup Language
+  HTML: HyperText Markup Language
+  CSS: Cascading Style Sheets
+  PDF: Portable Document Format
+  DOCX: Office Open XML Document
+  YAML: YAML Ain't Markup Language
+  CLI: Command Line Interface
+  GUI: Graphical User Interface
+  IDE: Integrated Development Environment
+  CI: Continuous Integration
+  CD: Continuous Deployment
+  TOC: Table of Contents
+
+terms:
+  Markdown: A lightweight markup language for creating formatted text using a plain-text editor
+  Pandoc: A universal document converter that can convert between many markup formats
+  WeasyPrint: A visual rendering engine for HTML and CSS that can generate PDFs
+  Mermaid: A diagramming and charting tool that uses text-based syntax
+  PlantUML: An open-source tool allowing users to create diagrams from a plain text language
+  Graphviz: An open-source graph visualization software
+  Frontmatter: Metadata at the beginning of a Markdown file, typically in YAML format
+  Cross-reference: A reference from one part of a document to another part
+  Glossary: A list of terms and their definitions, typically found at the end of a document
+

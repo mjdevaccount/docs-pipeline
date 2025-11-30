@@ -1,0 +1,580 @@
+/* ============================================================================
+ * FAANG-Grade PDF Stylesheet for Playwright
+ * ============================================================================
+ * Enterprise-quality typography, pagination, and visual design
+ * Optimized for Chromium PDF rendering via Playwright
+ * 
+ * Usage:
+ *   python md2pdf.py input.md output.pdf --css faang-grade.css --renderer playwright
+ * 
+ * Based on:
+ *   - Microsoft Azure Architecture Center styling
+ *   - AWS Well-Architected Framework documentation
+ *   - Stripe API documentation design
+ * ============================================================================
+ */
+
+/* ============================================================================
+ * PAGE SETUP & MARGINS
+ * ============================================================================ */
+@page {
+    size: A4;
+    margin: 0.75in 0.75in 1in 0.75in; /* top, right, bottom, left */
+}
+
+/* ============================================================================
+ * TYPOGRAPHY - FOUNDATION
+ * ============================================================================ */
+:root {
+    /* Brand colors - customize to your organization */
+    --primary-color: #0078d4;
+    --primary-dark: #005a9e;
+    --accent-color: #2e7d32;
+    --text-primary: #1a1a1a;
+    --text-secondary: #555555;
+    --text-tertiary: #777777;
+    --background-code: #f5f7fa;
+    --background-table-header: #0078d4;
+    --background-table-stripe: #f9fafb;
+    --border-light: #e1e4e8;
+    --border-medium: #999999;
+    
+    /* Typography scale */
+    --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --font-family-serif: 'Georgia', 'Times New Roman', serif;
+    --font-family-mono: 'Source Code Pro', 'SF Mono', 'Monaco', 'Cascadia Code', 'Courier New', monospace;
+    
+    --font-size-base: 11pt;
+    --line-height-base: 1.6;
+    --line-height-tight: 1.4;
+}
+
+body {
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--text-primary);
+    max-width: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* ============================================================================
+ * HEADINGS - HIERARCHICAL SYSTEM
+ * ============================================================================ */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: var(--line-height-tight);
+    page-break-after: avoid;
+    break-after: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+h1 {
+    font-size: 28pt;
+    color: var(--text-primary);
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 10pt;
+    margin-top: 0;
+    margin-bottom: 20pt;
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: 20pt;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-medium);
+    padding-bottom: 8pt;
+    margin-top: 24pt;
+    margin-bottom: 14pt;
+}
+
+h3 {
+    font-size: 16pt;
+    color: var(--text-secondary);
+    margin-top: 18pt;
+    margin-bottom: 10pt;
+    border-left: 4px solid var(--primary-color);
+    padding-left: 12pt;
+}
+
+h4 {
+    font-size: 14pt;
+    color: var(--text-secondary);
+    margin-top: 14pt;
+    margin-bottom: 8pt;
+    font-weight: 700;
+}
+
+h5 {
+    font-size: 12pt;
+    color: var(--text-tertiary);
+    margin-top: 12pt;
+    margin-bottom: 6pt;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+h6 {
+    font-size: 11pt;
+    color: var(--text-tertiary);
+    margin-top: 10pt;
+    margin-bottom: 6pt;
+    font-style: italic;
+}
+
+/* ============================================================================
+ * PARAGRAPHS & TEXT
+ * ============================================================================ */
+p {
+    margin: 0 0 12pt 0;
+    orphans: 3;
+    widows: 3;
+}
+
+/* First paragraph after heading - no indent */
+h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h6 + p {
+    margin-top: 0;
+}
+
+strong, b {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+em, i {
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+/* ============================================================================
+ * CODE & PREFORMATTED TEXT
+ * ============================================================================ */
+code {
+    font-family: var(--font-family-mono);
+    font-size: 9.5pt;
+    background-color: var(--background-code);
+    padding: 2pt 5pt;
+    border-radius: 3px;
+    border: 1px solid var(--border-light);
+    color: #c7254e;
+    white-space: nowrap;
+}
+
+pre {
+    font-family: var(--font-family-mono);
+    font-size: 9pt;
+    line-height: 1.45;
+    background-color: var(--background-code);
+    border: 1px solid var(--border-light);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 4px;
+    padding: 14pt;
+    margin: 16pt 0;
+    overflow-x: auto;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+    white-space: pre;
+}
+
+/* Syntax highlighting hint (works with Pandoc highlighting) */
+.sourceCode {
+    background-color: var(--background-code);
+}
+
+/* ============================================================================
+ * TABLES - PROFESSIONAL DATA DISPLAY
+ * ============================================================================ */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16pt 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    font-size: 10pt;
+}
+
+thead {
+    background-color: var(--background-table-header);
+    color: white;
+}
+
+th {
+    font-weight: 700;
+    padding: 10pt 12pt;
+    text-align: left;
+    border-bottom: 2px solid var(--primary-dark);
+}
+
+td {
+    padding: 10pt 12pt;
+    border-bottom: 1px solid var(--border-light);
+}
+
+tbody tr:nth-child(even) {
+    background-color: var(--background-table-stripe);
+}
+
+tbody tr:hover {
+    background-color: #f0f4f8;
+}
+
+/* Table caption */
+caption {
+    font-size: 10pt;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: left;
+    padding: 8pt 0;
+    caption-side: top;
+}
+
+/* ============================================================================
+ * LISTS - STRUCTURED CONTENT
+ * ============================================================================ */
+ul, ol {
+    margin: 12pt 0;
+    padding-left: 28pt;
+}
+
+li {
+    margin: 6pt 0;
+    line-height: var(--line-height-base);
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+    margin-top: 4pt;
+    margin-bottom: 4pt;
+}
+
+/* Definition lists */
+dl {
+    margin: 12pt 0;
+}
+
+dt {
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 10pt;
+}
+
+dd {
+    margin-left: 20pt;
+    margin-bottom: 8pt;
+    color: var(--text-secondary);
+}
+
+/* ============================================================================
+ * BLOCKQUOTES & CALLOUTS
+ * ============================================================================ */
+blockquote {
+    margin: 16pt 0;
+    padding: 12pt 16pt 12pt 20pt;
+    border-left: 5px solid var(--primary-color);
+    background-color: #f8f9fa;
+    font-style: italic;
+    color: var(--text-secondary);
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+blockquote p {
+    margin: 6pt 0;
+}
+
+blockquote cite {
+    display: block;
+    margin-top: 8pt;
+    font-size: 9pt;
+    font-style: normal;
+    color: var(--text-tertiary);
+}
+
+/* Callout boxes (use with Pandoc divs) */
+.callout-info, .callout-warning, .callout-success, .callout-danger {
+    margin: 16pt 0;
+    padding: 14pt 16pt;
+    border-radius: 4px;
+    border-left: 5px solid;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.callout-info {
+    background-color: #e7f3ff;
+    border-color: #0078d4;
+}
+
+.callout-warning {
+    background-color: #fff4e5;
+    border-color: #ff9800;
+}
+
+.callout-success {
+    background-color: #e8f5e9;
+    border-color: #4caf50;
+}
+
+.callout-danger {
+    background-color: #ffebee;
+    border-color: #f44336;
+}
+
+/* ============================================================================
+ * LINKS & REFERENCES
+ * ============================================================================ */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+a:hover {
+    border-bottom-color: var(--primary-color);
+}
+
+/* External links indicator (optional) */
+a[href^="http"]::after {
+    content: " ↗";
+    font-size: 0.8em;
+    color: var(--text-tertiary);
+}
+
+/* Internal links (same document) */
+a[href^="#"]::after {
+    content: "";
+}
+
+/* Print: show URLs for external links */
+@media print {
+    a[href^="http"] {
+        text-decoration: underline;
+    }
+}
+
+/* ============================================================================
+ * IMAGES & FIGURES
+ * ============================================================================ */
+/* Default: Constrain to page width */
+img:not([data-scaled]), 
+svg:not([data-scaled]) {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 16pt auto;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+/* Scaled diagrams: Respect explicit dimensions set by adaptive sizing */
+img[data-scaled], 
+svg[data-scaled] {
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    display: block;
+    margin: 16pt auto;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+figure {
+    margin: 20pt 0;
+    text-align: center;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+figcaption {
+    font-size: 9pt;
+    font-style: italic;
+    color: var(--text-tertiary);
+    margin-top: 8pt;
+    text-align: center;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+/* ============================================================================
+ * HORIZONTAL RULES
+ * ============================================================================ */
+hr {
+    border: none;
+    border-top: 2px solid var(--border-light);
+    margin: 24pt 0;
+    page-break-after: avoid;
+}
+
+/* ============================================================================
+ * FOOTNOTES
+ * ============================================================================ */
+.footnotes {
+    margin-top: 40pt;
+    padding-top: 16pt;
+    border-top: 2px solid var(--border-light);
+    font-size: 9pt;
+    color: var(--text-tertiary);
+}
+
+.footnotes ol {
+    padding-left: 20pt;
+}
+
+.footnotes li {
+    margin: 6pt 0;
+}
+
+/* ============================================================================
+ * PAGINATION & PRINT CONTROLS
+ * ============================================================================ */
+@media print {
+    /* Hide screen-only elements */
+    .no-print,
+    .screen-only {
+        display: none !important;
+    }
+    
+    /* Ensure proper page breaks */
+    .page-break-before {
+        page-break-before: always;
+        break-before: page;
+    }
+    
+    .page-break-after {
+        page-break-after: always;
+        break-after: page;
+    }
+    
+    .no-page-break {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+    
+    /* Color preservation for diagrams */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* Ensure links are visible in print */
+    a {
+        color: var(--primary-color);
+    }
+}
+
+/* ============================================================================
+ * SPECIAL SECTIONS
+ * ============================================================================ */
+
+/* Executive Summary */
+.executive-summary {
+    background-color: #f0f4f8;
+    border-left: 5px solid var(--accent-color);
+    padding: 16pt;
+    margin: 20pt 0;
+    page-break-inside: avoid;
+}
+
+.executive-summary h2 {
+    margin-top: 0;
+    border-bottom: none;
+}
+
+/* Glossary */
+.glossary dt {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 11pt;
+}
+
+.glossary dd {
+    margin-bottom: 12pt;
+    padding-left: 20pt;
+}
+
+/* Document metadata block (for title pages) */
+.document-metadata {
+    margin: 20pt 0;
+    padding: 16pt;
+    background-color: #fafbfc;
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    font-size: 10pt;
+}
+
+.document-metadata dt {
+    font-weight: 700;
+    color: var(--text-primary);
+    display: inline;
+}
+
+.document-metadata dd {
+    display: inline;
+    margin: 0 20pt 0 0;
+}
+
+/* ============================================================================
+ * ACCESSIBILITY IMPROVEMENTS
+ * ============================================================================ */
+
+/* Better focus indicators (for PDF generation preview) */
+*:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Improved contrast for better readability */
+::selection {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* ============================================================================
+ * UTILITY CLASSES
+ * ============================================================================ */
+
+/* Text alignment */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+
+/* Spacing utilities */
+.mt-0 { margin-top: 0 !important; }
+.mb-0 { margin-bottom: 0 !important; }
+.mt-1 { margin-top: 8pt !important; }
+.mb-1 { margin-bottom: 8pt !important; }
+.mt-2 { margin-top: 16pt !important; }
+.mb-2 { margin-bottom: 16pt !important; }
+
+/* Color emphasis */
+.text-muted { color: var(--text-tertiary); }
+.text-primary { color: var(--primary-color); }
+.text-success { color: #4caf50; }
+.text-warning { color: #ff9800; }
+.text-danger { color: #f44336; }
+
+/* ============================================================================
+ * END OF STYLESHEET
+ * ============================================================================ */
