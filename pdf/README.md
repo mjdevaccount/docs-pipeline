@@ -423,7 +423,7 @@ prepared_for: Executive Team
 **All Supported Fields:**
 - `title` - Document title (extracted from first H1 if missing)
 - `author` - Author name (default: "Matt Jeffcoat")
-- `organization` - Organization name (default: "REDACTED Systems")
+- `organization` - Organization name (default: "Your Organization")
 - `date` - Publication date (default: "November 2025")
 - `version` - Document version (default: "1.0")
 - `type` - Document type (default: "Technical Specification")
@@ -811,5 +811,5 @@ md2pdf.bat --help
 
 **Note:** All file paths in commands are relative to the **project root** (one level up from `pdf-tools/`).
 
-**Last Updated:** November 2025  
-**Maintained By:** Reporting Architecture Team
+**Last Updated:** January 2025  
+**Maintained By:** Documentation Pipeline Team

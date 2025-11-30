@@ -22,7 +22,7 @@
 
 ## Target Diagram
 
-**Location:** `docs/ReportingManager_ArchitectureProposal_Enhanced.md` (lines 197-259)  
+**Location:** `docs/architecture-proposal.md` (lines 197-259)  
 **Heading:** `### Architecture Overview (Phase 0)` (h3, line 195)  
 **Diagram Type:** Mermaid flowchart with 5 subgraphs (External Systems, Portal Layer, Reporting Manager, Execution Layer, Data Layer)
 
@@ -276,7 +276,7 @@ page_threshold = 0.6 * pair['availableHeight']
 **Enable verbose mode:**
 ```bash
 python pdf-tools/md2pdf.py \
-  docs/ReportingManager_ArchitectureProposal_Enhanced.md \
+  docs/architecture-proposal.md \
   output.pdf \
   --renderer playwright \
   --verbose
