@@ -64,31 +64,35 @@ tools/prompts/
 
 ```bash
 # Transform a rough draft into a polished document
-python -m tools.prompts.cli \
+cd tools/prompts
+python -m cli \
     input_draft.md \
     output_polished.md \
-    --config tools/prompts/pipelines/architecture-proposal.yaml \
+    --config pipelines/architecture-proposal.yaml \
     --verbose
 ```
 
 ### With OpenAI (default)
 
 ```bash
+cd tools/prompts
 export OPENAI_API_KEY="your-api-key"
-python -m tools.prompts.cli rough_draft.md polished.md -c pipelines/architecture-proposal.yaml
+python -m cli rough_draft.md polished.md -c pipelines/architecture-proposal.yaml
 ```
 
 ### With Anthropic Claude
 
 ```bash
+cd tools/prompts
 export ANTHROPIC_API_KEY="your-api-key"
-python -m tools.prompts.cli rough_draft.md polished.md -c pipelines/architecture-proposal.yaml --executor anthropic
+python -m cli rough_draft.md polished.md -c pipelines/architecture-proposal.yaml --executor anthropic
 ```
 
 ### List Available Prompts
 
 ```bash
-python -m tools.prompts.cli --list-prompts
+cd tools/prompts
+python -m cli --list-prompts
 ```
 
 ## Pipeline Configuration
@@ -158,14 +162,16 @@ After running the pipeline, you'll get:
 
 ```bash
 # Step 1: Transform rough draft to polished document
-python -m tools.prompts.cli \
+cd tools/prompts
+python -m cli \
     rough_draft.md \
     polished.md \
-    -c tools/prompts/pipelines/architecture-proposal.yaml
+    -c pipelines/architecture-proposal.yaml
 
 # Step 2: Generate PDF
-python tools/pdf/md2pdf.py \
-    polished.md \
+cd ../pdf
+python md2pdf.py \
+    ../polished.md \
     --profile reporting-manager \
     --generate-cover \
     --generate-toc
@@ -200,7 +206,8 @@ class DiagramGeneratorAgent(BaseDocumentAgent):
 
 ```bash
 # Use mock executor for testing without API calls
-python -m tools.prompts.cli \
+cd tools/prompts
+python -m cli \
     test_input.md \
     test_output.md \
     -c pipelines/architecture-proposal.yaml \

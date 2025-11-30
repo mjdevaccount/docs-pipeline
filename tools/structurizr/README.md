@@ -69,6 +69,7 @@ Generated Diagrams
 
 2. **Install Python dependencies** (optional, for helper scripts):
    ```bash
+   cd tools/structurizr
    pip install -r requirements-structurizr.txt
    ```
 
@@ -129,13 +130,13 @@ structurizr.bat validate --workspace docs/ReportingManager_Phase0_Architecture.d
 ## File Structure
 
 ```
-structurizr-tools/
+tools/structurizr/
 ├── README.md                    # This file
 ├── requirements-structurizr.txt # Python dependencies (optional)
 ├── structurizr.bat             # Windows batch wrapper
 ├── structurizr.sh              # Linux/macOS shell wrapper
 ├── structurizr.py              # Python helper script (optional)
-├── structurizr-config.json     # Configuration file (optional)
+├── structurizr-config.example.json # Configuration file example
 └── examples/                   # Example DSL files
     └── example.dsl
 ```
@@ -162,8 +163,8 @@ structurizr-tools/
 
 3. **Generate PDF**:
    ```bash
-   cd pdf-tools
-   python md2pdf.py ../docs/ReportingManager_Phase0_Diagrams.md
+   cd tools/pdf
+   python md2pdf.py ../../docs/ReportingManager_Phase0_Diagrams.md
    ```
 
 ### With Git / Version Control

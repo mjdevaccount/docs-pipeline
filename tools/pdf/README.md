@@ -641,14 +641,14 @@ python md2pdf.py --config pdf-config.json --threads 4 --cache-diagrams
 ## File Structure
 
 ```
-pdf-tools/
+tools/pdf/
 ├── md2pdf.py              # CLI wrapper (465 lines)
 ├── convert_final.py        # Core engine (636 lines)
 ├── md2pdf.bat             # Windows batch wrapper
 ├── requirements-pdf.txt    # Python dependencies
 ├── README.md              # This file
-├── PDF_GENERATION_SETUP.md # Setup guide
-├── pdf-config.json.example # Config example
+├── docs/                  # Documentation
+├── pdf-config.example.json # Config example
 └── [default_reference.docx] # Optional template
 ```
 
@@ -673,10 +673,10 @@ md2pdf.bat --batch docs\*.md --format docx
 
 ```bash
 # From project root
-python pdf-tools/md2pdf.py docs/report.md
+python tools/pdf/md2pdf.py docs/report.md
 
 # With options
-python pdf-tools/md2pdf.py docs/report.md --format docx --verbose
+python tools/pdf/md2pdf.py docs/report.md --format docx --verbose
 ```
 
 ---
@@ -686,7 +686,7 @@ python pdf-tools/md2pdf.py docs/report.md --format docx --verbose
 See `PDF_GENERATION_SETUP.md` for complete setup instructions.
 
 **Quick install:**
-1. `pip install -r requirements-pdf.txt`
+1. `cd tools/pdf && pip install -r requirements-pdf.txt`
 2. Install Pandoc: `choco install pandoc` (Windows) or `brew install pandoc` (macOS)
 3. Install Mermaid-CLI: `npm install -g @mermaid-js/mermaid-cli`
 4. (Windows) Install GTK: See setup guide
@@ -809,7 +809,7 @@ md2pdf.bat --help
 
 ---
 
-**Note:** All file paths in commands are relative to the **project root** (one level up from `pdf-tools/`).
+**Note:** All file paths in commands are relative to the **project root** (one level up from `tools/pdf/`).
 
 **Last Updated:** January 2025  
 **Maintained By:** Documentation Pipeline Team

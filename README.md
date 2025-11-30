@@ -18,7 +18,7 @@ Built with SOLID principles, type safety, and extensibility. Designed for enterp
 ### PDF Generation
 
 ```bash
-cd pdf
+cd tools/pdf
 pip install -r requirements-pdf.txt
 python md2pdf.py your-document.md --profile enterprise
 ```
@@ -26,7 +26,7 @@ python md2pdf.py your-document.md --profile enterprise
 ### AI Document Enhancement
 
 ```bash
-cd prompts
+cd tools/prompts
 pip install -r requirements.txt
 python -m cli rough-draft.md polished.md -c pipelines/architecture.yaml
 ```
@@ -34,16 +34,16 @@ python -m cli rough-draft.md polished.md -c pipelines/architecture.yaml
 ### Architecture Diagrams
 
 ```bash
-cd structurizr
+cd tools/structurizr
 docker pull structurizr/cli:latest
 python structurizr.py --config your-workspace.json
 ```
 
 ## Documentation
 
-- [PDF Generation Guide](pdf/README.md) - Layout engine, Mermaid optimization, document profiles
-- [AI Agents Architecture](prompts/ARCHITECTURE.md) - Multi-agent system design and extension
-- [Structurizr Integration](structurizr/README.md) - Docker-based diagram generation
+- [PDF Generation Guide](tools/pdf/README.md) - Layout engine, Mermaid optimization, document profiles
+- [AI Agents Architecture](tools/prompts/ARCHITECTURE.md) - Multi-agent system design and extension
+- [Structurizr Integration](tools/structurizr/README.md) - Docker-based diagram generation
 
 ## Features
 
@@ -82,17 +82,22 @@ Each tool follows SOLID principles with:
 
 ```
 docs-pipeline/
-├── pdf/                    # Markdown → PDF/DOCX generation
-│   ├── core/               # Layout engine, document profiles
-│   ├── playwright_pdf/     # Browser-based rendering
-│   └── tests/              # Layout verification and benchmarks
-├── prompts/                # AI-powered document refinement
-│   ├── agents/             # Document processing agents
-│   ├── library/            # Prompt templates
-│   └── pipelines/          # Workflow configurations
-├── structurizr/            # Architecture diagram generation
-│   └── structurizr_tools/
-└── docs_pipeline/          # Orchestration layer
+├── tools/                  # All standalone CLI tools
+│   ├── pdf/                # Markdown → PDF/DOCX generation
+│   │   ├── playwright_pdf/ # Browser-based rendering
+│   │   └── tests/          # Layout verification and benchmarks
+│   ├── prompts/            # AI-powered document refinement
+│   │   ├── agents/         # Document processing agents
+│   │   ├── library/        # Prompt templates
+│   │   └── pipelines/      # Workflow configurations
+│   └── structurizr/        # Architecture diagram generation
+│       └── structurizr_tools/
+├── docs/                   # Central documentation
+│   ├── examples/           # Working examples
+│   ├── development/        # Dev docs
+│   └── images/             # Screenshots/diagrams
+├── tests/                  # Integration tests
+└── scripts/                # Helper scripts
 ```
 
 ## Requirements
@@ -113,18 +118,18 @@ pip install -r requirements.txt  # All tools
 ### Option 2: Tool-Specific
 
 ```bash
-pip install -r pdf/requirements-pdf.txt              # PDF only
-pip install -r prompts/requirements.txt             # AI agents only
-pip install -r structurizr/requirements-structurizr.txt  # Diagrams only
+pip install -r tools/pdf/requirements-pdf.txt              # PDF only
+pip install -r tools/prompts/requirements.txt             # AI agents only
+pip install -r tools/structurizr/requirements-structurizr.txt  # Diagrams only
 ```
 
 ## Configuration
 
 Each tool uses YAML configuration:
 
-- PDF: Document profiles in `pdf/profiles.py` or custom CSS
-- AI Agents: Pipeline configs in `prompts/pipelines/*.yaml`
-- Structurizr: Workspace configs in `structurizr/*.json`
+- PDF: Document profiles in `tools/pdf/profiles.py` or custom CSS
+- AI Agents: Pipeline configs in `tools/prompts/pipelines/*.yaml`
+- Structurizr: Workspace configs in `tools/structurizr/*.json`
 
 See tool-specific README files for detailed configuration options.
 
@@ -132,9 +137,9 @@ See tool-specific README files for detailed configuration options.
 
 Complete examples in each tool directory:
 
-- `pdf/docs/` - Sample markdown documents with diagrams
-- `prompts/examples/` - Rough drafts and pipeline configurations
-- `structurizr/` - Example DSL files and export configs
+- `tools/pdf/docs/` - Sample markdown documents with diagrams
+- `tools/prompts/examples/` - Rough drafts and pipeline configurations
+- `tools/structurizr/` - Example DSL files and export configs
 
 ## Development
 
@@ -142,19 +147,19 @@ Complete examples in each tool directory:
 
 **PDF layout verification:**
 ```bash
-cd pdf/tests
+cd tools/pdf/tests
 python test_reporting_manager_layout.py
 ```
 
 **AI agents (requires API key):**
 ```bash
-cd prompts
+cd tools/prompts
 python -m pytest tests/
 ```
 
 **Structurizr:**
 ```bash
-cd structurizr
+cd tools/structurizr
 python structurizr.py --validate
 ```
 

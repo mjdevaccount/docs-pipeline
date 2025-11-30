@@ -10,7 +10,7 @@ authors = [{name = "Matt Jeffcoat", email = "matt.jeffcoat@gmail.com"}]
 license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.9"
-keywords = ["documentation", "pdf", "mermaid", "ai", "architecture", "diagrams"]
+keywords = ["documentation", "pdf", "mermaid", "ai", "architecture", "diagrams", "mcp", "tooling"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -18,13 +18,14 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Documentation",
     "Topic :: Software Development :: Documentation",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 dependencies = [
     "pyyaml>=6.0",
-    "jinja2>=3.1.0",
     "click>=8.1.0",
 ]
 
@@ -34,42 +35,100 @@ pdf = [
     "markdown>=3.5.0",
     "beautifulsoup4>=4.12.0",
     "lxml>=4.9.0",
+    "python-markdown-math>=0.8",
+    "pymdown-extensions>=10.0",
 ]
+
 ai = [
     "openai>=1.0.0",
     "anthropic>=0.8.0",
 ]
+
 structurizr = [
     "docker>=6.1.0",
+    "requests>=2.31.0",
 ]
+
 dev = [
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
     "black>=23.0.0",
     "mypy>=1.7.0",
     "ruff>=0.1.0",
+]
+
+# Install all tools at once
+all = [
+    "docs-pipeline[pdf,ai,structurizr,dev]",
 ]
 
 [project.urls]
 Homepage = "https://github.com/mjdevaccount/docs-pipeline"
 Issues = "https://github.com/mjdevaccount/docs-pipeline/issues"
 Documentation = "https://github.com/mjdevaccount/docs-pipeline#readme"
+Repository = "https://github.com/mjdevaccount/docs-pipeline"
+
+[project.scripts]
+# CLI entry points for each tool
+docs-pdf = "pdf.md2pdf:main"
+docs-prompts = "prompts.cli:main"
+docs-structurizr = "structurizr.structurizr:main"
 
 [tool.setuptools]
-packages = ["docs_pipeline", "pdf", "prompts", "structurizr"]
+# Discover packages in tools/ directory
+packages = {find = {where = ["tools"], include = ["pdf*", "prompts*", "structurizr*"]}}
+
+[tool.setuptools.package-dir]
+# Map package names to directories
+"" = "tools"
 
 [tool.black]
 line-length = 100
 target-version = ['py39', 'py310', 'py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
 
 [tool.mypy]
 python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
-disallow_untyped_defs = true
+disallow_untyped_defs = false  # Set to true when all code has type hints
+ignore_missing_imports = true
 
 [tool.ruff]
 line-length = 100
-select = ["E", "F", "I", "N", "W"]
-ignore = ["E501"]
+target-version = "py39"
+select = [
+    "E",  # pycodestyle errors
+    "F",  # pyflakes
+    "I",  # isort
+    "N",  # pep8-naming
+    "W",  # pycodestyle warnings
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+]
 
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --cov=tools --cov-report=term-missing"
+testpaths = [
+    "tests",
+    "tools/pdf/tests",
+    "tools/prompts/tests",
+    "tools/structurizr/tests",
+]
+pythonpath = ["tools"]
