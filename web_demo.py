@@ -22,6 +22,7 @@ BASE_DIR = Path('/app') if Path('/app').exists() else Path(__file__).parent
 UPLOAD_FOLDER = BASE_DIR / 'uploads'
 OUTPUT_FOLDER = BASE_DIR / 'output'
 EXAMPLES_FOLDER = BASE_DIR / 'docs' / 'examples' / 'generated'
+EXAMPLES_SOURCE_FOLDER = BASE_DIR / 'docs' / 'examples'
 
 # Create directories
 UPLOAD_FOLDER.mkdir(exist_ok=True)
@@ -131,70 +132,131 @@ def download_file(filepath):
         return jsonify({'error': str(e)}), 500
 
 
+def _generate_friendly_name(filename):
+    """Convert filename to friendly display name"""
+    # Remove extension and convert to title case
+    name = filename.replace('.md', '').replace('.markdown', '')
+    # Replace hyphens and underscores with spaces
+    name = name.replace('-', ' ').replace('_', ' ')
+    # Title case
+    return ' '.join(word.capitalize() for word in name.split())
+
+
+def _extract_base_name(filename):
+    """Extract base name from markdown filename for PDF matching"""
+    # Remove .md or .markdown extension
+    base = filename.replace('.md', '').replace('.markdown', '')
+    # Common patterns: convert to short base names
+    # e.g., "advanced-markdown-showcase" -> "showcase"
+    #       "technical-white-paper" -> "whitepaper"
+    #       "product-requirements-doc" -> "prd"
+    base_lower = base.lower()
+    
+    # Try to match common patterns
+    if 'showcase' in base_lower:
+        return 'showcase'
+    elif 'whitepaper' in base_lower or 'white-paper' in base_lower:
+        return 'whitepaper'
+    elif 'prd' in base_lower or 'product-requirements' in base_lower:
+        return 'prd'
+    elif 'technical-spec' in base_lower or 'tech-spec' in base_lower:
+        return 'tech-spec'
+    else:
+        # Use the last meaningful word or first few words
+        parts = base.split('-')
+        if len(parts) > 2:
+            # Take last 1-2 meaningful parts
+            return '-'.join(parts[-2:]) if len(parts[-1]) > 3 else '-'.join(parts[-3:])
+        return base
+
+
 @app.route('/examples')
 def list_examples():
-    """List pre-generated example PDFs with profile variants"""
-    
-    base_examples = [
-        {
-            'name': 'Advanced Markdown Showcase',
-            'description': 'Kitchen sink demo - complex tables, Mermaid diagrams, math equations, multi-language code blocks',
-            'base_file': 'showcase',
-            'source': 'docs/examples/advanced-markdown-showcase.md',
-            'profiles': ['tech', 'dark', 'minimalist', 'enterprise']
-        },
-        {
-            'name': 'Technical White Paper',
-            'description': 'Event-driven microservices architecture - production-grade engineering documentation',
-            'base_file': 'whitepaper',
-            'source': 'docs/examples/technical-white-paper.md',
-            'profiles': ['tech', 'dark', 'minimalist', 'enterprise']
-        },
-        {
-            'name': 'Product Requirements Document',
-            'description': 'Real-time collaboration platform PRD - business-facing product documentation',
-            'base_file': 'prd',
-            'source': 'docs/examples/product-requirements-doc.md',
-            'profiles': ['tech', 'dark', 'minimalist', 'enterprise']
-        }
-    ]
+    """Dynamically discover and list pre-generated example PDFs with profile variants"""
     
     result = []
+    profiles = ['tech', 'dark', 'minimalist', 'enterprise']
     
-    for example in base_examples:
-        # Check each profile variant
+    # Discover markdown files in examples folder (excluding README and subdirectories)
+    if not EXAMPLES_SOURCE_FOLDER.exists():
+        return jsonify([])
+    
+    # Find all markdown files in the examples directory (not in subdirectories)
+    markdown_files = [
+        f for f in EXAMPLES_SOURCE_FOLDER.iterdir()
+        if f.is_file() and f.suffix.lower() in ['.md', '.markdown']
+        and f.name.lower() != 'readme.md'
+    ]
+    
+    # Sort for consistent ordering
+    markdown_files.sort(key=lambda x: x.name.lower())
+    
+    for md_file in markdown_files:
+        base_name = _extract_base_name(md_file.name)
+        friendly_name = _generate_friendly_name(md_file.name)
+        source_path = f"docs/examples/{md_file.name}"
+        
+        # Check for PDFs matching this markdown file
         available_files = []
-        for profile in example['profiles']:
-            filename = f"{example['base_file']}-{profile}.pdf"
-            file_path = EXAMPLES_FOLDER / filename
+        for profile in profiles:
+            # Try different naming patterns
+            possible_names = [
+                f"{base_name}-{profile}.pdf",
+                f"{md_file.stem}-{profile}.pdf",
+            ]
             
-            if file_path.exists():
-                size_bytes = file_path.stat().st_size
-                size_mb = size_bytes / 1024 / 1024
-                available_files.append({
-                    'profile': profile,
-                    'filename': filename,
-                    'size': f"{size_mb:.1f} MB"
-                })
+            for pdf_name in possible_names:
+                pdf_path = EXAMPLES_FOLDER / pdf_name
+                if pdf_path.exists():
+                    size_bytes = pdf_path.stat().st_size
+                    size_mb = size_bytes / 1024 / 1024
+                    available_files.append({
+                        'profile': profile,
+                        'filename': pdf_name,
+                        'size': f"{size_mb:.1f} MB"
+                    })
+                    break  # Found a match, move to next profile
+        
+        # Also check for any PDF that starts with the base name (catch-all)
+        if not available_files:
+            for pdf_file in EXAMPLES_FOLDER.glob(f"{base_name}*.pdf"):
+                # Extract profile from filename if possible
+                pdf_stem = pdf_file.stem
+                if '-' in pdf_stem:
+                    parts = pdf_stem.split('-')
+                    if len(parts) >= 2:
+                        potential_profile = parts[-1]
+                        if potential_profile in profiles:
+                            size_bytes = pdf_file.stat().st_size
+                            size_mb = size_bytes / 1024 / 1024
+                            available_files.append({
+                                'profile': potential_profile,
+                                'filename': pdf_file.name,
+                                'size': f"{size_mb:.1f} MB"
+                            })
+        
+        # Sort available files by profile order
+        profile_order = {p: i for i, p in enumerate(profiles)}
+        available_files.sort(key=lambda x: profile_order.get(x['profile'], 999))
         
         if available_files:
-            # Add primary file (tech profile) for main display
+            # Use first available file as primary
             result.append({
-                'name': example['name'],
-                'description': example['description'],
-                'source': example['source'],
-                'file': available_files[0]['filename'],  # Default to first available
+                'name': friendly_name,
+                'description': f'Generated from {md_file.name}',
+                'source': source_path,
+                'file': available_files[0]['filename'],
                 'size': available_files[0]['size'],
                 'available': True,
                 'profiles': available_files
             })
         else:
-            # Show as unavailable
+            # Show as unavailable but still list it
             result.append({
-                'name': example['name'],
-                'description': example['description'],
-                'source': example['source'],
-                'file': f"{example['base_file']}-tech.pdf",
+                'name': friendly_name,
+                'description': f'Source file: {md_file.name} (PDF not yet generated)',
+                'source': source_path,
+                'file': f"{base_name}-tech.pdf",  # Expected filename
                 'size': 'N/A',
                 'available': False,
                 'profiles': []
