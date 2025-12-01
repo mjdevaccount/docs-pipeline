@@ -16,6 +16,8 @@ sys.path.insert(0, str(Path(__file__).parent / 'tools' / 'pdf'))
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # Use Docker paths if /app exists, otherwise use local paths
 BASE_DIR = Path('/app') if Path('/app').exists() else Path(__file__).parent

@@ -224,6 +224,20 @@
             font-size: 0.85rem;
         }
         
+        .profile-selector {
+            transition: all 0.2s ease;
+        }
+        
+        .profile-selector:hover {
+            border-color: #667eea;
+        }
+        
+        .profile-selector:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
         .status {
             margin-top: 25px;
             padding: 18px 24px;
@@ -596,13 +610,41 @@
                     return;
                 }
                 
-                examples.forEach(ex => {
+                examples.forEach((ex, idx) => {
                     const item = document.createElement('div');
                     item.className = `example-item ${!ex.available ? 'unavailable' : ''}`;
                     
-                    const downloadButton = ex.available 
-                        ? `<a href="/example/${ex.file}" class="btn btn-small" download>📥 Download PDF</a>`
-                        : `<span class="unavailable-badge">Not Generated Yet</span>`;
+                    // Create profile selector if multiple profiles are available
+                    let profileSelector = '';
+                    let downloadButton = '';
+                    
+                    if (ex.profiles && ex.profiles.length > 0) {
+                        const selectId = `profile-select-${idx}`;
+                        
+                        profileSelector = `
+                            <div style="margin-bottom: 15px;">
+                                <label for="${selectId}" style="font-size: 0.85rem; color: #4a5568; font-weight: 600; display: block; margin-bottom: 6px;">📐 Style Profile:</label>
+                                <select id="${selectId}" class="profile-selector" style="padding: 8px 12px; border-radius: 6px; border: 2px solid #cbd5e0; font-size: 0.9rem; background: white; cursor: pointer; width: 100%; max-width: 200px;">
+                                    ${ex.profiles.map((p, i) => `
+                                        <option value="${p.filename}" data-size="${p.size}" ${i === 0 ? 'selected' : ''}>
+                                            ${p.profile.charAt(0).toUpperCase() + p.profile.slice(1)}
+                                        </option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                        `;
+                        
+                        downloadButton = `
+                            <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
+                                <div class="example-size" id="size-${idx}" style="margin: 0;">💾 ${ex.profiles[0].size}</div>
+                                <a href="/example/${ex.profiles[0].filename}" id="download-btn-${idx}" class="btn btn-small" download>📥 Download PDF</a>
+                            </div>
+                        `;
+                    } else if (ex.available) {
+                        downloadButton = `<a href="/example/${ex.file}" class="btn btn-small" download>📥 Download PDF</a>`;
+                    } else {
+                        downloadButton = `<span class="unavailable-badge">Not Generated Yet</span>`;
+                    }
                     
                     item.innerHTML = `
                         <div class="example-header">
@@ -611,8 +653,8 @@
                                 <div class="example-description">${ex.description}</div>
                                 <div class="example-meta">
                                     <div class="example-source">📄 ${ex.source}</div>
-                                    ${ex.available ? `<div class="example-size">💾 ${ex.size}</div>` : ''}
                                 </div>
+                                ${profileSelector}
                             </div>
                             <div>
                                 ${downloadButton}
@@ -620,6 +662,22 @@
                         </div>
                     `;
                     list.appendChild(item);
+                    
+                    // Add event listener for profile selector
+                    if (ex.profiles && ex.profiles.length > 0) {
+                        const selector = document.getElementById(`profile-select-${idx}`);
+                        const downloadBtn = document.getElementById(`download-btn-${idx}`);
+                        const sizeLabel = document.getElementById(`size-${idx}`);
+                        
+                        selector.addEventListener('change', (e) => {
+                            const selectedOption = e.target.options[e.target.selectedIndex];
+                            const filename = selectedOption.value;
+                            const size = selectedOption.getAttribute('data-size');
+                            
+                            downloadBtn.href = `/example/${filename}`;
+                            sizeLabel.textContent = `💾 ${size}`;
+                        });
+                    }
                 });
             } catch (error) {
                 console.error('Failed to load examples:', error);
