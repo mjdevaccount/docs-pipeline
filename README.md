@@ -97,32 +97,62 @@ docker pull structurizr/cli:latest
 python structurizr.py --config your-workspace.json
 ```
 
-## ✨ NEW: PDF Profile System
+## ✨ PDF Profile System
 
-Generate dramatically different-looking PDFs from the same content with a single flag:
+Generate dramatically different-looking PDFs from the same content with a single `--profile` flag. No CSS editing required.
+
+### Available Profiles
+
+**🔧 Tech Whitepaper** (default) - Professional engineering documentation
+- Clean, technical style with blue accents
+- Bordered headings and structured layout
+- Best for: API docs, technical specs, developer guides
+
+**🌙 Dark Pro** - Modern dark theme for on-screen viewing
+- High contrast with neon blue accents (#3b82f6)
+- Dramatic shadows and glows
+- Best for: Presentations, demo materials, portfolio pieces
+
+**✨ Minimalist** - Clean, spacious architecture documents
+- Maximum whitespace, thin typography
+- No borders, subtle colors
+- Best for: Architecture Decision Records, RFCs, executive summaries
+
+**🏢 Enterprise Blue** - Corporate-friendly business documents
+- Conservative blue/gray scheme (#003d7a)
+- Professional header bars and structured tables
+- Best for: Client deliverables, business reports, proposals
+
+### Usage
 
 ```bash
-# Professional engineering style (default)
-python tools/pdf/md2pdf.py spec.md --profile tech-whitepaper
-
-# Modern dark theme for presentations
+# CLI
 python tools/pdf/md2pdf.py spec.md --profile dark-pro
 
-# Clean, spacious architecture docs
-python tools/pdf/md2pdf.py spec.md --profile minimalist
-
-# Corporate-friendly business documents
-python tools/pdf/md2pdf.py spec.md --profile enterprise-blue
+# Pipeline YAML
+documents:
+  - input: docs/api-spec.md
+    output: output/api-spec.pdf
+    profile: tech-whitepaper
+  - input: docs/architecture.md
+    output: output/architecture.pdf
+    profile: minimalist
 ```
 
-**Same content. Four completely different visual styles.** No CSS editing required.
+### Profile Showcase
 
-👉 [See Profile System Documentation](docs/PROFILE_SYSTEM.md) for detailed guide and examples.
+Generate the same document in all profiles to compare:
+
+```bash
+python -m tools.docs_pipeline.cli --config docs-pipeline-profiles-demo.yaml
+```
+
+Creates: `architecture-overview-tech.pdf`, `architecture-overview-dark.pdf`, `architecture-overview-minimalist.pdf`, `architecture-overview-enterprise.pdf`
 
 ## Documentation
 
 - [PDF Generation Guide](tools/pdf/README.md) - Layout engine, Mermaid optimization, document profiles
-- [Profile System Guide](docs/PROFILE_SYSTEM.md) - **NEW!** Visual styling with 4 distinct profiles
+- [Getting Started Tutorial](docs/getting-started.md) - Step-by-step guide for first-time users
 - [AI Agents Architecture](tools/prompts/ARCHITECTURE.md) - Multi-agent system design and extension
 - [Structurizr Integration](tools/structurizr/README.md) - Docker-based diagram generation
 
@@ -130,11 +160,11 @@ python tools/pdf/md2pdf.py spec.md --profile enterprise-blue
 
 ### PDF Generation Engine
 
-- **4 Visual Profiles** - Tech Whitepaper, Dark Pro, Minimalist, Enterprise Blue (NEW!)
+- **4 Visual Profiles** - Tech Whitepaper, Dark Pro, Minimalist, Enterprise Blue
 - Playwright-based rendering for pixel-perfect output
 - Adaptive pagination with intelligent diagram scaling
 - Pre-rendered Mermaid diagrams with theme optimization
-- Custom document profiles (cover pages, headers, footers)
+- Custom CSS styling and document profiles
 - Layout policies for fine-grained control
 
 ### AI Document Refinement
