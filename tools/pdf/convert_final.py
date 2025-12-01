@@ -608,6 +608,19 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
         
         subprocess.run(pandoc_cmd, check=True, capture_output=True, text=True, shell=False)
         
+        # Step 2.5: Strip Pandoc's embedded CSS to avoid conflicts with profile CSS
+        # Pandoc's --standalone flag embeds its own <style> blocks which can interfere
+        # with our custom profile CSS and create specificity wars
+        print("  [2.5/5] Stripping Pandoc's embedded CSS...")
+        html_content = tmp_html.read_text(encoding='utf-8')
+        
+        # Remove all <style> blocks from Pandoc (preserves inline styles on elements)
+        # Use DOTALL flag to match across newlines
+        html_content = re.sub(r'<style[^>]*>.*?</style>', '', html_content, flags=re.DOTALL)
+        
+        # Write cleaned HTML back
+        tmp_html.write_text(html_content, encoding='utf-8')
+        
         # Step 3: Post-process HTML for proper structure
         # NOTE: For Playwright renderer, skip WeasyPrint-style title page injection
         # Playwright handles cover page, TOC, and formatting separately

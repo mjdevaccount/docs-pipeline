@@ -4,7 +4,18 @@ Professional documentation demonstrating the full capabilities of the docs-pipel
 
 ## 🎯 Portfolio-Ready Examples
 
-This directory contains **12 generated PDFs** (3 documents × 4 profiles) showcasing the complete range of capabilities.
+This directory contains **12 generated PDFs** (3 documents × 4 profiles) showcasing the complete range of capabilities, with **all CSS collision fixes applied** for production-quality output.
+
+### ✨ Latest Improvements (Dec 2025)
+
+All PDFs generated with the following enhancements:
+- ✅ **CSS Collision Resolution** - Clean injection order, no style conflicts
+- ✅ **Pandoc CSS Stripping** - Removed embedded style pollution
+- ✅ **Profile-Specific Styling** - Colors controlled by CSS classes, not inline styles
+- ✅ **Dark Theme Fix** - Full background color support via `-webkit-print-color-adjust`
+- ✅ **Proper Margins** - CSS `@page` rules control margins (not hardcoded Python)
+- ✅ **Font Stack Priority** - Profile CSS fonts load before Google Fonts
+- ✅ **Centralized Pagination** - All page-break rules in `layout.css` (no duplicates)
 
 ### Document Types
 
@@ -42,10 +53,22 @@ Enterprise PRD for a real-time collaboration platform:
 
 Each document is available in **4 distinct visual profiles:**
 
-- **`-tech.pdf`** - Tech Whitepaper: Professional engineering documentation style
-- **`-dark.pdf`** - Dark Pro: Modern dark theme for on-screen presentations
-- **`-minimalist.pdf`** - Minimalist: Clean, spacious architecture documentation
-- **`-enterprise.pdf`** - Enterprise Blue: Corporate-friendly business documents
+- **`-tech.pdf`** - Tech Whitepaper: Professional engineering documentation style (Blue accents, clean margins)
+- **`-dark.pdf`** - Dark Pro: Modern dark theme for on-screen presentations (Dark navy background, light text)
+- **`-minimalist.pdf`** - Minimalist: Clean, spacious architecture documentation (Maximum whitespace, subtle styling)
+- **`-enterprise.pdf`** - Enterprise Blue: Corporate-friendly business documents (Corporate blue, structured layout)
+
+### 📊 File Sizes
+
+| Document | Tech | Dark Pro | Minimalist | Enterprise |
+|----------|------|----------|------------|------------|
+| **Showcase** | 977 KB | 1,175 KB | 677 KB | 862 KB |
+| **White Paper** | 551 KB | 766 KB | 344 KB | 583 KB |
+| **PRD** | 735 KB | 1,010 KB | 649 KB | 923 KB |
+
+**Total Portfolio:** 9.9 MB across 12 professional PDFs
+
+*Note: Dark Pro PDFs are larger due to full-page background color preservation and enhanced visual effects.*
 
 ## 🚀 Regenerate All Examples
 
@@ -85,18 +108,33 @@ docs/examples/generated/
 Generate individual PDFs with specific profiles:
 
 ```bash
-# Tech Whitepaper profile
+# Tech Whitepaper profile with cover page and TOC
 python tools/pdf/md2pdf.py docs/examples/technical-white-paper.md \
-  --output output/whitepaper-tech.pdf \
+  whitepaper-tech.pdf \
   --profile tech-whitepaper \
-  --renderer playwright
+  --renderer playwright \
+  --generate-cover \
+  --generate-toc
 
-# Dark Pro profile
+# Dark Pro profile with cover page and TOC
 python tools/pdf/md2pdf.py docs/examples/product-requirements-doc.md \
-  --output output/prd-dark.pdf \
+  prd-dark.pdf \
   --profile dark-pro \
-  --renderer playwright
+  --renderer playwright \
+  --generate-cover \
+  --generate-toc
+
+# Add --verbose flag to see CSS loading order and debug info
+python tools/pdf/md2pdf.py docs/examples/advanced-markdown-showcase.md \
+  showcase-enterprise.pdf \
+  --profile enterprise-blue \
+  --renderer playwright \
+  --generate-cover \
+  --generate-toc \
+  --verbose
 ```
+
+**Note:** Output files are automatically placed in `<repo>/output/` by default.
 
 ## 📊 What These Examples Demonstrate
 
@@ -113,12 +151,23 @@ python tools/pdf/md2pdf.py docs/examples/product-requirements-doc.md \
 - ✅ Complex table formatting with cell styling
 - ✅ Multi-page layouts with automatic pagination
 - ✅ Professional typography and spacing
+- ✅ Professional cover pages with metadata
+- ✅ Auto-generated table of contents
+- ✅ PDF bookmarks for navigation (36+ per document)
 
 **Profile System:**
 - ✅ **Tech Whitepaper** - Blue accents, clean margins, engineering focus
-- ✅ **Dark Pro** - High contrast, modern aesthetic, screen-optimized
+- ✅ **Dark Pro** - High contrast, modern aesthetic, screen-optimized (with full background color support)
 - ✅ **Minimalist** - Maximum whitespace, subtle styling, architecture focus
 - ✅ **Enterprise Blue** - Corporate colors, conservative styling, business focus
+
+**Production Quality:**
+- ✅ CSS collision resolution (4-source problem → 2-source clean solution)
+- ✅ Proper CSS specificity (profile CSS controls styling, no inline overrides)
+- ✅ Chromium PDF compliance (`-webkit-print-color-adjust: exact` for dark themes)
+- ✅ Pandoc CSS isolation (embedded styles stripped before rendering)
+- ✅ Font stack priority (profile fonts load before web fonts)
+- ✅ Centralized pagination rules (no duplicates across profiles)
 
 ## 📖 Pipeline Configuration
 

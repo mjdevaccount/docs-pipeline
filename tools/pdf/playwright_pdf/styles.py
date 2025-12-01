@@ -75,12 +75,9 @@ async def inject_fonts(page: Page, font_families: Optional[List[str]] = None, ve
     # Wait for fonts to load (critical!)
     await page.evaluate("document.fonts.ready")
     
-    # Update body font family
-    await page.evaluate(f"""
-        () => {{
-            document.body.style.fontFamily = "'{font_families[0]}', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
-        }}
-    """)
+    # DO NOT set document.body.style.fontFamily here - that overrides CSS rules with inline styles
+    # Let profile CSS control font family via CSS rules (higher specificity when needed)
+    # Google Fonts are now available as fallbacks in the font stack
     
     if verbose:
         print(f"{INFO} Loaded web fonts: {', '.join(font_families)}")

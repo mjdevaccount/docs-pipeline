@@ -40,7 +40,7 @@ async def inject_cover_page(page: Page, config: CoverConfig, verbose: bool = Fal
         # Build classification badge if present
         classification_html = ''
         if classification:
-            classification_html = f'<div style="font-size: 10pt; color: #d32f2f; font-weight: 600; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">{classification}</div>'
+            classification_html = f'<div class="cover-classification" style="font-size: 10pt; font-weight: 600; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">{classification}</div>'
         
         # Build version/type info if present
         version_type_html = ''
@@ -51,9 +51,10 @@ async def inject_cover_page(page: Page, config: CoverConfig, verbose: bool = Fal
             if version:
                 parts.append(f'Version {version}')
             if parts:
-                version_type_html = f'<div style="font-size: 11pt; color: #777; margin-top: 20px;">{" | ".join(parts)}</div>'
+                version_type_html = f'<div class="cover-version" style="font-size: 11pt; margin-top: 20px;">{" | ".join(parts)}</div>'
         
         # Use fixed height that fills the page (A4 height minus margins = ~10in)
+        # Note: Removed inline color styles to respect profile CSS (dark/light themes)
         cover_html = f"""
             <div class="cover-page-wrapper" style="
                 height: 10in;
@@ -68,13 +69,13 @@ async def inject_cover_page(page: Page, config: CoverConfig, verbose: bool = Fal
             ">
                 {logo_html}
                 {classification_html}
-                <h1 style="font-size: 36pt; margin: 0 0 20px 0; color: #1a1a1a; font-weight: 600; line-height: 1.2;">
+                <h1 class="cover-title" style="font-size: 36pt; margin: 0 0 20px 0; font-weight: 600; line-height: 1.2;">
                     {config.title or 'Architecture Documentation'}
                 </h1>
-                <div style="font-size: 18pt; color: #666; margin: 0 0 40px 0;">
+                <div class="cover-subtitle" style="font-size: 18pt; margin: 0 0 40px 0;">
                     {config.organization or 'Engineering Team'}
                 </div>
-                <div style="font-size: 14pt; color: #999; margin: 0; line-height: 1.6;">
+                <div class="cover-metadata" style="font-size: 14pt; margin: 0; line-height: 1.6;">
                     {config.author or ''}<br/>
                     {config.date or datetime.now().strftime('%B %d, %Y')}
                 </div>

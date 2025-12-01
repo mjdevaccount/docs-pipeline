@@ -32,8 +32,8 @@ h1, h2, h3, h4, h5, h6 {
     color: #003d7a;
     margin-top: 1.4em;
     margin-bottom: 0.5em;
-    page-break-after: avoid;
     line-height: 1.35;
+    /* page-break rules removed - handled by layout.css */
 }
 
 h1 {
@@ -104,7 +104,7 @@ pre {
     margin: 1.2em 0;
     border-radius: 4px;
     overflow-x: auto;
-    page-break-inside: avoid;
+    /* page-break rules removed - handled by layout.css */
 }
 
 pre code {
@@ -132,9 +132,9 @@ table {
     border-collapse: collapse;
     width: 100%;
     margin: 1.5em 0;
-    page-break-inside: avoid;
     font-size: 0.95em;
     border: 1px solid #d1dce5;
+    /* page-break rules removed - handled by layout.css */
 }
 
 th, td {
@@ -188,17 +188,17 @@ img, svg {
     height: auto;
     display: block;
     margin: 1.5em auto;
-    page-break-inside: avoid;
     border: 1px solid #e1e8ed;
     padding: 0.5em;
     background: #ffffff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    /* page-break rules removed - handled by layout.css */
 }
 
 figure {
     margin: 1.5em 0;
     text-align: center;
-    page-break-inside: avoid;
+    /* page-break rules removed - handled by layout.css */
 }
 
 figcaption {
@@ -265,7 +265,7 @@ nav#TOC a:hover, #TOC a:hover {
     margin: 1.5em 0;
     border-radius: 4px;
     border-left: 4px solid;
-    page-break-inside: avoid;
+    /* page-break rules removed - handled by layout.css */
 }
 
 .info-box, .note {
@@ -280,6 +280,45 @@ nav#TOC a:hover, #TOC a:hover {
     color: #804000;
 }
 
+/* Cover page - Enterprise blue styling */
+.cover-title {
+    color: #003d7a;
+}
+
+.cover-subtitle {
+    color: #4d94ff;
+}
+
+.cover-metadata {
+    color: #6c757d;
+}
+
+.cover-version {
+    color: #8c9ba5;
+}
+
+.cover-classification {
+    color: #721c24;
+    background: #f8d7da;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid #f5c6cb;
+}
+
+/* TOC - Enterprise blue styling */
+.toc-title {
+    color: #003d7a;
+    border-bottom: 2px solid #0066cc;
+}
+
+.toc-link {
+    color: #003d7a;
+}
+
+.toc-link:hover {
+    color: #0066cc;
+}
+
 /* Print-specific adjustments */
 @media print {
     body {
@@ -290,14 +329,7 @@ nav#TOC a:hover, #TOC a:hover {
         color: #0066cc;
     }
     
-    /* Ensure proper page breaks */
-    h1, h2, h3 {
-        page-break-after: avoid;
-    }
-    
-    table, figure, img, pre {
-        page-break-inside: avoid;
-    }
+    /* Page break rules removed - handled by layout.css */
     
     /* Print colors */
     th {

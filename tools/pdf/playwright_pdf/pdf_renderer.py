@@ -59,13 +59,15 @@ async def render_pdf(
         if verbose:
             print(f"[WARN] Custom page format '{page_format}' not fully supported, using A4")
     
+    # Let CSS @page rules control margins (margin_config kept for measurement only)
+    # Passing margin to page.pdf() overrides CSS, so we omit it
     options = {
         'format': format_option,
         'print_background': True,
         'display_header_footer': True,
         'header_template': header_html,
-        'footer_template': footer_html,
-        'margin': margin_config
+        'footer_template': footer_html
+        # margin intentionally omitted - CSS @page { margin: ... } now controls it
     }
     
     try:

@@ -29,9 +29,9 @@ h1, h2, h3, h4, h5, h6 {
     color: #1a1a1a;
     margin-top: 2.5em;
     margin-bottom: 0.8em;
-    page-break-after: avoid;
     line-height: 1.4;
     letter-spacing: 0.03em;
+    /* page-break rules removed - handled by layout.css */
 }
 
 h1 {
@@ -97,7 +97,7 @@ pre {
     padding: 1.5em 1.8em;
     margin: 2em 0;
     overflow-x: auto;
-    page-break-inside: avoid;
+    /* page-break rules removed - handled by layout.css */
 }
 
 pre code {
@@ -128,8 +128,8 @@ table {
     border-collapse: collapse;
     width: 100%;
     margin: 2.5em 0;
-    page-break-inside: avoid;
     font-size: 0.95em;
+    /* page-break rules removed - handled by layout.css */
 }
 
 th, td {
@@ -179,13 +179,13 @@ img, svg {
     height: auto;
     display: block;
     margin: 2.5em auto;
-    page-break-inside: avoid;
+    /* page-break rules removed - handled by layout.css */
 }
 
 figure {
     margin: 2.5em 0;
     text-align: center;
-    page-break-inside: avoid;
+    /* page-break rules removed - handled by layout.css */
 }
 
 figcaption {
@@ -234,6 +234,45 @@ nav#TOC a:hover, #TOC a:hover {
     text-decoration-color: #cbd5e0;
 }
 
+/* Cover page - Minimalist styling */
+.cover-title {
+    color: #1a1a1a;
+}
+
+.cover-subtitle {
+    color: #4a5568;
+}
+
+.cover-metadata {
+    color: #6c757d;
+}
+
+.cover-version {
+    color: #868e96;
+}
+
+.cover-classification {
+    color: #856404;
+    background: #fff3cd;
+    padding: 8px 16px;
+    border-radius: 2px;
+}
+
+/* TOC - Minimalist styling */
+.toc-title {
+    color: #1a1a1a;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.toc-link {
+    color: #2c3e50;
+}
+
+.toc-link:hover {
+    text-decoration: underline;
+    text-decoration-color: #cbd5e0;
+}
+
 /* Print-specific adjustments */
 @media print {
     body {
@@ -246,13 +285,6 @@ nav#TOC a:hover, #TOC a:hover {
         text-decoration-color: #cbd5e0;
     }
     
-    /* Ensure proper page breaks */
-    h1, h2, h3 {
-        page-break-after: avoid;
-    }
-    
-    table, figure, img, pre {
-        page-break-inside: avoid;
-    }
+    /* Page break rules removed - handled by layout.css */
 }
 

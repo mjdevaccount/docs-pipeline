@@ -107,14 +107,44 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
             
             # Phase 2: Inject fonts, CSS, and decorators FIRST
             # This ensures cover page and TOC exist before we analyze layout
-            await inject_fonts(page, font_families=config.font_families, verbose=config.verbose)
-            
-            # Inject custom CSS if provided (before pagination CSS)
+            # IMPORTANT: Inject profile CSS BEFORE Google Fonts so profile font stack takes precedence
             if config.css_file:
                 await inject_custom_css(page, str(config.css_file), verbose=config.verbose)
             
-            # Inject pagination CSS (needed for proper page break detection)
+            # Inject Google Fonts AFTER profile CSS (fonts are additive, not overriding)
+            # Only inject if fonts are explicitly requested or if no profile CSS is present
+            if config.font_families or not config.css_file:
+                await inject_fonts(page, font_families=config.font_families, verbose=config.verbose)
+            
+            # Inject pagination CSS last (needed for proper page break detection)
             await inject_pagination_css(page, verbose=config.verbose)
+            
+            # Debug: Show loaded CSS in verbose mode
+            if config.verbose:
+                loaded_styles = await page.evaluate("""
+                    () => {
+                        return Array.from(document.styleSheets).map(sheet => {
+                            try {
+                                return {
+                                    href: sheet.href || 'inline',
+                                    rules: sheet.cssRules ? sheet.cssRules.length : 0,
+                                    disabled: sheet.disabled
+                                };
+                            } catch (e) {
+                                // CORS-protected stylesheets can't be read
+                                return {
+                                    href: sheet.href || 'inline',
+                                    rules: 'protected',
+                                    disabled: sheet.disabled
+                                };
+                            }
+                        });
+                    }
+                """)
+                print(f"{INFO} CSS Loading Order ({len(loaded_styles)} stylesheets):")
+                for i, style in enumerate(loaded_styles, 1):
+                    status = "disabled" if style.get('disabled') else "active"
+                    print(f"{INFO}   {i}. {style['href']} ({style['rules']} rules, {status})")
             
             # Remove Pandoc's TOC if we're generating our own
             if config.generate_toc:

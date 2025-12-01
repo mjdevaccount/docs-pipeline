@@ -314,16 +314,20 @@ def get_default_output_root() -> Path:
 
     Priority:
     1. DOCS_OUTPUT_ROOT environment variable (if set)
-    2. On Windows: C:\\documentpipeline
-       On other platforms: ~/documentpipeline
+    2. <repo_root>/output (repo-relative output folder)
     """
     env_root = os.environ.get("DOCS_OUTPUT_ROOT")
     if env_root:
         return Path(env_root)
 
-    if os.name == "nt":
-        return Path(r"C:\documentpipeline")
-    return Path.home() / "documentpipeline"
+    # Default to output folder in repo root (parent of tools/pdf)
+    repo_root = Path(__file__).parent.parent.parent
+    output_dir = repo_root / "output"
+    
+    # Create output directory if it doesn't exist
+    output_dir.mkdir(exist_ok=True)
+    
+    return output_dir
 
 
 def resolve_output_path(output_file: str, output_dir: Optional[str]) -> str:

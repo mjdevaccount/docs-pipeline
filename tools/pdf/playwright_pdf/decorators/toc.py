@@ -38,7 +38,7 @@ async def inject_toc(page: Page, verbose: bool = False) -> bool:
                 
                 // Use wrapper with explicit page-break-after inline to ensure Chromium PDF respects it
                 let toc = '<div class="toc-wrapper" style="page-break-after: always !important; break-after: page !important; padding-bottom: 0.5in;">';
-                toc += '<h1 style="font-size: 24pt; margin: 0 0 20px 0; border-bottom: 2px solid #333; padding-bottom: 10px;">Table of Contents</h1>';
+                toc += '<h1 class="toc-title" style="font-size: 24pt; margin: 0 0 20px 0; padding-bottom: 10px;">Table of Contents</h1>';
                 toc += '<ul style="list-style: none; padding: 0; margin: 20px 0 40px 0;">';
                 
                 headings.forEach((heading, idx) => {
@@ -52,7 +52,7 @@ async def inject_toc(page: Page, verbose: bool = False) -> bool:
                     const fontSize = 14 - (level - 1) * 1;
                     
                     toc += `<li style="margin: 0 0 8px ${indent}px; line-height: 1.6;">`;
-                    toc += `<a href="#${id}" style="text-decoration: none; color: #1976d2; font-size: ${fontSize}pt;">`;
+                    toc += `<a href="#${id}" class="toc-link" style="text-decoration: none; font-size: ${fontSize}pt;">`;
                     toc += text;
                     toc += '</a></li>';
                 });
