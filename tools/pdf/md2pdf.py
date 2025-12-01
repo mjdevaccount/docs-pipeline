@@ -414,7 +414,7 @@ Markdown Syntax:
       A --> B
     ```
   
-  - Logo: Place REDACTEDLogo.png in docs/ directory (or configure path)
+  - Logo: Place logo.png in docs/ directory (or configure path)
         """
     )
     

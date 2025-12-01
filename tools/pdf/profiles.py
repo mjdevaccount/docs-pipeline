@@ -36,11 +36,11 @@ def _rel_from_repo_root(*parts: str) -> str:
 
 
 PROFILES: Dict[str, DocumentProfile] = {
-    # Default profile for the Reporting Manager / REDACTED documentation.
+    # Default profile for the Reporting Manager documentation.
     "reporting-manager": DocumentProfile(
         name="reporting-manager",
         # Logo lives in the reporting-manager proposal assets.
-        logo=_rel_from_repo_root("projects", "reporting-2.0", "proposals", "reporting-manager", "assets", "REDACTEDLogo.png"),
+        logo=_rel_from_repo_root("projects", "reporting-2.0", "proposals", "reporting-manager", "assets", "logo.png"),
         # Primary Playwright stylesheet with branded colors and typography.
         css=_rel_from_repo_root("tools", "pdf", "custom.css.playwright"),
         theme_config=_rel_from_repo_root("tools", "pdf", "pdf-mermaid-theme.json"),

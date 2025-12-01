@@ -455,7 +455,7 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
     Args:
         md_file: Path to input Markdown file
         output_pdf: Path to output PDF file
-        logo_path: Optional path to logo image (default: docs/REDACTEDLogo.png)
+        logo_path: Optional path to logo image (default: docs/logo.png)
         css_file: Optional path to external CSS file (overrides default CSS)
         cache_dir: Optional cache directory for diagrams (default: pdf-tools/pdf-diagrams/)
         use_cache: If True, use cached diagrams when available
@@ -586,7 +586,7 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
             # Just ensure logo_path is available for Playwright cover page
             if logo_path is None:
                 # Default logo path relative to project root (one level up from pdf-tools/)
-                logo_path = Path(__file__).parent.parent / 'docs' / 'REDACTEDLogo.png'
+                logo_path = Path(__file__).parent.parent / 'docs' / 'logo.png'
                 logo_path = logo_path.resolve()
             else:
                 logo_path = Path(logo_path).resolve()
@@ -603,14 +603,14 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
             # Build professional title page
             if logo_path is None:
                 # Default logo path relative to project root (one level up from pdf-tools/)
-                logo_path = Path(__file__).parent.parent / 'docs' / 'REDACTEDLogo.png'
+                logo_path = Path(__file__).parent.parent / 'docs' / 'logo.png'
                 logo_path = logo_path.resolve()
             else:
                 logo_path = Path(logo_path).resolve()
             
             if logo_path.exists():
                 logo_url = logo_path.as_uri()
-                logo_html = f'<div class="logo"><img src="{logo_url}" alt="REDACTED Systems" /></div>\n'
+                logo_html = f'<div class="logo"><img src="{logo_url}" alt="[Organization Name]" /></div>\n'
             else:
                 logo_html = ''
             
@@ -620,7 +620,7 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
             
             # Get metadata with defaults
             author = metadata.get("author", "Matt Jeffcoat")
-            organization = metadata.get("organization", "REDACTED Systems")
+            organization = metadata.get("organization", "[Organization Name]")
             date = metadata.get("date", "November 2025")
             version = metadata.get("version", "1.0")
             doc_type = metadata.get("type", "Technical Specification")
@@ -666,7 +666,7 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
     {metadata_block}
 </div>
 <div class="disclaimer">
-    <p>This document is confidential and intended solely for authorized REDACTED Systems personnel and approved contractors. Unauthorized distribution is prohibited.</p>
+    <p>This document is confidential and intended solely for authorized personnel and approved contractors. Unauthorized distribution is prohibited.</p>
 </div>'''
             
             # Wrap title in header with enhanced structure
@@ -712,7 +712,7 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
                     font-style: italic;
                 }
                 @bottom-center {
-                    content: "REDACTED Systems • Confidential • November 2025";
+                    content: "[Organization Name] • Confidential • November 2025";
                     font-size: 9pt;
                     color: #888;
                 }
@@ -977,7 +977,7 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
                     # Extract metadata for header/footer
                     title = metadata.get("title") or doc_title
                     author = metadata.get("author", "Matt Jeffcoat")
-                    organization = metadata.get("organization", "REDACTED Systems")
+                    organization = metadata.get("organization", "[Organization Name]")
                     date = metadata.get("date", "November 2025")
                     
                     # Generate PDF with Playwright - FIXED: Pass all flags!

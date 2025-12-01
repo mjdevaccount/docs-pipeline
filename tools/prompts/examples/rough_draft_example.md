@@ -1,7 +1,7 @@
 ---
 title: Cache Manager Enhancement Proposal
 author: Matt Jeffcoat
-organization: REDACTED Systems
+organization: [Organization Name]
 date: November 2025
 type: Architecture Proposal
 ---

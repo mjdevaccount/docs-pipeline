@@ -1,7 +1,7 @@
 ---
 title: Multi-Diagram Test Document
 author: Matt Jeffcoat
-organization: REDACTED Systems
+organization: [Organization Name]
 date: November 2025
 ---
 
