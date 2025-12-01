@@ -637,11 +637,19 @@
                         downloadButton = `
                             <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
                                 <div class="example-size" id="size-${idx}" style="margin: 0;">💾 ${ex.profiles[0].size}</div>
-                                <a href="/example/${ex.profiles[0].filename}" id="download-btn-${idx}" class="btn btn-small" download>📥 Download PDF</a>
+                                <div style="display: flex; gap: 8px;">
+                                    <a href="/example/${ex.profiles[0].filename}" id="preview-btn-${idx}" class="btn btn-small" target="_blank" style="background: #48bb78; border-color: #48bb78;">👁️ Preview</a>
+                                    <a href="/example/${ex.profiles[0].filename}" id="download-btn-${idx}" class="btn btn-small" download>📥 Download</a>
+                                </div>
                             </div>
                         `;
                     } else if (ex.available) {
-                        downloadButton = `<a href="/example/${ex.file}" class="btn btn-small" download>📥 Download PDF</a>`;
+                        downloadButton = `
+                            <div style="display: flex; gap: 8px;">
+                                <a href="/example/${ex.file}" class="btn btn-small" target="_blank" style="background: #48bb78; border-color: #48bb78;">👁️ Preview</a>
+                                <a href="/example/${ex.file}" class="btn btn-small" download>📥 Download</a>
+                            </div>
+                        `;
                     } else {
                         downloadButton = `<span class="unavailable-badge">Not Generated Yet</span>`;
                     }
@@ -666,6 +674,7 @@
                     // Add event listener for profile selector
                     if (ex.profiles && ex.profiles.length > 0) {
                         const selector = document.getElementById(`profile-select-${idx}`);
+                        const previewBtn = document.getElementById(`preview-btn-${idx}`);
                         const downloadBtn = document.getElementById(`download-btn-${idx}`);
                         const sizeLabel = document.getElementById(`size-${idx}`);
                         
@@ -674,6 +683,7 @@
                             const filename = selectedOption.value;
                             const size = selectedOption.getAttribute('data-size');
                             
+                            previewBtn.href = `/example/${filename}`;
                             downloadBtn.href = `/example/${filename}`;
                             sizeLabel.textContent = `💾 ${size}`;
                         });
