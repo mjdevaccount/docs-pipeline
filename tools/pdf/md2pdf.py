@@ -21,12 +21,20 @@ Features:
     - Company logo support (PDF)
     - DOCX output with optional reference template
 """
-import argparse
 import sys
 import os
+from pathlib import Path
+
+# Support standalone execution: add current directory to path for local imports
+# Check if running as script (not as module)
+_script_file = Path(__file__).resolve()
+_script_dir = _script_file.parent
+if str(_script_dir) not in sys.path:
+    sys.path.insert(0, str(_script_dir))
+
+import argparse
 import json
 import logging
-from pathlib import Path
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional
@@ -46,15 +54,22 @@ except ImportError:
     INFO = "[INFO]"
 
 # Import the conversion functions from convert_final
-from convert_final import markdown_to_pdf, markdown_to_docx, markdown_to_html, extract_metadata, get_cache_dir
+try:
+    from .convert_final import markdown_to_pdf, markdown_to_docx, markdown_to_html, extract_metadata, get_cache_dir
+except ImportError:
+    # Fallback for standalone execution
+    from convert_final import markdown_to_pdf, markdown_to_docx, markdown_to_html, extract_metadata, get_cache_dir
 
 # Optional: document profiles (brand/layout presets)
 try:
-    from profiles import get_profile
+    from .profiles import get_profile
 except ImportError:
-    # When imported as a module or run from a different CWD, local import may fail.
-    # In that case, profile support is simply unavailable.
-    get_profile = None
+    try:
+        from profiles import get_profile
+    except ImportError:
+        # When imported as a module or run from a different CWD, local import may fail.
+        # In that case, profile support is simply unavailable.
+        get_profile = None
 
 # Version
 __version__ = "2.0.0"

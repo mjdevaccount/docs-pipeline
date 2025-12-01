@@ -4,20 +4,39 @@ Prompt Pipeline CLI
 Command-line interface for running prompt-driven document pipelines.
 """
 import sys
+from pathlib import Path
+
+# Support standalone execution: add current directory to path for local imports
+_script_file = Path(__file__).resolve()
+_script_dir = _script_file.parent
+if str(_script_dir) not in sys.path:
+    sys.path.insert(0, str(_script_dir))
+
 import asyncio
 import argparse
-from pathlib import Path
 from typing import Optional
 
-from .core.models import PromptConfig
-from .core.exceptions import PromptPipelineError
-from .library import FileSystemPromptLibrary
-from .executor import OpenAIPromptExecutor, AnthropicPromptExecutor, MockPromptExecutor
-from .orchestrator import AgentOrchestrator
-from .agents.structure_analyzer import StructureAnalyzerAgent
-from .agents.content_enhancer import ContentEnhancerAgent
-from .agents.technical_reviewer import TechnicalReviewerAgent
-from .agents.style_polisher import StylePolisherAgent
+try:
+    from .core.models import PromptConfig
+    from .core.exceptions import PromptPipelineError
+    from .library import FileSystemPromptLibrary
+    from .executor import OpenAIPromptExecutor, AnthropicPromptExecutor, MockPromptExecutor
+    from .orchestrator import AgentOrchestrator
+    from .agents.structure_analyzer import StructureAnalyzerAgent
+    from .agents.content_enhancer import ContentEnhancerAgent
+    from .agents.technical_reviewer import TechnicalReviewerAgent
+    from .agents.style_polisher import StylePolisherAgent
+except ImportError:
+    # Fallback for standalone execution
+    from core.models import PromptConfig
+    from core.exceptions import PromptPipelineError
+    from library import FileSystemPromptLibrary
+    from executor import OpenAIPromptExecutor, AnthropicPromptExecutor, MockPromptExecutor
+    from orchestrator import AgentOrchestrator
+    from agents.structure_analyzer import StructureAnalyzerAgent
+    from agents.content_enhancer import ContentEnhancerAgent
+    from agents.technical_reviewer import TechnicalReviewerAgent
+    from agents.style_polisher import StylePolisherAgent
 
 
 def create_agent_from_config(agent_config, prompt_library, prompt_executor):
