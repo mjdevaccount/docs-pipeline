@@ -11,6 +11,11 @@ from tools.structurizr.structurizr_tools import export_workspace
 
 
 def _load_pipeline_config(path: Path) -> PipelineConfig:
+    """
+    Load pipeline configuration from YAML file.
+    All paths in the config are resolved relative to the config file's directory.
+    """
+    config_dir = path.parent.resolve()
     data: Dict[str, Any]
     with path.open("r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
@@ -21,17 +26,17 @@ def _load_pipeline_config(path: Path) -> PipelineConfig:
         diagrams = None
         if diagrams_cfg:
             diagrams = DiagramConfig(
-                workspace=Path(diagrams_cfg["dsl"]),
+                workspace=(config_dir / diagrams_cfg["dsl"]).resolve(),
                 formats=list(diagrams_cfg.get("formats", ["mermaid"])),
-                output_dir=Path(diagrams_cfg.get("output_dir", "docs/diagrams")),
+                output_dir=(config_dir / diagrams_cfg.get("output_dir", "docs/diagrams")).resolve(),
                 image=diagrams_cfg.get("image"),
             )
 
         docs_cfg = cfg.get("documents") or []
         documents = [
             DocumentConfig(
-                input=Path(d["input"]),
-                output=Path(d["output"]) if d.get("output") else None,
+                input=(config_dir / d["input"]).resolve(),
+                output=(config_dir / d["output"]).resolve() if d.get("output") else None,
                 format=d.get("format"),
                 profile=d.get("profile"),
             )
