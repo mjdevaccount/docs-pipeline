@@ -562,9 +562,9 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
         
         # Add code highlighting style if specified
         if highlight_style:
-            pandoc_cmd.extend(['--syntax-highlighting', highlight_style])
+            pandoc_cmd.extend(['--highlight-style', highlight_style])
         else:
-            pandoc_cmd.extend(['--syntax-highlighting', 'pygments'])  # Default to pygments style
+            pandoc_cmd.extend(['--highlight-style', 'pygments'])  # Default to pygments style
         
         # Add pandoc-crossref filter if available and config provided
         if crossref_config and Path(crossref_config).exists():
@@ -1148,9 +1148,9 @@ def markdown_to_docx(md_file, output_docx, logo_path=None, reference_docx=None, 
         
         # Add code highlighting style if specified
         if highlight_style:
-            pandoc_cmd.extend(['--syntax-highlighting', highlight_style])
+            pandoc_cmd.extend(['--highlight-style', highlight_style])
         else:
-            pandoc_cmd.extend(['--syntax-highlighting', 'pygments'])  # Default to pygments style
+            pandoc_cmd.extend(['--highlight-style', 'pygments'])  # Default to pygments style
         
         # Add pandoc-crossref filter if available and config provided
         if crossref_config and Path(crossref_config).exists():

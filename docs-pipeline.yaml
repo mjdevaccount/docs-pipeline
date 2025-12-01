@@ -1,0 +1,44 @@
+# Documentation Pipeline Configuration
+# ===================================
+#
+# This YAML file orchestrates the complete documentation generation workflow:
+# 1. Generate architecture diagrams from Structurizr DSL (optional)
+# 2. Convert Markdown documents to PDF/DOCX/HTML
+#
+# Usage:
+#   python -m tools.docs_pipeline.cli --config docs-pipeline.yaml
+
+workspaces:
+  # Example: Development Documentation
+  development-docs:
+    # Optional: Generate diagrams from Structurizr DSL first
+    # Uncomment and configure if you have Structurizr DSL files
+    # diagrams:
+    #   dsl: docs/development/architecture.dsl
+    #   formats: ["mermaid"]  # Options: mermaid, plantuml, png, svg, html
+    #   output_dir: docs/diagrams
+
+    documents:
+      # SOLID Implementation Analysis
+      - input: docs/development/pdf-solid-implementation.md
+        output: docs/examples/generated/solid-implementation.pdf
+        format: pdf
+        # profile: enterprise  # Optional: PDF profile (see tools/pdf/profiles.py)
+
+      # Structurizr Architecture Evaluation
+      - input: docs/development/structurizr-solid-evaluation.md
+        output: docs/examples/generated/structurizr-evaluation.pdf
+        format: pdf
+
+      # PDF Generation Setup Guide
+      - input: tools/pdf/docs/PDF_GENERATION_SETUP.md
+        output: docs/examples/generated/pdf-setup-guide.pdf
+        format: pdf
+
+# Notes:
+# - If diagrams section is omitted, only document conversion runs
+# - If output is not specified, defaults to same name with .pdf/.docx extension
+# - PDF profiles control styling (see tools/pdf/profiles.py)
+# - All paths are relative to repository root
+# - Diagrams are generated FIRST, then documents (so diagrams are available for embedding)
+

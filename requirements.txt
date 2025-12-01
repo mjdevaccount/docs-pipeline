@@ -1,6 +1,8 @@
 # Root requirements - common dependencies
 pyyaml>=6.0
 click>=8.1.0
+flask>=3.0.0
+werkzeug>=3.0.0
 
 # Optional: Install specific tool dependencies
 # pip install -r tools/pdf/requirements-pdf.txt

@@ -1,0 +1,75 @@
+# Documentation Pipeline Configuration
+# ===================================
+#
+# This YAML file orchestrates the complete documentation generation workflow:
+# 1. Generate architecture diagrams from Structurizr DSL
+# 2. Convert Markdown documents to PDF/DOCX/HTML
+#
+# Usage:
+#   python -m tools.docs_pipeline.cli --config docs-pipeline.yaml
+
+workspaces:
+  # Example workspace: Project Documentation
+  project-docs:
+    diagrams:
+      # Structurizr DSL workspace file
+      # Generate diagrams from this architecture model
+      dsl: docs/development/architecture.dsl
+      
+      # Export formats for diagrams
+      # Options: mermaid, plantuml, png, svg, html
+      formats: ["mermaid"]
+      
+      # Output directory for generated diagrams
+      # These will be embedded in your Markdown documents
+      output_dir: docs/diagrams
+      
+      # Optional: Custom Docker image for Structurizr CLI
+      # image: structurizr/cli:latest
+
+    documents:
+      # Document 1: Main architecture document
+      - input: docs/development/architecture-proposal.md
+        output: docs/examples/generated/architecture-proposal.pdf
+        format: pdf
+        profile: enterprise  # Optional: PDF profile (see tools/pdf/profiles.py)
+
+      # Document 2: Technical specification
+      - input: docs/development/technical-spec.md
+        output: docs/examples/generated/technical-spec.pdf
+        format: pdf
+        profile: project-docs
+
+      # Document 3: Executive summary (DOCX for Word editing)
+      - input: docs/development/executive-summary.md
+        output: docs/examples/generated/executive-summary.docx
+        format: docx
+
+  # Example workspace: SOLID Principles Documentation
+  solid-docs:
+    diagrams:
+      # If you have Structurizr DSL for system architecture
+      dsl: docs/development/system-architecture.dsl
+      formats: ["mermaid", "png"]
+      output_dir: docs/diagrams
+
+    documents:
+      # SOLID implementation analysis
+      - input: docs/development/pdf-solid-implementation.md
+        output: docs/examples/generated/solid-implementation.pdf
+        format: pdf
+        profile: enterprise
+
+      # Structurizr evaluation
+      - input: docs/development/structurizr-solid-evaluation.md
+        output: docs/examples/generated/structurizr-evaluation.pdf
+        format: pdf
+        profile: enterprise
+
+# Notes:
+# - Diagrams are generated FIRST, then documents
+# - Diagrams are embedded in Markdown via Mermaid code blocks or image references
+# - If output is not specified, it defaults to same name with .pdf/.docx extension
+# - PDF profiles control styling (see tools/pdf/profiles.py)
+# - All paths are relative to repository root
+

@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  docs-pipeline-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./output:/app/output
+      - ./docs:/app/docs
+    environment:
+      - FLASK_ENV=development
+      - PYTHONUNBUFFERED=1
+    command: python web_demo.py
+
+  # Structurizr CLI for architecture diagrams (optional)
+  structurizr:
+    image: structurizr/cli:latest
+    volumes:
+      - ./structurizr-workspaces:/workspaces
+    profiles:
+      - with-structurizr
+

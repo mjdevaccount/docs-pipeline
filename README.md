@@ -13,6 +13,64 @@ A modular toolkit for building publication-quality technical documentation with:
 
 Built with SOLID principles, type safety, and extensibility. Designed for enterprise documentation workflows but flexible for any technical writing project.
 
+## 🚀 Try It Now
+
+### Option 1: Live Web Demo (Recommended)
+
+The fastest way to see docs-pipeline in action:
+
+```bash
+# Clone the repository
+git clone https://github.com/mjdevaccount/docs-pipeline.git
+cd docs-pipeline
+
+# Start the web demo (requires Docker)
+./scripts/start-demo.sh
+# Windows: scripts\start-demo.bat
+
+# Opens at http://localhost:8080
+```
+
+**One command. Everything works.**
+
+Features:
+- 📤 Upload Markdown files via web interface
+- 📥 Download generated PDFs instantly
+- 📚 Browse pre-generated examples
+- 🐳 Fully containerized (no dependency hell)
+
+### Option 2: CLI Usage
+
+For command-line enthusiasts:
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+pip install -r tools/pdf/requirements-pdf.txt
+
+# Generate PDF
+python -m tools.pdf.convert_final input.md output.pdf
+```
+
+### Option 3: Generate Example PDFs
+
+```bash
+# Generate all example PDFs locally
+./scripts/generate-examples.sh
+```
+
+## 📦 What's Included
+
+```
+docs-pipeline/
+├── 🌐 Web Demo (Flask + Docker)
+├── 🛠️ CLI Tools (Python)
+├── 📄 PDF Generation (Playwright + Pandoc)
+├── 🎨 Mermaid Diagrams
+├── 🏗️ Architecture Visualization (Structurizr)
+└── 📚 AI-Powered Prompts
+```
+
 ## Quick Start
 
 ### PDF Generation
