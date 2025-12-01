@@ -1,310 +1,353 @@
-# Documentation Pipeline
+<div align="center">
 
-Professional documentation tooling for AI-assisted technical writing, architecture diagrams, and PDF generation.
+# 📄 docs-pipeline
 
-## Overview
+**Transform Markdown into publication-quality PDFs with professional styling, Mermaid diagrams, and zero configuration.**
 
-A modular toolkit for building publication-quality technical documentation with:
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
-- **PDF Generation** - Markdown → PDF/DOCX with Mermaid diagrams, custom styling, and adaptive layouts
-- **AI Document Refinement** - Multi-agent system for structure analysis, content enhancement, and technical review
-- **Architecture Diagrams** - Structurizr DSL → Mermaid/PlantUML/SVG with automated export
-- **Pipeline Orchestration** - Coordinate multi-stage document workflows with YAML configuration
+[🚀 Quick Start](#-quick-start) · [📖 Documentation](#-documentation) · [✨ Features](#-features) · [💻 Examples](#-examples)
 
-Built with SOLID principles, type safety, and extensibility. Designed for enterprise documentation workflows but flexible for any technical writing project.
+</div>
 
-## 🚀 Try It Now
+---
 
-### Option 1: Live Web Demo (Recommended)
+## Why docs-pipeline?
 
-The fastest way to see docs-pipeline in action:
+<table>
+<tr>
+<td width="33%" align="center">
+
+### 🎨 Professional Output
+
+4 visual profiles turn basic Markdown into polished technical documentation
+
+</td>
+<td width="33%" align="center">
+
+### ⚡ Zero Config
+
+Works out-of-the-box with sensible defaults. Customize only what matters.
+
+</td>
+<td width="33%" align="center">
+
+### 🧪 Battle-Tested
+
+100KB+ of tests covering layout, scaling, and diagram rendering
+
+</td>
+</tr>
+</table>
+
+---
+
+## 📸 See the Difference
+
+Generate drastically different-looking PDFs from the **same Markdown** by changing one flag:
 
 ```bash
-# Clone the repository
+python -m tools.pdf.convert_final spec.md output.pdf --profile tech-whitepaper  # Clean, technical
+python -m tools.pdf.convert_final spec.md output.pdf --profile dark-pro         # Modern, dark theme
+python -m tools.pdf.convert_final spec.md output.pdf --profile minimalist      # Spacious, elegant
+python -m tools.pdf.convert_final spec.md output.pdf --profile enterprise-blue # Corporate-friendly
+```
+
+<table>
+<tr>
+<td width="50%">
+
+#### Tech Whitepaper
+
+*Clean technical style with structured layout*
+
+Best for: API docs, technical specs, developer guides
+
+</td>
+<td width="50%">
+
+#### Dark Pro
+
+*High contrast with dramatic shadows*
+
+Best for: Presentations, demo materials, portfolio pieces
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+#### Minimalist
+
+*Maximum whitespace, thin typography*
+
+Best for: Architecture Decision Records, RFCs, executive summaries
+
+</td>
+<td width="50%">
+
+#### Enterprise Blue
+
+*Conservative blue/gray corporate style*
+
+Best for: Client deliverables, business reports, proposals
+
+</td>
+</tr>
+</table>
+
+> 💡 **Same content. Different profiles. Zero CSS editing.**
+
+---
+
+## 🚀 Quick Start
+
+### Try the Live Demo (30 seconds)
+
+```bash
 git clone https://github.com/mjdevaccount/docs-pipeline.git
 cd docs-pipeline
-
-# Start the web demo (requires Docker)
-./scripts/start-demo.sh
-# Windows: scripts\start-demo.bat
-
-# Opens at http://localhost:8080
+docker-compose up
 ```
 
-**One command. Everything works.**
+Open http://localhost:8080
 
-Features:
-- 📤 Upload Markdown files via web interface
-- 📥 Download generated PDFs instantly
-- 📚 Browse pre-generated examples
-- 🐳 Fully containerized (no dependency hell)
+**That's it.** Upload a Markdown file, download your PDF.
 
-### Option 2: CLI Usage
+---
 
-For command-line enthusiasts:
+### CLI Installation (2 minutes)
+
+**Install:**
 
 ```bash
-# Install dependencies
 pip install -r requirements.txt
 pip install -r tools/pdf/requirements-pdf.txt
-
-# Generate PDF
-python -m tools.pdf.convert_final input.md output.pdf
 ```
 
-### Option 3: Generate Example PDFs
+**Generate PDF:**
 
 ```bash
-# Generate all example PDFs locally
-./scripts/generate-examples.sh
+python -m tools.pdf.convert_final input.md output.pdf --profile dark-pro
 ```
 
-## 📦 What's Included
+---
+
+### Your First PDF (5 minutes)
+
+1. **Use an example file:**
+
+```bash
+# Try one of the example documents
+cp docs/examples/advanced-markdown-showcase.md hello.md
+```
+
+Or create your own `hello.md` with Markdown content and Mermaid diagrams.
+
+2. **Generate PDF:**
+
+```bash
+python -m tools.pdf.convert_final hello.md hello.pdf --profile tech-whitepaper
+```
+
+3. **Done!** Open `hello.pdf` to see:
+   - Professional styling
+   - Rendered Mermaid diagram
+   - Page numbers and headers
+
+---
+
+## ✨ Features
+
+<table>
+<tr>
+<td width="50%">
+
+#### 🎨 Multiple Visual Profiles
+
+```bash
+--profile tech-whitepaper  # Technical docs
+--profile dark-pro          # Modern presentations
+--profile minimalist        # Architecture docs
+--profile enterprise-blue    # Business reports
+```
+
+*Dramatically different looks, same content*
+
+</td>
+<td width="50%">
+
+#### 📊 Mermaid Diagram Rendering
+
+```mermaid
+graph TB
+    A[Write Markdown]
+    B[Add Diagrams]
+    C[Generate PDF]
+    A --> B --> C
+```
+
+*Automatically rendered with theme matching*
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+#### ⚙️ Two Rendering Engines
+
+- **Playwright** (recommended) - Pixel-perfect browser rendering
+- **WeasyPrint** - Faster for simple documents
+
+*Choose the right tool for your use case*
+
+</td>
+<td width="50%">
+
+#### 🧪 Tested & Validated
+
+```
+tests/
+├── test_page_size_measurement.py
+├── test_scaling_validation.py
+├── test_project_docs_layout.py
+└── verify_pdf_diagrams.py
+```
+
+*100KB+ of tests covering layout, scaling, diagrams*
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🏗️ Architecture
+
+Built with clean separation of concerns:
 
 ```
 docs-pipeline/
-├── 🌐 Web Demo (Flask + Docker)
-├── 🛠️ CLI Tools (Python)
-├── 📄 PDF Generation (Playwright + Pandoc)
-├── 🎨 Mermaid Diagrams
-├── 🏗️ Architecture Visualization (Structurizr)
-└── 📚 AI-Powered Prompts
+├── tools/
+│   ├── pdf/                    # Core: Markdown → PDF conversion
+│   │   ├── playwright_pdf/     # Browser-based rendering
+│   │   ├── profiles/            # Visual styling profiles
+│   │   └── tests/               # Layout + scaling validation
+│   ├── docs_pipeline/          # CLI: Multi-document orchestration
+│   └── prompts/                # Optional: AI document enhancement
+├── web_demo.py                 # Live web interface
+└── docs/
+    ├── examples/                # Sample documents
+    └── images/                  # Screenshots
 ```
 
-## Quick Start
+**Design Philosophy:**
 
-### PDF Generation
+- ✅ Single Responsibility - Each module does one thing well
+- ✅ Tested - Real tests, not aspirational claims
+- ✅ Extensible - Add profiles/renderers without changing core
+- ✅ Practical - Works out-of-box, customize if needed
 
-```bash
-cd tools/pdf
-pip install -r requirements-pdf.txt
-python md2pdf.py your-document.md --profile enterprise
-```
+---
 
-### AI Document Enhancement
+## 🎯 Use Cases
 
-```bash
-cd tools/prompts
-pip install -r requirements.txt
-python -m cli rough-draft.md polished.md -c pipelines/architecture.yaml
-```
+| Use Case | Profile Recommendation | Why |
+|----------|----------------------|-----|
+| **API Documentation** | `tech-whitepaper` | Clean, structured layout for endpoints |
+| **Architecture Decision Records** | `minimalist` | Whitespace emphasizes key decisions |
+| **Client Deliverables** | `enterprise-blue` | Professional, corporate-friendly |
+| **Internal Presentations** | `dark-pro` | Modern, high contrast for screens |
+| **Technical Specifications** | `tech-whitepaper` | Borders and structure aid scanning |
 
-### Architecture Diagrams
+---
 
-```bash
-cd tools/structurizr
-docker pull structurizr/cli:latest
-python structurizr.py --config your-workspace.json
-```
+## 📋 Requirements
 
-## ✨ PDF Profile System
+### Minimum
 
-Generate dramatically different-looking PDFs from the same content with a single `--profile` flag. No CSS editing required.
+- Python 3.9+
+- 50MB disk space
 
-### Available Profiles
+### Optional
 
-**🔧 Tech Whitepaper** (default) - Professional engineering documentation
-- Clean, technical style with blue accents
-- Bordered headings and structured layout
-- Best for: API docs, technical specs, developer guides
+- Docker (for web demo)
+- OpenAI/Anthropic API key (for AI document enhancement)
 
-**🌙 Dark Pro** - Modern dark theme for on-screen viewing
-- High contrast with neon blue accents (#3b82f6)
-- Dramatic shadows and glows
-- Best for: Presentations, demo materials, portfolio pieces
+### Automatically Installed
 
-**✨ Minimalist** - Clean, spacious architecture documents
-- Maximum whitespace, thin typography
-- No borders, subtle colors
-- Best for: Architecture Decision Records, RFCs, executive summaries
+- Playwright (browser automation)
+- Pandoc (Markdown processing)
+- All Python dependencies
 
-**🏢 Enterprise Blue** - Corporate-friendly business documents
-- Conservative blue/gray scheme (#003d7a)
-- Professional header bars and structured tables
-- Best for: Client deliverables, business reports, proposals
+**No manual setup required.** `pip install` handles everything.
 
-### Usage
+---
 
-```bash
-# CLI
-python tools/pdf/md2pdf.py spec.md --profile dark-pro
+## 🔧 Troubleshooting
 
-# Pipeline YAML
-documents:
-  - input: docs/api-spec.md
-    output: output/api-spec.pdf
-    profile: tech-whitepaper
-  - input: docs/architecture.md
-    output: output/architecture.pdf
-    profile: minimalist
-```
+| Problem | Solution |
+|---------|----------|
+| `ModuleNotFoundError: playwright` | Run `playwright install chromium` |
+| Mermaid diagrams not rendering | Check `--renderer playwright` (not weasyprint) |
+| PDFs look different than expected | Try `--profile tech-whitepaper` explicitly |
+| Docker demo won't start | Ensure port 8080 is free: `lsof -i :8080` (Linux/Mac) or `netstat -ano \| findstr :8080` (Windows) |
 
-### Profile Showcase
+**Still stuck?** [Open an issue](https://github.com/mjdevaccount/docs-pipeline/issues) with:
 
-Generate the same document in all profiles to compare:
+- Your command
+- Error message
+- OS and Python version
 
-```bash
-python -m tools.docs_pipeline.cli --config docs-pipeline-profiles-demo.yaml
-```
+---
 
-Creates: `architecture-overview-tech.pdf`, `architecture-overview-dark.pdf`, `architecture-overview-minimalist.pdf`, `architecture-overview-enterprise.pdf`
-
-## Documentation
+## 📖 Documentation
 
 - [PDF Generation Guide](tools/pdf/README.md) - Layout engine, Mermaid optimization, document profiles
 - [Getting Started Tutorial](docs/getting-started.md) - Step-by-step guide for first-time users
 - [AI Agents Architecture](tools/prompts/ARCHITECTURE.md) - Multi-agent system design and extension
 - [Structurizr Integration](tools/structurizr/README.md) - Docker-based diagram generation
 
-## Features
+---
 
-### PDF Generation Engine
-
-- **4 Visual Profiles** - Tech Whitepaper, Dark Pro, Minimalist, Enterprise Blue
-- Playwright-based rendering for pixel-perfect output
-- Adaptive pagination with intelligent diagram scaling
-- Pre-rendered Mermaid diagrams with theme optimization
-- Custom CSS styling and document profiles
-- Layout policies for fine-grained control
-
-### AI Document Refinement
-
-- Four specialized agents: Structure Analyzer, Content Enhancer, Technical Reviewer, Style Polisher
-- Support for OpenAI (GPT-4) and Anthropic (Claude)
-- YAML-based pipeline configuration
-- Automated gap analysis and technical validation
-- Extensible agent framework
-
-### Architecture Diagram Generation
-
-- Docker-based Structurizr CLI wrapper
-- Batch export to multiple formats (Mermaid, PNG, SVG, PlantUML)
-- Clean interface-based architecture
-- Parallel processing support
-
-## Architecture
-
-Each tool follows SOLID principles with:
-
-- **Single Responsibility** - Focused modules with one purpose
-- **Open/Closed** - Extend without modification
-- **Liskov Substitution** - Proper interface abstraction
-- **Interface Segregation** - Clean, focused interfaces
-- **Dependency Inversion** - Depend on abstractions
-
-```
-docs-pipeline/
-├── tools/                  # All standalone CLI tools
-│   ├── pdf/                # Markdown → PDF/DOCX generation
-│   │   ├── playwright_pdf/ # Browser-based rendering
-│   │   └── tests/          # Layout verification and benchmarks
-│   ├── prompts/            # AI-powered document refinement
-│   │   ├── agents/         # Document processing agents
-│   │   ├── library/        # Prompt templates
-│   │   └── pipelines/      # Workflow configurations
-│   └── structurizr/        # Architecture diagram generation
-│       └── structurizr_tools/
-├── docs/                   # Central documentation
-│   ├── examples/           # Working examples
-│   ├── development/        # Dev docs
-│   └── images/             # Screenshots/diagrams
-├── tests/                  # Integration tests
-└── scripts/                # Helper scripts
-```
-
-## Requirements
-
-- Python 3.9+
-- Docker (for Structurizr diagrams)
-- Playwright (auto-installed with pdf requirements)
-- OpenAI or Anthropic API key (for AI agents)
-
-## Installation
-
-### Option 1: Full Install
-
-```bash
-pip install -r requirements.txt  # All tools
-```
-
-### Option 2: Tool-Specific
-
-```bash
-pip install -r tools/pdf/requirements-pdf.txt              # PDF only
-pip install -r tools/prompts/requirements.txt             # AI agents only
-pip install -r tools/structurizr/requirements-structurizr.txt  # Diagrams only
-```
-
-## Configuration
-
-Each tool uses YAML configuration:
-
-- PDF: Document profiles in `tools/pdf/profiles.py` or custom CSS
-- AI Agents: Pipeline configs in `tools/prompts/pipelines/*.yaml`
-- Structurizr: Workspace configs in `tools/structurizr/*.json`
-
-See tool-specific README files for detailed configuration options.
-
-## Examples
+## 💻 Examples
 
 Complete examples in each tool directory:
 
-- `tools/pdf/docs/` - Sample markdown documents with diagrams
+- `docs/examples/` - Sample markdown documents with diagrams
 - `tools/prompts/examples/` - Rough drafts and pipeline configurations
 - `tools/structurizr/` - Example DSL files and export configs
 
-## Development
+Generate all example PDFs:
 
-### Running Tests
-
-**PDF layout verification:**
 ```bash
-cd tools/pdf/tests
-python test_project_docs_layout.py
+./scripts/generate-examples.sh
 ```
 
-**AI agents (requires API key):**
-```bash
-cd tools/prompts
-python -m pytest tests/
-```
+---
 
-**Structurizr:**
-```bash
-cd tools/structurizr
-python structurizr.py --validate
-```
+## 📝 License
 
-### Code Standards
+MIT License - Free for personal and commercial use.
 
-- Type hints on all functions
-- Google-style docstrings
-- PEP 8 compliance
-- 100% test coverage on core logic
+## 👤 Author
 
-## Contributing
+**Matt Jeffcoat** - Senior Software Engineer  
+Building tools for technical documentation and AI-powered workflows.
 
-Contributions welcome! Please:
+[GitHub](https://github.com/mjdevaccount) · [LinkedIn](https://linkedin.com/in/matt-jeffcoat)
 
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Ensure all tests pass
-5. Submit a pull request
+## 🙏 Acknowledgments
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+- [Playwright](https://playwright.dev) - Browser automation
+- [Pandoc](https://pandoc.org) - Markdown processing
+- [Mermaid](https://mermaid.js.org) - Diagram syntax
 
-## License
+---
 
-MIT License - see [LICENSE](LICENSE) for details.
+<div align="center">
 
-## Author
+**⭐ Found this useful? Give it a star!**
 
-Built by [Matt Jeffcoat](https://github.com/mjdevaccount) - Senior Software Engineer specializing in AI-powered tooling, distributed systems, and developer experience.
-
-## Acknowledgments
-
-- Playwright team for excellent browser automation
-- Structurizr for C4 model tooling
-- OpenAI and Anthropic for LLM APIs
-
+</div>
