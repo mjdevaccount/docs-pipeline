@@ -59,6 +59,7 @@ secrets/
 
 # Test outputs
 test-output/
+output/
 temp/
 tmp/
 
