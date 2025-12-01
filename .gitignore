@@ -57,9 +57,10 @@ diagrams/
 *.key
 secrets/
 
-# Test outputs
+# Test outputs and temporary files
 test-output/
 output/
+uploads/
 temp/
 tmp/
 
