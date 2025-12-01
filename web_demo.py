@@ -77,13 +77,19 @@ def upload_file():
         # Import and run PDF conversion
         from convert_final import markdown_to_pdf
         
-        # Get renderer from request (default to playwright for Docker compatibility)
-        renderer = request.args.get('renderer', 'playwright')
+        # Get renderer and profile from request
+        # Default to playwright for Docker compatibility
+        renderer = request.form.get('renderer', 'playwright')
         if renderer not in ['playwright', 'weasyprint']:
             renderer = 'playwright'  # Fallback to safe default
         
+        # Get profile selection (optional)
+        profile = request.form.get('profile', None)
+        if profile and profile not in ['tech-whitepaper', 'dark-pro', 'minimalist', 'enterprise-blue']:
+            profile = None  # Invalid profile, ignore
+        
         # Convert markdown to PDF
-        markdown_to_pdf(str(md_path), str(pdf_path), renderer=renderer)
+        markdown_to_pdf(str(md_path), str(pdf_path), renderer=renderer, profile=profile)
         
         # Check if PDF was created
         if not pdf_path.exists():

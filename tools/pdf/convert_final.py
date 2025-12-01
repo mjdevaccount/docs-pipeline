@@ -152,6 +152,18 @@ def render_mermaid_to_svg(md_content, work_dir, also_png=False, cache_dir=None, 
     def mermaid_to_svg(match):
         mermaid_code = match.group(1).strip()
         
+        # Validate that this looks like actual mermaid code
+        # Skip blocks that are just image references or invalid content
+        mermaid_keywords = ['graph', 'flowchart', 'sequenceDiagram', 'classDiagram', 
+                           'stateDiagram', 'erDiagram', 'journey', 'gantt', 'pie',
+                           'gitGraph', 'mindmap', 'timeline', 'C4Context', 'C4Container']
+        
+        # Check if code starts with a markdown image reference or doesn't contain mermaid keywords
+        if mermaid_code.startswith('![') or not any(keyword in mermaid_code for keyword in mermaid_keywords):
+            print(f"    ! Skipping invalid mermaid block (appears to be image reference or invalid syntax)")
+            # Return the original block as a code block so it's visible in output
+            return f'```\n[Skipped invalid mermaid block: {mermaid_code[:50]}...]\n```'
+        
         # Create hash for unique filename (include PNG flag in hash for cache key)
         cache_key = mermaid_code + ('_png' if also_png else '_svg')
         code_hash = hashlib.md5(cache_key.encode()).hexdigest()[:8]
@@ -449,19 +461,38 @@ def expand_glossary(md_content, glossary_file=None):
         print(f"    ! Warning: Glossary expansion failed: {e}")
         return md_content
 
-def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_dir=None, use_cache=True, theme_config=None, highlight_style=None, crossref_config=None, glossary_file=None, renderer='weasyprint', generate_toc=False, generate_cover=False, watermark=None, verbose=False):
+def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_dir=None, use_cache=True, theme_config=None, highlight_style=None, crossref_config=None, glossary_file=None, renderer='weasyprint', generate_toc=False, generate_cover=False, watermark=None, verbose=False, profile=None):
     """Convert Markdown to PDF via Pandoc + WeasyPrint/Playwright with Mermaid pre-rendering
     
     Args:
         md_file: Path to input Markdown file
         output_pdf: Path to output PDF file
         logo_path: Optional path to logo image (default: docs/logo.png)
-        css_file: Optional path to external CSS file (overrides default CSS)
+        css_file: Optional path to external CSS file (overrides default CSS and profile)
         cache_dir: Optional cache directory for diagrams (default: pdf-tools/pdf-diagrams/)
         use_cache: If True, use cached diagrams when available
         theme_config: Optional path to Mermaid theme config JSON file (default: pdf-tools/pdf-mermaid-theme.json)
         renderer: PDF renderer to use ('weasyprint' or 'playwright'). Playwright provides perfect SVG foreignObject support.
+        profile: Optional profile name (e.g., 'tech-whitepaper', 'dark-pro', 'minimalist', 'enterprise-blue')
+                 Profile provides CSS, theme config, and logo defaults. Explicit arguments override profile settings.
     """
+    
+    # If profile is specified, use it to set defaults for missing arguments
+    if profile:
+        try:
+            from profiles import get_profile
+            profile_obj = get_profile(profile)
+            if profile_obj:
+                # Only use profile values if explicit arguments not provided
+                if css_file is None and profile_obj.css:
+                    css_file = profile_obj.css
+                if logo_path is None and profile_obj.logo:
+                    logo_path = profile_obj.logo
+                if theme_config is None and profile_obj.theme_config:
+                    theme_config = profile_obj.theme_config
+        except ImportError:
+            # profiles module not available, continue without profile
+            pass
     
     md_path = Path(md_file)
     output_path = Path(output_pdf)

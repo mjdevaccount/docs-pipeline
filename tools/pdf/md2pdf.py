@@ -511,6 +511,7 @@ Markdown Syntax:
                     item_highlight = item.get('highlight_style', config_highlight)
                     item_crossref = item.get('crossref_config', config_crossref)
                     item_glossary = item.get('glossary', config_glossary)
+                    item_profile = item.get('profile', config_profile_name)
                     item_format, output_file = detect_format(output_file, item.get('format'))
                 else:
                     md_file = item
@@ -522,11 +523,12 @@ Markdown Syntax:
                     item_highlight = config_highlight
                     item_crossref = config_crossref
                     item_glossary = config_glossary
+                    item_profile = config_profile_name
                     item_format, output_file = detect_format(output_file)
 
                 # Apply profile defaults if requested and profile support is available
-                if config_profile_name and get_profile is not None:
-                    profile = get_profile(config_profile_name)
+                if item_profile and get_profile is not None:
+                    profile = get_profile(item_profile)
                     if profile:
                         if item_logo is None and profile.logo:
                             item_logo = profile.logo
@@ -555,7 +557,7 @@ Markdown Syntax:
                         failures += 1
                         continue
                 
-                file_tasks.append((md_file, output_file, item_format, item_logo, item_reference, item_css, cache_dir, use_cache, item_theme, item_highlight, item_crossref, item_glossary, config_renderer))
+                file_tasks.append((md_file, output_file, item_format, item_logo, item_reference, item_css, cache_dir, use_cache, item_theme, item_highlight, item_crossref, item_glossary, config_renderer, item_profile))
                 
             except Exception as e:
                 failures += 1
@@ -594,7 +596,7 @@ Markdown Syntax:
                             print(f"{ERR} Failed: {md_file} -> {error}")
         else:
             # Sequential processing
-            for md_file, output_file, item_format, item_logo, item_reference, item_css, cache_dir, use_cache, item_theme, item_highlight, item_crossref, item_glossary, renderer, verbose in file_tasks:
+            for md_file, output_file, item_format, item_logo, item_reference, item_css, cache_dir, use_cache, item_theme, item_highlight, item_crossref, item_glossary, renderer, item_profile in file_tasks:
                 try:
                     # Echo metadata
                     md_content = Path(md_file).read_text(encoding='utf-8')
@@ -613,14 +615,15 @@ Markdown Syntax:
                         'theme_config': item_theme,
                         'highlight_style': item_highlight,
                         'crossref_config': item_crossref,
-                        'glossary_file': item_glossary
+                        'glossary_file': item_glossary,
+                        'profile': item_profile
                     }
                     if item_format == 'html':
                         markdown_to_html(md_file, output_file, css_file=item_css, **common_args)
                     elif item_format == 'docx':
                         markdown_to_docx(md_file, output_file, reference_docx=item_reference, **common_args)
                     else:
-                        markdown_to_pdf(md_file, output_file, logo_path=item_logo, css_file=item_css, renderer=renderer, generate_toc=args.generate_toc, generate_cover=args.generate_cover, watermark=args.watermark, verbose=verbose, **common_args)
+                        markdown_to_pdf(md_file, output_file, logo_path=item_logo, css_file=item_css, renderer=renderer, generate_toc=args.generate_toc, generate_cover=args.generate_cover, watermark=args.watermark, verbose=args.verbose, **common_args)
                     print(f"{OK} Generated: {output_file}")
                     
                 except Exception as e:
@@ -735,14 +738,15 @@ Markdown Syntax:
                         'theme_config': theme_config,
                         'highlight_style': highlight_style,
                         'crossref_config': crossref_config,
-                        'glossary_file': glossary_file
+                        'glossary_file': glossary_file,
+                        'profile': args.profile
                     }
                     if output_format == 'html':
                         markdown_to_html(md_file, output_file, css_file=css_file, **common_args)
                     elif output_format == 'docx':
                         markdown_to_docx(md_file, output_file, reference_docx=reference_docx, **common_args)
                     else:
-                        markdown_to_pdf(md_file, output_file, logo_path=logo, css_file=css_file, renderer=args.renderer, generate_toc=args.generate_toc, generate_cover=args.generate_cover, watermark=args.watermark, verbose=verbose, **common_args)
+                        markdown_to_pdf(md_file, output_file, logo_path=logo, css_file=css_file, renderer=args.renderer, generate_toc=args.generate_toc, generate_cover=args.generate_cover, watermark=args.watermark, verbose=args.verbose, **common_args)
                     print(f"{OK} Generated: {output_file}")
                     
                 except Exception as e:
@@ -834,9 +838,12 @@ Markdown Syntax:
             'theme_config': theme_config,
             'highlight_style': highlight_style,
             'crossref_config': crossref_config,
-            'glossary_file': glossary_file
+            'glossary_file': glossary_file,
+            'profile': args.profile
         }
         
+        if args.profile:
+            print(f"  Using profile: {args.profile}")
         if reference_docx and output_format == 'docx':
             print(f"  Using reference template: {reference_docx}")
         if args.css:

@@ -97,9 +97,32 @@ docker pull structurizr/cli:latest
 python structurizr.py --config your-workspace.json
 ```
 
+## ✨ NEW: PDF Profile System
+
+Generate dramatically different-looking PDFs from the same content with a single flag:
+
+```bash
+# Professional engineering style (default)
+python tools/pdf/md2pdf.py spec.md --profile tech-whitepaper
+
+# Modern dark theme for presentations
+python tools/pdf/md2pdf.py spec.md --profile dark-pro
+
+# Clean, spacious architecture docs
+python tools/pdf/md2pdf.py spec.md --profile minimalist
+
+# Corporate-friendly business documents
+python tools/pdf/md2pdf.py spec.md --profile enterprise-blue
+```
+
+**Same content. Four completely different visual styles.** No CSS editing required.
+
+👉 [See Profile System Documentation](docs/PROFILE_SYSTEM.md) for detailed guide and examples.
+
 ## Documentation
 
 - [PDF Generation Guide](tools/pdf/README.md) - Layout engine, Mermaid optimization, document profiles
+- [Profile System Guide](docs/PROFILE_SYSTEM.md) - **NEW!** Visual styling with 4 distinct profiles
 - [AI Agents Architecture](tools/prompts/ARCHITECTURE.md) - Multi-agent system design and extension
 - [Structurizr Integration](tools/structurizr/README.md) - Docker-based diagram generation
 
@@ -107,6 +130,7 @@ python structurizr.py --config your-workspace.json
 
 ### PDF Generation Engine
 
+- **4 Visual Profiles** - Tech Whitepaper, Dark Pro, Minimalist, Enterprise Blue (NEW!)
 - Playwright-based rendering for pixel-perfect output
 - Adaptive pagination with intelligent diagram scaling
 - Pre-rendered Mermaid diagrams with theme optimization

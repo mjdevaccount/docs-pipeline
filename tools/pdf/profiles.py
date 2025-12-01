@@ -36,17 +36,54 @@ def _rel_from_repo_root(*parts: str) -> str:
 
 
 PROFILES: Dict[str, DocumentProfile] = {
-    # Default profile for project documentation.
+    # Tech Whitepaper - Default professional engineering documentation style
+    # Clean, blue accents, generous margins, perfect for technical specs
+    "tech-whitepaper": DocumentProfile(
+        name="tech-whitepaper",
+        logo=None,
+        css=_rel_from_repo_root("tools", "pdf", "styles", "tech-whitepaper.css"),
+        theme_config=_rel_from_repo_root("tools", "pdf", "pdf-mermaid-theme.json"),
+        reference_docx=None,
+    ),
+    
+    # Dark Pro - Modern dark theme for on-screen viewing
+    # High contrast, dramatic presentation, neon accents
+    "dark-pro": DocumentProfile(
+        name="dark-pro",
+        logo=None,
+        css=_rel_from_repo_root("tools", "pdf", "styles", "dark-pro.css"),
+        theme_config=_rel_from_repo_root("tools", "pdf", "pdf-mermaid-theme.json"),
+        reference_docx=None,
+    ),
+    
+    # Minimalist - Clean, spacious design with maximum whitespace
+    # Thin typography, subtle colors, perfect for architecture docs
+    "minimalist": DocumentProfile(
+        name="minimalist",
+        logo=None,
+        css=_rel_from_repo_root("tools", "pdf", "styles", "minimalist.css"),
+        theme_config=_rel_from_repo_root("tools", "pdf", "pdf-mermaid-theme.json"),
+        reference_docx=None,
+    ),
+    
+    # Enterprise Blue - Corporate-friendly, conservative styling
+    # Blue and gray color scheme, structured layout, perfect for business docs
+    "enterprise-blue": DocumentProfile(
+        name="enterprise-blue",
+        logo=None,
+        css=_rel_from_repo_root("tools", "pdf", "styles", "enterprise-blue.css"),
+        theme_config=_rel_from_repo_root("tools", "pdf", "pdf-mermaid-theme.json"),
+        reference_docx=None,
+    ),
+    
+    # Legacy profiles (for backward compatibility)
     "project-docs": DocumentProfile(
         name="project-docs",
-        # Logo path - update to point to your project's logo if needed
-        logo=None,  # Set to your logo path: _rel_from_repo_root("path", "to", "logo.png")
-        # Primary Playwright stylesheet with branded colors and typography.
+        logo=None,
         css=_rel_from_repo_root("tools", "pdf", "custom.css.playwright"),
         theme_config=_rel_from_repo_root("tools", "pdf", "pdf-mermaid-theme.json"),
         reference_docx=None,
     ),
-    # Minimal, unbranded profile that can be used as a neutral default.
     "neutral": DocumentProfile(
         name="neutral",
         logo=None,

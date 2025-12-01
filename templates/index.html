@@ -364,6 +364,28 @@
             <strong>Selected:</strong> <span id="fileName"></span>
         </div>
         
+        <div style="margin-top: 30px; display: flex; gap: 20px; flex-wrap: wrap;">
+            <div>
+                <label for="rendererSelect" style="font-size: 0.95rem; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">🎨 Renderer</label>
+                <select id="rendererSelect" style="padding: 10px 15px; border-radius: 8px; border: 2px solid #cbd5e0; font-size: 1rem; background: white; cursor: pointer; min-width: 180px;">
+                    <option value="playwright">Playwright (Recommended)</option>
+                    <option value="weasyprint">WeasyPrint</option>
+                </select>
+            </div>
+            <div>
+                <label for="profileSelect" style="font-size: 0.95rem; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">📐 Profile / Style</label>
+                <select id="profileSelect" style="padding: 10px 15px; border-radius: 8px; border: 2px solid #cbd5e0; font-size: 1rem; background: white; cursor: pointer; min-width: 220px;">
+                    <option value="tech-whitepaper">Tech Whitepaper (Default)</option>
+                    <option value="dark-pro">Dark Pro</option>
+                    <option value="minimalist">Minimalist</option>
+                    <option value="enterprise-blue">Enterprise Blue</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top: 15px; padding: 12px 18px; background: #edf2f7; border-radius: 8px; font-size: 0.9rem; color: #4a5568;">
+            <strong>💡 Tip:</strong> Profiles change the PDF look without changing your content. Try different styles to see dramatic visual differences!
+        </div>
+        
         <button class="btn" id="generateBtn" disabled>🚀 Generate PDF</button>
         
         <div class="loading" id="loading">
@@ -470,6 +492,12 @@
             
             const formData = new FormData();
             formData.append('markdown', selectedFile);
+            
+            // Add renderer and profile selections
+            const renderer = document.getElementById('rendererSelect').value;
+            const profile = document.getElementById('profileSelect').value;
+            formData.append('renderer', renderer);
+            formData.append('profile', profile);
             
             loading.classList.add('show');
             status.style.display = 'none';

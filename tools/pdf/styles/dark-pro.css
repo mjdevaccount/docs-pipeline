@@ -1,0 +1,277 @@
+/**
+ * Dark Pro Profile
+ * Modern dark theme for on-screen viewing
+ * High contrast, neon accents, dramatic presentation
+ */
+
+/* Page setup */
+@page {
+    size: A4;
+    margin: 2cm 1.8cm 2cm 1.8cm;
+}
+
+/* Base typography - Dark background */
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 11pt;
+    line-height: 1.75;
+    color: #e5e7eb;
+    background: #0f172a;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Headings - Light with subtle glow effect */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: #f8fafc;
+    margin-top: 1.6em;
+    margin-bottom: 0.6em;
+    page-break-after: avoid;
+    line-height: 1.25;
+    letter-spacing: 0.02em;
+}
+
+h1 {
+    font-size: 2.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 2px solid #334155;
+    padding-bottom: 0.5em;
+    margin-top: 0.5em;
+    color: #e0e7ff;
+    page-break-before: auto;
+}
+
+h2 {
+    font-size: 1.6rem;
+    color: #93c5fd;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 0.4em;
+}
+
+h3 {
+    font-size: 1.3rem;
+    color: #bfdbfe;
+}
+
+h4 {
+    font-size: 1.1rem;
+    color: #dbeafe;
+}
+
+/* Paragraphs */
+p {
+    margin: 0.6em 0 1em 0;
+    color: #d1d5db;
+    text-align: left;
+    orphans: 3;
+    widows: 3;
+}
+
+/* Links - Bright cyan */
+a {
+    color: #60a5fa;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    color: #93c5fd;
+    text-decoration: underline;
+}
+
+/* Code - Very dark background with subtle border */
+code {
+    font-family: 'Fira Code', 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 0.88em;
+    background: #111827;
+    color: #e5e7eb;
+    padding: 0.25em 0.45em;
+    border-radius: 4px;
+    border: 1px solid #1f2937;
+}
+
+pre {
+    background: #020617;
+    border-left: 4px solid #3b82f6;
+    padding: 1.1em 1.3em;
+    margin: 1.3em 0;
+    border-radius: 8px;
+    overflow-x: auto;
+    page-break-inside: avoid;
+    box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.15), 
+                0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+pre code {
+    background: transparent;
+    color: #e5e7eb;
+    padding: 0;
+    border: none;
+    font-size: 0.9em;
+    line-height: 1.7;
+}
+
+/* Lists */
+ul, ol {
+    margin: 0.9em 0;
+    padding-left: 2em;
+}
+
+li {
+    margin: 0.5em 0;
+    line-height: 1.7;
+    color: #d1d5db;
+}
+
+/* Tables - Dark theme */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5em 0;
+    page-break-inside: avoid;
+    font-size: 0.95em;
+    background: #1e293b;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    border: 1px solid #334155;
+    padding: 0.9em 1.1em;
+    text-align: left;
+}
+
+th {
+    background: #0f172a;
+    color: #f8fafc;
+    font-weight: 700;
+    border-bottom: 2px solid #3b82f6;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.05em;
+}
+
+tr:nth-child(even) {
+    background: #1a2332;
+}
+
+td {
+    color: #d1d5db;
+}
+
+/* Blockquotes - Subtle cyan accent */
+blockquote {
+    border-left: 4px solid #3b82f6;
+    background: #1e293b;
+    padding: 1.1em 1.6em;
+    margin: 1.3em 0;
+    font-style: italic;
+    color: #cbd5e1;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+blockquote p {
+    margin: 0.4em 0;
+}
+
+/* Horizontal rules */
+hr {
+    border: none;
+    border-top: 2px solid #1e293b;
+    margin: 2.5em 0;
+}
+
+/* Images and diagrams - Pop on dark background */
+img, svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1.8em auto;
+    page-break-inside: avoid;
+    background: #0f172a;
+    border-radius: 8px;
+    padding: 1em;
+    box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.1),
+                0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+figure {
+    margin: 1.8em 0;
+    text-align: center;
+    page-break-inside: avoid;
+}
+
+figcaption {
+    font-size: 0.9em;
+    color: #94a3b8;
+    margin-top: 0.7em;
+    font-style: italic;
+}
+
+/* Table of Contents - Dark styled */
+nav#TOC, #TOC {
+    background: #1e293b;
+    padding: 1.8em;
+    border: 2px solid #334155;
+    border-radius: 10px;
+    margin: 2.5em 0;
+    page-break-after: always;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+nav#TOC h2, #TOC h2 {
+    font-size: 1.5rem;
+    color: #f8fafc;
+    margin-top: 0;
+    border-bottom: 2px solid #3b82f6;
+    padding-bottom: 0.6em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+nav#TOC ul, #TOC ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+nav#TOC li, #TOC li {
+    margin: 0.7em 0;
+    padding-left: 1.5em;
+}
+
+nav#TOC a, #TOC a {
+    color: #93c5fd;
+    text-decoration: none;
+}
+
+nav#TOC a:hover, #TOC a:hover {
+    color: #bfdbfe;
+    text-decoration: underline;
+}
+
+/* Print-specific adjustments */
+@media print {
+    /* Keep dark theme even in print for consistency */
+    body {
+        background: #0f172a;
+        color: #e5e7eb;
+    }
+    
+    a {
+        color: #60a5fa;
+    }
+    
+    /* Ensure proper page breaks */
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+    
+    table, figure, img, pre {
+        page-break-inside: avoid;
+    }
+}
+

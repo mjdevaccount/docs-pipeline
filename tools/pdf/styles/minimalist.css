@@ -1,0 +1,258 @@
+/**
+ * Minimalist Profile
+ * Clean, spacious design with maximum whitespace
+ * Thin typography, subtle colors, no borders or boxes
+ */
+
+/* Page setup - More generous margins */
+@page {
+    size: A4;
+    margin: 3.5cm 3cm 3cm 3cm;
+}
+
+/* Base typography - Light and airy */
+body {
+    font-family: 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
+    font-size: 10.5pt;
+    font-weight: 300;
+    line-height: 1.9;
+    color: #2c3e50;
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Headings - Thin, minimal styling */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 300;
+    color: #1a1a1a;
+    margin-top: 2.5em;
+    margin-bottom: 0.8em;
+    page-break-after: avoid;
+    line-height: 1.4;
+    letter-spacing: 0.03em;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 200;
+    margin-top: 0;
+    margin-bottom: 2em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    page-break-before: auto;
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-top: 2em;
+}
+
+h3 {
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+h4 {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #4a5568;
+}
+
+/* Paragraphs - Maximum breathing room */
+p {
+    margin: 0 0 1.5em 0;
+    text-align: left;
+    orphans: 3;
+    widows: 3;
+    font-weight: 300;
+}
+
+/* Links - Understated */
+a {
+    color: #2c3e50;
+    text-decoration: underline;
+    text-decoration-color: #cbd5e0;
+    font-weight: 400;
+}
+
+a:hover {
+    text-decoration-color: #2c3e50;
+}
+
+/* Code - Minimal styling */
+code {
+    font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9em;
+    background: #f8f9fa;
+    color: #495057;
+    padding: 0.15em 0.3em;
+    font-weight: 400;
+}
+
+pre {
+    background: #fafbfc;
+    padding: 1.5em 1.8em;
+    margin: 2em 0;
+    overflow-x: auto;
+    page-break-inside: avoid;
+}
+
+pre code {
+    background: transparent;
+    color: #495057;
+    padding: 0;
+    font-size: 0.85em;
+    line-height: 1.8;
+}
+
+/* Lists - Minimal bullets */
+ul, ol {
+    margin: 1.2em 0;
+    padding-left: 1.5em;
+}
+
+li {
+    margin: 0.8em 0;
+    line-height: 1.9;
+}
+
+ul {
+    list-style-type: circle;
+}
+
+/* Tables - No borders, just spacing */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 2.5em 0;
+    page-break-inside: avoid;
+    font-size: 0.95em;
+}
+
+th, td {
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1em 0.5em;
+    text-align: left;
+}
+
+th {
+    background: transparent;
+    color: #1a1a1a;
+    font-weight: 400;
+    border-bottom: 2px solid #dee2e6;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.1em;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* Blockquotes - Very subtle */
+blockquote {
+    border-left: 2px solid #e9ecef;
+    padding: 0.5em 0 0.5em 2em;
+    margin: 2em 0;
+    font-style: italic;
+    color: #6c757d;
+}
+
+blockquote p {
+    margin: 0.5em 0;
+}
+
+/* Horizontal rules - Barely there */
+hr {
+    border: none;
+    border-top: 1px solid #e9ecef;
+    margin: 3em 0;
+}
+
+/* Images and diagrams - Clean, no decorations */
+img, svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 2.5em auto;
+    page-break-inside: avoid;
+}
+
+figure {
+    margin: 2.5em 0;
+    text-align: center;
+    page-break-inside: avoid;
+}
+
+figcaption {
+    font-size: 0.85em;
+    color: #868e96;
+    margin-top: 1em;
+    font-style: italic;
+    font-weight: 300;
+}
+
+/* Table of Contents - Minimal */
+nav#TOC, #TOC {
+    padding: 2em 0;
+    margin: 3em 0;
+    page-break-after: always;
+}
+
+nav#TOC h2, #TOC h2 {
+    font-size: 1.3rem;
+    color: #1a1a1a;
+    margin-top: 0;
+    margin-bottom: 1.5em;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+nav#TOC ul, #TOC ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+nav#TOC li, #TOC li {
+    margin: 1em 0;
+    padding-left: 0;
+}
+
+nav#TOC a, #TOC a {
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 300;
+}
+
+nav#TOC a:hover, #TOC a:hover {
+    text-decoration: underline;
+    text-decoration-color: #cbd5e0;
+}
+
+/* Print-specific adjustments */
+@media print {
+    body {
+        background: white;
+    }
+    
+    a {
+        color: #2c3e50;
+        text-decoration: underline;
+        text-decoration-color: #cbd5e0;
+    }
+    
+    /* Ensure proper page breaks */
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+    
+    table, figure, img, pre {
+        page-break-inside: avoid;
+    }
+}
+

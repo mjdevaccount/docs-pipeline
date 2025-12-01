@@ -156,10 +156,8 @@ tools/structurizr/
    ```markdown
    ## System Context
    
-   ```mermaid
-   ![](system-context.mmd)
-   ```
-   ```
+   <!-- Mermaid diagram would be included here if generated -->
+   <!-- See docs/examples/diagrams/structurizr-SystemContext.mmd for source -->
 
 3. **Generate PDF**:
    ```bash

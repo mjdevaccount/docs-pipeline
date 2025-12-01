@@ -1,0 +1,84 @@
+###############################################################################
+# docs-pipeline Profile Demo Configuration
+# 
+# This config demonstrates the PDF styling system by generating the same
+# document with 4 different visual profiles, producing dramatically different
+# outputs from identical content.
+#
+# Usage:
+#   docs-pipeline docs-pipeline-profiles-demo.yaml
+#
+# Output:
+#   - docs/examples/generated/architecture-overview-tech.pdf
+#   - docs/examples/generated/architecture-overview-dark.pdf
+#   - docs/examples/generated/architecture-overview-minimalist.pdf
+#   - docs/examples/generated/architecture-overview-enterprise.pdf
+###############################################################################
+
+workspaces:
+  # Profile demo workspace - Same content, 4 different visual styles
+  profile-showcase:
+    documents:
+      # Tech Whitepaper - Default professional engineering style
+      # Clean, blue accents, generous margins, perfect for technical specs
+      - input: docs/examples/architecture-overview.md
+        output: docs/examples/generated/architecture-overview-tech.pdf
+        format: pdf
+        renderer: playwright
+        profile: tech-whitepaper
+      
+      # Dark Pro - Modern dark theme for on-screen viewing
+      # High contrast, dramatic presentation, neon accents
+      - input: docs/examples/architecture-overview.md
+        output: docs/examples/generated/architecture-overview-dark.pdf
+        format: pdf
+        renderer: playwright
+        profile: dark-pro
+      
+      # Minimalist - Clean, spacious design with maximum whitespace
+      # Thin typography, subtle colors, perfect for architecture docs
+      - input: docs/examples/architecture-overview.md
+        output: docs/examples/generated/architecture-overview-minimalist.pdf
+        format: pdf
+        renderer: playwright
+        profile: minimalist
+      
+      # Enterprise Blue - Corporate-friendly, conservative styling
+      # Blue and gray color scheme, structured layout, perfect for business
+      - input: docs/examples/architecture-overview.md
+        output: docs/examples/generated/architecture-overview-enterprise.pdf
+        format: pdf
+        renderer: playwright
+        profile: enterprise-blue
+
+  # Real-world example: Different profiles for different document types
+  multi-document-demo:
+    documents:
+      # Technical specification → Tech Whitepaper style
+      - input: tools/structurizr/README.md
+        output: docs/examples/generated/structurizr-spec-tech.pdf
+        format: pdf
+        renderer: playwright
+        profile: tech-whitepaper
+      
+      # Architecture RFC → Minimalist style
+      - input: tools/structurizr/README.md
+        output: docs/examples/generated/structurizr-spec-minimalist.pdf
+        format: pdf
+        renderer: playwright
+        profile: minimalist
+      
+      # Executive summary → Enterprise Blue style
+      - input: tools/structurizr/README.md
+        output: docs/examples/generated/structurizr-spec-enterprise.pdf
+        format: pdf
+        renderer: playwright
+        profile: enterprise-blue
+      
+      # Presentation deck → Dark Pro style (best for screens)
+      - input: tools/structurizr/README.md
+        output: docs/examples/generated/structurizr-spec-dark.pdf
+        format: pdf
+        renderer: playwright
+        profile: dark-pro
+

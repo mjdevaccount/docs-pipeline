@@ -1,0 +1,308 @@
+/**
+ * Enterprise Blue Profile
+ * Corporate-friendly, conservative styling
+ * Blue and gray color scheme, structured layout
+ */
+
+/* Page setup */
+@page {
+    size: A4;
+    margin: 2.5cm 2.2cm 2.5cm 2.2cm;
+}
+
+@page:first {
+    margin-top: 1.5cm;
+}
+
+/* Base typography - Corporate standard */
+body {
+    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.65;
+    color: #333333;
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Headings - Corporate blue */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: #003d7a;
+    margin-top: 1.4em;
+    margin-bottom: 0.5em;
+    page-break-after: avoid;
+    line-height: 1.35;
+}
+
+h1 {
+    font-size: 2rem;
+    border-bottom: 3px solid #0066cc;
+    padding-bottom: 0.4em;
+    margin-top: 0.5em;
+    page-break-before: auto;
+    background: linear-gradient(to right, #f0f4f8 0%, transparent 100%);
+    padding: 0.5em 0 0.5em 0.5em;
+    margin-left: -0.5em;
+}
+
+h2 {
+    font-size: 1.5rem;
+    color: #0066cc;
+    border-bottom: 2px solid #b3d9ff;
+    padding-bottom: 0.3em;
+}
+
+h3 {
+    font-size: 1.25rem;
+    color: #0073e6;
+}
+
+h4 {
+    font-size: 1.1rem;
+    color: #4d94ff;
+}
+
+/* Paragraphs */
+p {
+    margin: 0.5em 0 1em 0;
+    color: #4a4a4a;
+    text-align: left;
+    orphans: 3;
+    widows: 3;
+}
+
+/* Links - Corporate blue */
+a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    color: #003d7a;
+    text-decoration: underline;
+}
+
+/* Code - Light blue background */
+code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.9em;
+    background: #e6f2ff;
+    color: #003366;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    border: 1px solid #b3d9ff;
+}
+
+pre {
+    background: #f5f8fa;
+    border: 1px solid #d1dce5;
+    border-left: 4px solid #0066cc;
+    padding: 1em 1.2em;
+    margin: 1.2em 0;
+    border-radius: 4px;
+    overflow-x: auto;
+    page-break-inside: avoid;
+}
+
+pre code {
+    background: transparent;
+    color: #2d3748;
+    padding: 0;
+    border: none;
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+/* Lists */
+ul, ol {
+    margin: 0.8em 0;
+    padding-left: 2em;
+}
+
+li {
+    margin: 0.4em 0;
+    line-height: 1.65;
+}
+
+/* Tables - Professional blue and gray */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5em 0;
+    page-break-inside: avoid;
+    font-size: 0.95em;
+    border: 1px solid #d1dce5;
+}
+
+th, td {
+    border: 1px solid #d1dce5;
+    padding: 0.8em 1em;
+    text-align: left;
+}
+
+th {
+    background: linear-gradient(to bottom, #003d7a 0%, #0052a3 100%);
+    color: #ffffff;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 0.03em;
+}
+
+tr:nth-child(even) {
+    background: #f8fafb;
+}
+
+tr:hover {
+    background: #e6f2ff;
+}
+
+/* Blockquotes - Corporate info box */
+blockquote {
+    border-left: 4px solid #0066cc;
+    background: #f0f7ff;
+    padding: 1em 1.5em;
+    margin: 1.2em 0;
+    color: #003d7a;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+blockquote p {
+    margin: 0.4em 0;
+}
+
+/* Horizontal rules */
+hr {
+    border: none;
+    border-top: 2px solid #d1dce5;
+    margin: 2em 0;
+}
+
+/* Images and diagrams - Framed */
+img, svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1.5em auto;
+    page-break-inside: avoid;
+    border: 1px solid #e1e8ed;
+    padding: 0.5em;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+figure {
+    margin: 1.5em 0;
+    text-align: center;
+    page-break-inside: avoid;
+}
+
+figcaption {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin-top: 0.5em;
+    font-style: italic;
+}
+
+/* Table of Contents - Corporate styled */
+nav#TOC, #TOC {
+    background: linear-gradient(to bottom, #f0f7ff 0%, #ffffff 100%);
+    padding: 1.5em 2em;
+    border: 2px solid #0066cc;
+    border-radius: 6px;
+    margin: 2em 0;
+    page-break-after: always;
+    box-shadow: 0 2px 8px rgba(0, 61, 122, 0.1);
+}
+
+nav#TOC h2, #TOC h2 {
+    font-size: 1.5rem;
+    color: #003d7a;
+    margin-top: 0;
+    border-bottom: 2px solid #0066cc;
+    padding-bottom: 0.5em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+nav#TOC ul, #TOC ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+nav#TOC li, #TOC li {
+    margin: 0.6em 0;
+    padding-left: 1.5em;
+    position: relative;
+}
+
+nav#TOC li::before, #TOC li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: #0066cc;
+    font-weight: bold;
+}
+
+nav#TOC a, #TOC a {
+    color: #003d7a;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+nav#TOC a:hover, #TOC a:hover {
+    color: #0066cc;
+    text-decoration: underline;
+}
+
+/* Special elements - Info boxes, warnings, etc. */
+.info-box, .note, .warning {
+    padding: 1em 1.5em;
+    margin: 1.5em 0;
+    border-radius: 4px;
+    border-left: 4px solid;
+    page-break-inside: avoid;
+}
+
+.info-box, .note {
+    background: #e6f2ff;
+    border-color: #0066cc;
+    color: #003d7a;
+}
+
+.warning {
+    background: #fff3e6;
+    border-color: #ff9933;
+    color: #804000;
+}
+
+/* Print-specific adjustments */
+@media print {
+    body {
+        background: white;
+    }
+    
+    a {
+        color: #0066cc;
+    }
+    
+    /* Ensure proper page breaks */
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+    
+    table, figure, img, pre {
+        page-break-inside: avoid;
+    }
+    
+    /* Print colors */
+    th {
+        background: #003d7a;
+        color: white;
+    }
+}
+
