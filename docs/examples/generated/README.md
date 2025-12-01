@@ -4,29 +4,22 @@ Professional documentation demonstrating the full capabilities of the docs-pipel
 
 ## 🎯 Portfolio-Ready Examples
 
-### 1. Advanced Markdown Showcase
+This directory contains **12 generated PDFs** (3 documents × 4 profiles) showcasing the complete range of capabilities.
 
-**Source:** `../advanced-markdown-showcase.md`  
-**Output:** `advanced-markdown-showcase.pdf`
+### Document Types
 
-Comprehensive demonstration of all markdown capabilities including:
+#### 1. Advanced Markdown Showcase (`showcase-*.pdf`)
+**Source:** `../advanced-markdown-showcase.md`
+
+Comprehensive demonstration of all markdown capabilities:
 - Complex Mermaid diagrams (flowcharts, sequence diagrams, data flows)
-- Nested tables with formatting
+- Nested tables with multi-column formatting
 - Multi-language code blocks (Python, JavaScript, YAML, Bash)
-- Mathematical expressions (inline and display math)
-- Hierarchical lists and callouts
+- Mathematical equations (inline and display math with KaTeX)
+- Hierarchical lists, callouts, and special formatting
 
-**Generate:**
-```bash
-python tools/pdf/md2pdf.py docs/examples/advanced-markdown-showcase.md \
-  --output docs/examples/generated/advanced-markdown-showcase.pdf \
-  --profile tech-whitepaper --renderer playwright
-```
-
-### 2. Technical White Paper
-
-**Source:** `../technical-white-paper.md`  
-**Output:** `technical-white-paper.pdf`
+#### 2. Technical White Paper (`whitepaper-*.pdf`)
+**Source:** `../technical-white-paper.md`
 
 Production-quality technical white paper on event-driven microservices:
 - Executive summary with business objectives
@@ -35,94 +28,125 @@ Production-quality technical white paper on event-driven microservices:
 - Real-world code examples (Python sagas, orchestration)
 - Security considerations and best practices
 
-**Generate:**
-```bash
-python tools/pdf/md2pdf.py docs/examples/technical-white-paper.md \
-  --output docs/examples/generated/technical-white-paper.pdf \
-  --profile tech-whitepaper --renderer playwright
-```
-
-### 3. Product Requirements Document
-
-**Source:** `../product-requirements-doc.md`  
-**Output:** `product-requirements-doc.pdf`
+#### 3. Product Requirements Document (`prd-*.pdf`)
+**Source:** `../product-requirements-doc.md`
 
 Enterprise PRD for a real-time collaboration platform:
-- User personas and pain points
-- Detailed functional requirements
+- User personas and pain point analysis
+- Detailed functional requirements with acceptance criteria
 - System architecture diagrams
-- Gantt charts and roadmaps
+- Gantt charts and project roadmaps
 - Competitive analysis matrices
 
-**Generate:**
+### Visual Profiles
+
+Each document is available in **4 distinct visual profiles:**
+
+- **`-tech.pdf`** - Tech Whitepaper: Professional engineering documentation style
+- **`-dark.pdf`** - Dark Pro: Modern dark theme for on-screen presentations
+- **`-minimalist.pdf`** - Minimalist: Clean, spacious architecture documentation
+- **`-enterprise.pdf`** - Enterprise Blue: Corporate-friendly business documents
+
+## 🚀 Regenerate All Examples
+
+The entire showcase is driven by a single pipeline configuration file:
+
 ```bash
-python tools/pdf/md2pdf.py docs/examples/product-requirements-doc.md \
-  --output docs/examples/generated/product-requirements-doc.pdf \
-  --profile enterprise-blue --renderer playwright
+# From repo root
+python -m tools.docs_pipeline.cli --config docs-pipeline-showcase.yaml
 ```
 
-### 4. Architecture Specifications
+This single command generates all 12 PDFs in one pass, demonstrating:
+- ✅ Automated batch processing
+- ✅ Consistent styling across profiles
+- ✅ Reproducible build pipeline
+- ✅ Production-ready workflow
 
-**Multiple profile demonstrations:**
-- `architecture-overview-tech.pdf` - Tech Whitepaper profile
-- `architecture-overview-dark.pdf` - Dark Pro profile
-- `architecture-overview-minimalist.pdf` - Minimalist profile
-- `architecture-overview-enterprise.pdf` - Enterprise Blue profile
+### What Gets Generated
 
-Same content, four completely different visual styles.
+```
+docs/examples/generated/
+├── showcase-tech.pdf              # Markdown showcase - Tech Whitepaper
+├── showcase-dark.pdf              # Markdown showcase - Dark Pro
+├── showcase-minimalist.pdf        # Markdown showcase - Minimalist
+├── showcase-enterprise.pdf        # Markdown showcase - Enterprise Blue
+├── whitepaper-tech.pdf            # White paper - Tech Whitepaper
+├── whitepaper-dark.pdf            # White paper - Dark Pro
+├── whitepaper-minimalist.pdf      # White paper - Minimalist
+├── whitepaper-enterprise.pdf      # White paper - Enterprise Blue
+├── prd-tech.pdf                   # PRD - Tech Whitepaper
+├── prd-dark.pdf                   # PRD - Dark Pro
+├── prd-minimalist.pdf             # PRD - Minimalist
+└── prd-enterprise.pdf             # PRD - Enterprise Blue
+```
 
-## 🎨 Multi-Profile Generation
+## 🎨 Manual Single-File Generation
 
-Generate the same document in all four profiles:
+Generate individual PDFs with specific profiles:
 
 ```bash
-# Tech Whitepaper (default)
+# Tech Whitepaper profile
 python tools/pdf/md2pdf.py docs/examples/technical-white-paper.md \
-  --output output/white-paper-tech.pdf --profile tech-whitepaper
+  --output output/whitepaper-tech.pdf \
+  --profile tech-whitepaper \
+  --renderer playwright
 
-# Dark Pro (modern)
-python tools/pdf/md2pdf.py docs/examples/technical-white-paper.md \
-  --output output/white-paper-dark.pdf --profile dark-pro
-
-# Minimalist (clean)
-python tools/pdf/md2pdf.py docs/examples/technical-white-paper.md \
-  --output output/white-paper-minimal.pdf --profile minimalist
-
-# Enterprise Blue (corporate)
-python tools/pdf/md2pdf.py docs/examples/technical-white-paper.md \
-  --output output/white-paper-enterprise.pdf --profile enterprise-blue
+# Dark Pro profile
+python tools/pdf/md2pdf.py docs/examples/product-requirements-doc.md \
+  --output output/prd-dark.pdf \
+  --profile dark-pro \
+  --renderer playwright
 ```
 
 ## 📊 What These Examples Demonstrate
 
 **Content Variety:**
-- ✅ Technical white papers
-- ✅ Product requirements documents
-- ✅ Architecture specifications
-- ✅ Comprehensive markdown showcases
+- ✅ Technical white papers (500+ lines)
+- ✅ Product requirements documents (525+ lines)
+- ✅ Comprehensive markdown showcases (456+ lines)
+- ✅ Real-world professional content
 
 **Technical Capabilities:**
-- ✅ Complex Mermaid diagrams (10+ diagram types)
-- ✅ Syntax-highlighted code blocks
-- ✅ Mathematical equations (KaTeX)
-- ✅ Advanced table formatting
-- ✅ Multi-page document layout
-- ✅ Professional typography
+- ✅ 15+ Mermaid diagrams across all documents
+- ✅ Syntax-highlighted code blocks in 5+ languages
+- ✅ Mathematical equations (KaTeX integration)
+- ✅ Complex table formatting with cell styling
+- ✅ Multi-page layouts with automatic pagination
+- ✅ Professional typography and spacing
 
-**Visual Profiles:**
-- ✅ Tech Whitepaper - Engineering documentation
-- ✅ Dark Pro - Modern presentations
-- ✅ Minimalist - Architecture docs
-- ✅ Enterprise Blue - Business reports
+**Profile System:**
+- ✅ **Tech Whitepaper** - Blue accents, clean margins, engineering focus
+- ✅ **Dark Pro** - High contrast, modern aesthetic, screen-optimized
+- ✅ **Minimalist** - Maximum whitespace, subtle styling, architecture focus
+- ✅ **Enterprise Blue** - Corporate colors, conservative styling, business focus
 
-## 🚀 Quick Start
+## 📖 Pipeline Configuration
 
-Generate all examples:
+The `docs-pipeline-showcase.yaml` configuration demonstrates best practices:
 
-```bash
-# From repo root
-python tools/pdf/md2pdf.py docs/examples/advanced-markdown-showcase.md --output docs/examples/generated/advanced-markdown-showcase.pdf
-python tools/pdf/md2pdf.py docs/examples/technical-white-paper.md --output docs/examples/generated/technical-white-paper.pdf
-python tools/pdf/md2pdf.py docs/examples/product-requirements-doc.md --output docs/examples/generated/product-requirements-doc.pdf
+```yaml
+workspaces:
+  markdown-showcase:
+    documents:
+      - input: docs/examples/advanced-markdown-showcase.md
+        output: docs/examples/generated/showcase-tech.pdf
+        format: pdf
+        renderer: playwright
+        profile: tech-whitepaper
+      # ... 3 more profiles
+  
+  white-paper:
+    documents:
+      # ... 4 profiles for white paper
+  
+  prd:
+    documents:
+      # ... 4 profiles for PRD
 ```
+
+This approach enables:
+- Version-controlled configuration
+- Reproducible builds
+- CI/CD integration
+- Batch processing
 

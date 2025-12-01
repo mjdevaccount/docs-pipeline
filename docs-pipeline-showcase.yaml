@@ -1,0 +1,106 @@
+###############################################################################
+# docs-pipeline Showcase Configuration
+# 
+# This configuration generates professional demo materials showcasing the full
+# capabilities of the docs-pipeline system across multiple document types and
+# visual profiles.
+#
+# Documents:
+#   - Advanced Markdown Showcase (comprehensive feature demonstration)
+#   - Technical White Paper (event-driven microservices architecture)
+#   - Product Requirements Document (real-time collaboration platform)
+#
+# Profiles:
+#   - tech-whitepaper: Professional engineering documentation
+#   - dark-pro: Modern dark theme for presentations
+#   - minimalist: Clean, spacious architecture docs
+#   - enterprise-blue: Corporate-friendly business documents
+#
+# Usage:
+#   python -m tools.docs_pipeline.cli --config docs-pipeline-showcase.yaml
+#
+# Output: 12 PDFs in docs/examples/generated/
+###############################################################################
+
+workspaces:
+  # Advanced Markdown Showcase - Demonstrates all markdown capabilities
+  markdown-showcase:
+    documents:
+      - input: docs/examples/advanced-markdown-showcase.md
+        output: docs/examples/generated/showcase-tech.pdf
+        format: pdf
+        renderer: playwright
+        profile: tech-whitepaper
+      
+      - input: docs/examples/advanced-markdown-showcase.md
+        output: docs/examples/generated/showcase-dark.pdf
+        format: pdf
+        renderer: playwright
+        profile: dark-pro
+      
+      - input: docs/examples/advanced-markdown-showcase.md
+        output: docs/examples/generated/showcase-minimalist.pdf
+        format: pdf
+        renderer: playwright
+        profile: minimalist
+      
+      - input: docs/examples/advanced-markdown-showcase.md
+        output: docs/examples/generated/showcase-enterprise.pdf
+        format: pdf
+        renderer: playwright
+        profile: enterprise-blue
+  
+  # Technical White Paper - Production-quality architecture documentation
+  white-paper:
+    documents:
+      - input: docs/examples/technical-white-paper.md
+        output: docs/examples/generated/whitepaper-tech.pdf
+        format: pdf
+        renderer: playwright
+        profile: tech-whitepaper
+      
+      - input: docs/examples/technical-white-paper.md
+        output: docs/examples/generated/whitepaper-dark.pdf
+        format: pdf
+        renderer: playwright
+        profile: dark-pro
+      
+      - input: docs/examples/technical-white-paper.md
+        output: docs/examples/generated/whitepaper-minimalist.pdf
+        format: pdf
+        renderer: playwright
+        profile: minimalist
+      
+      - input: docs/examples/technical-white-paper.md
+        output: docs/examples/generated/whitepaper-enterprise.pdf
+        format: pdf
+        renderer: playwright
+        profile: enterprise-blue
+  
+  # Product Requirements Document - Enterprise PRD with diagrams
+  prd:
+    documents:
+      - input: docs/examples/product-requirements-doc.md
+        output: docs/examples/generated/prd-tech.pdf
+        format: pdf
+        renderer: playwright
+        profile: tech-whitepaper
+      
+      - input: docs/examples/product-requirements-doc.md
+        output: docs/examples/generated/prd-dark.pdf
+        format: pdf
+        renderer: playwright
+        profile: dark-pro
+      
+      - input: docs/examples/product-requirements-doc.md
+        output: docs/examples/generated/prd-minimalist.pdf
+        format: pdf
+        renderer: playwright
+        profile: minimalist
+      
+      - input: docs/examples/product-requirements-doc.md
+        output: docs/examples/generated/prd-enterprise.pdf
+        format: pdf
+        renderer: playwright
+        profile: enterprise-blue
+
