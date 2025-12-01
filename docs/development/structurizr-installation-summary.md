@@ -69,7 +69,7 @@ docker pull structurizr/cli:latest
 ### 4. Test Export
 ```bash
 # Export diagrams from existing DSL
-.\structurizr.bat export --workspace docs/ReportingManager_Phase0_Architecture.dsl --format mermaid --output docs/
+.\structurizr.bat export --workspace docs/architecture.dsl --format mermaid --output docs/
 ```
 
 ### 5. (Optional) Activate Virtual Environment
@@ -104,7 +104,7 @@ pip install -r structurizr-tools/requirements-structurizr.txt
 │   └── .gitignore                     # Git ignore rules
 ├── venv-structurizr/                  # Virtual environment (optional)
 └── docs/
-    └── ReportingManager_Phase0_Architecture.dsl  # Example DSL
+    └── architecture.dsl  # Example DSL
 ```
 
 ---
@@ -146,7 +146,7 @@ python structurizr-tools/structurizr.py export --workspace docs/Architecture.dsl
 
 1. **Generate diagrams from DSL:**
    ```bash
-   .\structurizr.bat export --workspace docs/ReportingManager_Phase0_Architecture.dsl --format mermaid --output docs/
+   .\structurizr.bat export --workspace docs/architecture.dsl --format mermaid --output docs/
    ```
 
 2. **Include in Markdown:**
@@ -160,7 +160,7 @@ python structurizr-tools/structurizr.py export --workspace docs/Architecture.dsl
 3. **Generate PDF:**
    ```bash
    cd pdf-tools
-   python md2pdf.py ../docs/ReportingManager_Phase0_Diagrams.md
+   python md2pdf.py ../docs/architecture-diagrams.md
    ```
 
 ### With Git / Version Control
@@ -200,7 +200,7 @@ docker pull structurizr/cli:latest
 - **Quick Start:** `structurizr-tools/QUICK_START.md`
 - **Full Documentation:** `structurizr-tools/README.md`
 - **Setup Guide:** `structurizr-tools/SETUP.md`
-- **Example DSL:** `docs/ReportingManager_Phase0_Architecture.dsl`
+- **Example DSL:** `docs/architecture.dsl`
 
 ---
 

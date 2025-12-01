@@ -142,7 +142,7 @@ python structurizr.py export --workspace docs/Architecture.dsl --format mermaid 
 ```json
 {
   "version": "1.0",
-  "workspace": "docs/ReportingManager_Phase0_Architecture.dsl",
+  "workspace": "docs/architecture.dsl",
   "formats": ["mermaid", "svg"],
   "output_dir": "docs/diagrams",
   "docker_image": "structurizr/cli:latest",

@@ -6,7 +6,7 @@ Project Documentation Architecture Proposal – Scaling Verification
 This test uses the same Playwright-based layout analysis pipeline as the
 other scaling tests, but runs it against the *actual* generated HTML for:
 
-  archive/reporting-manager-docs/ReportingManager_ArchitectureProposal_Enhanced.md
+  archive/project-docs/architecture-proposal-enhanced.md
 
 The goal is to:
   - Confirm all diagram blocks have reasonable available height.
@@ -49,7 +49,7 @@ async def run_project_docs_scaling_test() -> bool:
     # 1) Convert Markdown → HTML once using the same preprocessor as md2pdf
     work_dir = Path(__file__).parent / "test_outputs"
     work_dir.mkdir(parents=True, exist_ok=True)
-    html_file = work_dir / "ReportingManager_ArchitectureProposal_Enhanced.html"
+    html_file = work_dir / "architecture-proposal-enhanced.html"
 
     print(f"[INFO] Rendering Markdown to HTML for analysis: {md_file}")
     markdown_to_html(str(md_file), str(html_file))

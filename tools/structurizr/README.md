@@ -97,23 +97,23 @@ Generated Diagrams
 
 ```bash
 # Export to Mermaid format
-structurizr.bat export --workspace docs/ReportingManager_Phase0_Architecture.dsl --format mermaid --output docs/
+structurizr.bat export --workspace docs/architecture.dsl --format mermaid --output docs/
 
 # Export to PlantUML
-structurizr.bat export --workspace docs/ReportingManager_Phase0_Architecture.dsl --format plantuml --output docs/
+structurizr.bat export --workspace docs/architecture.dsl --format plantuml --output docs/
 
 # Export to PNG images
-structurizr.bat export --workspace docs/ReportingManager_Phase0_Architecture.dsl --format png --output docs/diagrams/
+structurizr.bat export --workspace docs/architecture.dsl --format png --output docs/diagrams/
 
 # Export to SVG
-structurizr.bat export --workspace docs/ReportingManager_Phase0_Architecture.dsl --format svg --output docs/diagrams/
+structurizr.bat export --workspace docs/architecture.dsl --format svg --output docs/diagrams/
 ```
 
 #### Interactive Viewer (Structurizr Lite)
 
 ```bash
 # Start Structurizr Lite server
-structurizr.bat serve --workspace docs/ReportingManager_Phase0_Architecture.dsl
+structurizr.bat serve --workspace docs/architecture.dsl
 
 # Access at http://localhost:8080
 ```
@@ -122,7 +122,7 @@ structurizr.bat serve --workspace docs/ReportingManager_Phase0_Architecture.dsl
 
 ```bash
 # Check DSL syntax
-structurizr.bat validate --workspace docs/ReportingManager_Phase0_Architecture.dsl
+structurizr.bat validate --workspace docs/architecture.dsl
 ```
 
 ---
@@ -149,7 +149,7 @@ tools/structurizr/
 
 1. **Generate diagrams from DSL**:
    ```bash
-   structurizr.bat export --workspace docs/ReportingManager_Phase0_Architecture.dsl --format mermaid --output docs/
+   structurizr.bat export --workspace docs/architecture.dsl --format mermaid --output docs/
    ```
 
 2. **Include in Markdown**:
@@ -164,14 +164,14 @@ tools/structurizr/
 3. **Generate PDF**:
    ```bash
    cd tools/pdf
-   python md2pdf.py ../../docs/ReportingManager_Phase0_Diagrams.md
+   python md2pdf.py ../../docs/architecture-diagrams.md
    ```
 
 ### With Git / Version Control
 
 1. **Commit DSL files** (source of truth):
    ```bash
-   git add docs/ReportingManager_Phase0_Architecture.dsl
+   git add docs/architecture.dsl
    git commit -m "Add architecture model"
    ```
 
@@ -181,7 +181,7 @@ tools/structurizr/
    - name: Generate architecture diagrams
      run: |
        docker run --rm -v ${{ github.workspace }}:/workspace structurizr/cli export \
-         -workspace /workspace/docs/ReportingManager_Phase0_Architecture.dsl \
+         -workspace /workspace/docs/architecture.dsl \
          -format mermaid \
          -output /workspace/docs/
    ```
@@ -210,7 +210,7 @@ workspace "Workspace Name" "Description" {
 
 ### Example DSL
 
-See `docs/ReportingManager_Phase0_Architecture.dsl` for a complete example.
+See `docs/architecture.dsl` for a complete example.
 
 ---
 
@@ -257,7 +257,7 @@ See `docs/ReportingManager_Phase0_Architecture.dsl` for a complete example.
 
 ```json
 {
-  "workspace": "docs/ReportingManager_Phase0_Architecture.dsl",
+  "workspace": "docs/architecture.dsl",
   "output_dir": "docs/diagrams",
   "formats": ["mermaid", "png"],
   "views": {
@@ -286,7 +286,7 @@ views {
         autoLayout lr
     }
     
-    dynamic reportingManager "CustomFlow" {
+    dynamic systemFlow "CustomFlow" {
         user -> portal "1. Action"
         portal -> manager "2. Process"
         autoLayout tb
@@ -373,7 +373,7 @@ docker logs $(docker ps -lq)
 
 ### 3. Naming Conventions
 - Use consistent naming: `{System}_{Phase}_{View}.dsl`
-- Example: `ReportingManager_Phase0_Architecture.dsl`
+- Example: `architecture.dsl`
 
 ### 4. Documentation
 - Document each view's audience and purpose
@@ -410,7 +410,7 @@ jobs:
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
             structurizr/cli export \
-            -workspace /workspace/docs/ReportingManager_Phase0_Architecture.dsl \
+            -workspace /workspace/docs/architecture.dsl \
             -format mermaid \
             -output /workspace/docs/
       
@@ -431,7 +431,7 @@ steps:
   inputs:
     containerRegistry: 'Docker Hub'
     command: 'run'
-    arguments: '--rm -v $(System.DefaultWorkingDirectory):/workspace structurizr/cli export -workspace /workspace/docs/ReportingManager_Phase0_Architecture.dsl -format mermaid -output /workspace/docs/'
+    arguments: '--rm -v $(System.DefaultWorkingDirectory):/workspace structurizr/cli export -workspace /workspace/docs/architecture.dsl -format mermaid -output /workspace/docs/'
 ```
 
 ---
@@ -441,7 +441,7 @@ steps:
 - **Structurizr DSL Documentation:** https://github.com/structurizr/dsl
 - **C4 Model:** https://c4model.com/
 - **Structurizr Lite:** https://github.com/structurizr/lite
-- **Examples:** See `docs/ReportingManager_Phase0_Architecture.dsl`
+- **Examples:** See `docs/architecture.dsl`
 
 ---
 
@@ -455,6 +455,5 @@ For issues or questions:
 
 ---
 
-**Last Updated:** November 2025  
-**Maintained By:** Reporting Architecture Team
+**Last Updated:** November 2025
 

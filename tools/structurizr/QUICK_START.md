@@ -34,10 +34,10 @@ cd structurizr-tools
 
 ```bash
 # Export from existing DSL file
-.\structurizr.bat export --workspace ../docs/ReportingManager_Phase0_Architecture.dsl --format mermaid --output ../docs/
+.\structurizr.bat export --workspace ../docs/architecture.dsl --format mermaid --output ../docs/
 
 # Or validate your DSL
-.\structurizr.bat validate --workspace ../docs/ReportingManager_Phase0_Architecture.dsl
+.\structurizr.bat validate --workspace ../docs/architecture.dsl
 ```
 
 ---
@@ -46,7 +46,7 @@ cd structurizr-tools
 
 ```bash
 # Start Structurizr Lite server
-.\structurizr.bat serve --workspace ../docs/ReportingManager_Phase0_Architecture.dsl
+.\structurizr.bat serve --workspace ../docs/architecture.dsl
 
 # Open browser to http://localhost:8080
 ```
@@ -75,7 +75,7 @@ structurizr.bat serve --workspace docs/Architecture.dsl
 
 - Read `README.md` for full documentation
 - See `SETUP.md` for detailed setup instructions
-- Check `docs/ReportingManager_Phase0_Architecture.dsl` for DSL examples
+- Check `docs/architecture.dsl` for DSL examples
 
 ---
 

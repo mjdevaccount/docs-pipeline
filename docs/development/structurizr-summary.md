@@ -59,7 +59,7 @@ python structurizr-tools/structurizr.py --check
 python structurizr-tools/structurizr.py init
 
 # 3. Export diagrams
-python structurizr-tools/structurizr.py export --workspace docs/ReportingManager_Phase0_Architecture.dsl --format mermaid --output docs/
+python structurizr-tools/structurizr.py export --workspace docs/architecture.dsl --format mermaid --output docs/
 
 # 4. Or use config file
 python structurizr-tools/structurizr.py --config structurizr-config.json
@@ -115,7 +115,7 @@ python structurizr-tools/structurizr.py export --workspace docs/Architecture.dsl
 
 # 3. Generate PDF
 cd pdf-tools
-python md2pdf.py ../docs/ReportingManager_Phase0_Diagrams.md
+python md2pdf.py ../docs/architecture-diagrams.md
 ```
 
 ### With Git / CI/CD
@@ -187,5 +187,4 @@ The Structurizr CLI Python wrapper is now:
 
 **Version:** 2.0.0  
 **Status:** Production-Ready ✅  
-**Maintained By:** Reporting Architecture Team
 

@@ -78,7 +78,7 @@ async def main():
     print()
     
     # Check if test output exists
-    test_html = REPO_ROOT / "tools/pdf/tests/test_outputs/reporting-manager-architecture-proposal.html"
+    test_html = REPO_ROOT / "tools/pdf/tests/test_outputs/architecture-proposal.html"
     
     if not test_html.exists():
         print("[ERROR] Test HTML not found. Run test_project_docs_layout.py first.")

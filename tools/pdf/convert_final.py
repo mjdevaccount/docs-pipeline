@@ -1357,10 +1357,10 @@ if __name__ == "__main__":
         # Paths relative to project root (one level up from pdf-tools/)
         project_root = Path(__file__).parent.parent
         files = [
-            (project_root / "docs/ReportingManager_Phase0_Foundation.md", project_root / "docs/ReportingManager_Phase0_Foundation.pdf"),
-            (project_root / "docs/ReportingManagerSpec.md", project_root / "docs/ReportingManagerSpec.pdf"),
-            (project_root / "docs/ReportingManagerSpec-ExecutiveBrief.md", project_root / "docs/ReportingManagerSpec-ExecutiveBrief.pdf"),
-            (project_root / "docs/ReportingManager_ExecutiveArchitecture.md", project_root / "docs/ReportingManager_ExecutiveArchitecture.pdf")
+            (project_root / "docs/architecture-foundation.md", project_root / "docs/architecture-foundation.pdf"),
+            (project_root / "docs/architecture-spec.md", project_root / "docs/architecture-spec.pdf"),
+            (project_root / "docs/architecture-executive-brief.md", project_root / "docs/architecture-executive-brief.pdf"),
+            (project_root / "docs/architecture-executive.md", project_root / "docs/architecture-executive.pdf")
         ]
         
         print("=" * 70)

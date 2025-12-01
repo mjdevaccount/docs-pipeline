@@ -359,6 +359,5 @@ For issues or questions:
 
 ---
 
-**Last Updated:** November 2025  
-**Maintained By:** Reporting Architecture Team
+**Last Updated:** November 2025
 

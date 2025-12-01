@@ -111,16 +111,16 @@ def run_pipeline(config_path: Path, dry_run: bool = False, parallel: bool = Fals
     Example config:
 
     workspaces:
-      reporting-manager:
+      project-docs:
         diagrams:
-          dsl: archive/reporting-manager-docs/ReportingManager_Phase0_Architecture.dsl
+          workspace: docs/architecture.dsl
           formats: ["mermaid"]
-          output_dir: archive/reporting-manager-docs/diagrams
+          output_dir: docs/diagrams
         documents:
-          - input: archive/reporting-manager-docs/ReportingManager_ArchitectureProposal_Enhanced.md
-            output: archive/reporting-manager-docs/ReportingManager_ArchitectureProposal_Enhanced.pdf
+          - input: docs/architecture-proposal.md
+            output: docs/architecture-proposal.pdf
             format: pdf
-            profile: reporting-manager
+            profile: default
     """
     cfg = _load_pipeline_config(config_path)
     all_ok = True

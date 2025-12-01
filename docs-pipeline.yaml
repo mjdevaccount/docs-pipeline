@@ -9,6 +9,18 @@
 #   python -m tools.docs_pipeline.cli --config docs-pipeline.yaml
 
 workspaces:
+  # Demo: Generate architecture diagram then embed in document
+  demo-workspace:
+    diagrams:
+      workspace: docs/examples/sample-architecture.dsl
+      formats: ["mermaid", "png"]
+      output_dir: docs/examples/diagrams
+    
+    documents:
+      - input: docs/examples/architecture-overview.md
+        output: docs/examples/generated/architecture-overview.pdf
+        format: pdf
+
   # Example: Development Documentation
   development-docs:
     # Optional: Generate diagrams from Structurizr DSL first

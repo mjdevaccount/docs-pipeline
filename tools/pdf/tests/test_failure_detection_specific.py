@@ -43,7 +43,7 @@ async def test_failure_detection_from_actual_document():
     print("FAILURE DETECTION AND RECOVERY - ACTUAL DOCUMENT TEST")
     print("="*70)
     
-    html_file = Path(__file__).parent.parent.parent / "docs" / "ReportingManager_ArchitectureProposal_Enhanced.html"
+    html_file = Path(__file__).parent.parent.parent / "docs" / "architecture-proposal-enhanced.html"
     
     if not html_file.exists():
         print(f"{FAIL} HTML file not found: {html_file}")

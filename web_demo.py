@@ -96,11 +96,16 @@ def upload_file():
         return jsonify({'error': f'PDF generation failed: {str(e)}'}), 500
 
 
-@app.route('/download/<filename>')
-def download_file(filename):
-    """Download generated PDF"""
+@app.route('/download/<path:filepath>')
+def download_file(filepath):
+    """Download generated PDF (supports subdirectories)"""
     try:
-        file_path = OUTPUT_FOLDER / secure_filename(filename)
+        # Handle both flat files and subdirectory paths
+        # Split path and secure each component
+        parts = filepath.split('/')
+        file_path = OUTPUT_FOLDER
+        for part in parts:
+            file_path = file_path / secure_filename(part)
         
         if not file_path.exists():
             return jsonify({'error': 'File not found'}), 404
@@ -108,7 +113,7 @@ def download_file(filename):
         return send_file(
             file_path,
             as_attachment=True,
-            download_name=filename,
+            download_name=file_path.name,
             mimetype='application/pdf'
         )
     except Exception as e:
@@ -198,29 +203,47 @@ def run_pipeline_endpoint():
         # Save config
         file.save(config_path)
         
-        # Run pipeline
+        # Run pipeline and capture output
         from tools.docs_pipeline.runner import run_pipeline
+        import io
+        import sys
         
-        success = run_pipeline(config_path, dry_run=False, parallel=True)
+        # Capture stdout
+        old_stdout = sys.stdout
+        sys.stdout = captured_output = io.StringIO()
+        
+        try:
+            success = run_pipeline(config_path, dry_run=False, parallel=True)
+        finally:
+            sys.stdout = old_stdout
+        
+        log_output = captured_output.getvalue()
+        
+        # Find all generated PDFs in output folder and subdirectories
+        generated_pdfs = []
+        for pdf_file in OUTPUT_FOLDER.rglob('*.pdf'):
+            rel_path = pdf_file.relative_to(OUTPUT_FOLDER)
+            generated_pdfs.append({
+                'filename': pdf_file.name,
+                'path': str(rel_path),
+                'download_url': f'/download/{rel_path}',
+                'size': f"{pdf_file.stat().st_size / 1024 / 1024:.2f} MB"
+            })
         
         if success:
-            # Find all generated PDFs in output folder
-            generated_pdfs = []
-            for pdf_file in OUTPUT_FOLDER.glob('*.pdf'):
-                generated_pdfs.append({
-                    'filename': pdf_file.name,
-                    'download_url': f'/download/{pdf_file.name}',
-                    'size': f"{pdf_file.stat().st_size / 1024 / 1024:.2f} MB"
-                })
-            
             return jsonify({
                 'success': True,
                 'message': 'Pipeline executed successfully',
+                'log': log_output,
                 'outputs': generated_pdfs,
                 'count': len(generated_pdfs)
             })
         else:
-            return jsonify({'error': 'Pipeline failed - check logs for details'}), 500
+            return jsonify({
+                'success': False,
+                'error': 'Pipeline execution failed',
+                'log': log_output
+            }), 500
             
     except Exception as e:
         print(f"Error during pipeline execution: {e}")

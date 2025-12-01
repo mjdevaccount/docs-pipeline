@@ -123,7 +123,7 @@ Expected output:
 
 ```bash
 # Export a test diagram (if you have a DSL file)
-.\structurizr.bat export --workspace ../docs/ReportingManager_Phase0_Architecture.dsl --format mermaid --output ../docs/
+.\structurizr.bat export --workspace ../docs/architecture.dsl --format mermaid --output ../docs/
 ```
 
 ---
@@ -170,7 +170,7 @@ docker pull structurizr/cli:latest
 ## Next Steps
 
 1. **Create your first DSL file:**
-   - See `docs/ReportingManager_Phase0_Architecture.dsl` for example
+   - See `docs/architecture.dsl` for example
    - Or start with Structurizr DSL documentation: https://github.com/structurizr/dsl
 
 2. **Generate diagrams:**
@@ -196,7 +196,7 @@ docker pull structurizr/cli:latest
 - **Structurizr DSL Documentation:** https://github.com/structurizr/dsl
 - **C4 Model:** https://c4model.com/
 - **Structurizr Lite:** https://github.com/structurizr/lite
-- **Example DSL:** `docs/ReportingManager_Phase0_Architecture.dsl`
+- **Example DSL:** `docs/architecture.dsl`
 
 ---
 

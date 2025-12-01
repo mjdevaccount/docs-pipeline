@@ -1,7 +1,7 @@
-# Test Results - ReportingManager_Phase0_Architecture.dsl
+# Test Results - Architecture_Phase0_Architecture.dsl
 
 **Date:** November 2025  
-**DSL File:** `docs/ReportingManager_Phase0_Architecture.dsl`  
+**DSL File:** `docs/Architecture_Phase0_Architecture.dsl`  
 **Status:** ✅ Ready for Export
 
 ---
@@ -12,16 +12,16 @@
 
 1. **Single Format Export (Mermaid)**
    ```bash
-   python structurizr.py export --workspace docs\ReportingManager_Phase0_Architecture.dsl --format mermaid --output docs\diagrams --dry-run --verbose
+   python structurizr.py export --workspace docs\Architecture_Phase0_Architecture.dsl --format mermaid --output docs\diagrams --dry-run --verbose
    ```
-   - ✅ Workspace path correctly resolved: `docs/ReportingManager_Phase0_Architecture.dsl`
+   - ✅ Workspace path correctly resolved: `docs/Architecture_Phase0_Architecture.dsl`
    - ✅ Output directory created: `docs/diagrams`
    - ✅ Docker command properly formatted with Windows path normalization
    - ✅ Workspace directory correctly extracted: `/c/Work/docs`
 
 2. **Batch Export (Config File)**
    ```bash
-   python structurizr.py --config structurizr-tools/reporting-manager-config.json --dry-run --verbose
+   python structurizr.py --config structurizr-tools/project-config.json --dry-run --verbose
    ```
    - ✅ Config file validated
    - ✅ All three formats (mermaid, plantuml, svg) processed
@@ -52,7 +52,7 @@
 ### Views
 1. **SystemContext** - High-level system context
 2. **Containers** - Container-level architecture
-3. **ReportingManagerComponents** - Component-level detail
+3. **ArchitectureComponents** - Component-level detail
 4. **StandardJobExecution** - Success flow sequence diagram
 5. **FailureDetection** - Failure detection and recovery flow
 6. **CacheCoordination** - Cache coordination flow
@@ -67,7 +67,7 @@ When Docker is running, the export will generate:
 ### Mermaid Format (`docs/diagrams/*.mmd`)
 - SystemContext.mmd
 - Containers.mmd
-- ReportingManagerComponents.mmd
+- ArchitectureComponents.mmd
 - StandardJobExecution.mmd
 - FailureDetection.mmd
 - CacheCoordination.mmd
@@ -76,7 +76,7 @@ When Docker is running, the export will generate:
 ### PlantUML Format (`docs/diagrams/*.puml`)
 - SystemContext.puml
 - Containers.puml
-- ReportingManagerComponents.puml
+- ArchitectureComponents.puml
 - StandardJobExecution.puml
 - FailureDetection.puml
 - CacheCoordination.puml
@@ -85,7 +85,7 @@ When Docker is running, the export will generate:
 ### SVG Format (`docs/diagrams/*.svg`)
 - SystemContext.svg
 - Containers.svg
-- ReportingManagerComponents.svg
+- ArchitectureComponents.svg
 - StandardJobExecution.svg
 - FailureDetection.svg
 - CacheCoordination.svg
@@ -101,22 +101,22 @@ When Docker is running, the export will generate:
 
 2. **Single Format Export:**
    ```bash
-   python structurizr-tools\structurizr.py export --workspace docs\ReportingManager_Phase0_Architecture.dsl --format mermaid --output docs\diagrams
+   python structurizr-tools\structurizr.py export --workspace docs\Architecture_Phase0_Architecture.dsl --format mermaid --output docs\diagrams
    ```
 
 3. **Batch Export (All Formats):**
    ```bash
-   python structurizr-tools\structurizr.py --config structurizr-tools\reporting-manager-config.json
+   python structurizr-tools\structurizr.py --config structurizr-tools\project-config.json
    ```
 
 4. **Validate DSL First:**
    ```bash
-   python structurizr-tools\structurizr.py validate --workspace docs\ReportingManager_Phase0_Architecture.dsl
+   python structurizr-tools\structurizr.py validate --workspace docs\Architecture_Phase0_Architecture.dsl
    ```
 
 5. **Interactive View (Structurizr Lite):**
    ```bash
-   python structurizr-tools\structurizr.py serve --workspace docs\ReportingManager_Phase0_Architecture.dsl
+   python structurizr-tools\structurizr.py serve --workspace docs\Architecture_Phase0_Architecture.dsl
    ```
    Then open http://localhost:8080
 
@@ -124,12 +124,12 @@ When Docker is running, the export will generate:
 
 ## Configuration File
 
-Created: `structurizr-tools/reporting-manager-config.json`
+Created: `structurizr-tools/project-config.json`
 
 ```json
 {
   "version": "1.0",
-  "workspace": "docs/ReportingManager_Phase0_Architecture.dsl",
+  "workspace": "docs/Architecture_Phase0_Architecture.dsl",
   "formats": ["mermaid", "plantuml", "svg"],
   "output_dir": "docs/diagrams",
   "docker_image": "structurizr/cli:latest",
