@@ -175,6 +175,59 @@ def download_example(filename):
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/pipeline', methods=['POST'])
+def run_pipeline_endpoint():
+    """Handle pipeline config upload and execution"""
+    
+    if 'config' not in request.files:
+        return jsonify({'error': 'No config file uploaded'}), 400
+    
+    file = request.files['config']
+    
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+    
+    if not file.filename.endswith(('.yaml', '.yml')):
+        return jsonify({'error': 'Config must be YAML file (.yaml or .yml)'}), 400
+    
+    try:
+        # Secure the filename
+        filename = secure_filename(file.filename)
+        config_path = UPLOAD_FOLDER / filename
+        
+        # Save config
+        file.save(config_path)
+        
+        # Run pipeline
+        from tools.docs_pipeline.runner import run_pipeline
+        
+        success = run_pipeline(config_path, dry_run=False, parallel=True)
+        
+        if success:
+            # Find all generated PDFs in output folder
+            generated_pdfs = []
+            for pdf_file in OUTPUT_FOLDER.glob('*.pdf'):
+                generated_pdfs.append({
+                    'filename': pdf_file.name,
+                    'download_url': f'/download/{pdf_file.name}',
+                    'size': f"{pdf_file.stat().st_size / 1024 / 1024:.2f} MB"
+                })
+            
+            return jsonify({
+                'success': True,
+                'message': 'Pipeline executed successfully',
+                'outputs': generated_pdfs,
+                'count': len(generated_pdfs)
+            })
+        else:
+            return jsonify({'error': 'Pipeline failed - check logs for details'}), 500
+            
+    except Exception as e:
+        print(f"Error during pipeline execution: {e}")
+        traceback.print_exc()
+        return jsonify({'error': f'Pipeline execution failed: {str(e)}'}), 500
+
+
 if __name__ == '__main__':
     print("🚀 Starting docs-pipeline web demo...")
     print("📍 Server will be available at http://localhost:8080")

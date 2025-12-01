@@ -12,9 +12,21 @@ workspaces:
   # Example workspace: Project Documentation
   project-docs:
     diagrams:
-      # Structurizr DSL workspace file
+      # Structurizr workspace file (.dsl or .json)
       # Generate diagrams from this architecture model
-      dsl: docs/development/architecture.dsl
+      workspace: docs/development/architecture.dsl
+      # Alternative: use 'dsl' (legacy, still supported)
+      # dsl: docs/development/architecture.dsl
+      
+      # Optional: Workspace directory containing supporting files
+      # If not specified, uses the parent directory of the workspace file
+      # workspace_dir: docs/development/structurizr-workspace
+      
+      # Optional: Additional resource directories (images, styles, etc.)
+      # These will be available to the Structurizr CLI during export
+      # resources:
+      #   - docs/images
+      #   - docs/styles
       
       # Export formats for diagrams
       # Options: mermaid, plantuml, png, svg, html
@@ -67,9 +79,12 @@ workspaces:
         profile: enterprise
 
 # Notes:
-# - Diagrams are generated FIRST, then documents
+# - Diagrams are generated FIRST, then documents (so diagrams are available for embedding)
 # - Diagrams are embedded in Markdown via Mermaid code blocks or image references
 # - If output is not specified, it defaults to same name with .pdf/.docx extension
 # - PDF profiles control styling (see tools/pdf/profiles.py)
 # - All paths are relative to repository root
+# - Structurizr workspace: The workspace file (.dsl or .json) and all supporting files
+#   (images, styles, etc.) should be in the same directory or subdirectories.
+#   Use 'workspace_dir' to specify the root directory containing all workspace files.
 
