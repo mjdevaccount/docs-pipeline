@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Reporting Manager Layout Visual Test
-====================================
-Generates the Reporting Manager Architecture Proposal PDF using the
+Project Documentation Layout Visual Test
+=======================================
+Generates the Project Documentation Architecture Proposal PDF using the
 Playwright pipeline and verifies that the pipeline runs end-to-end.
 
 This is a document-specific visual validation: it ensures that
@@ -72,19 +72,9 @@ def _load_docs_config() -> List[LayoutDocConfig]:
     """
     config_path = Path(__file__).parent / "layout_docs.yaml"
     if not config_path.exists():
-        # Default fallback: preserve the original Reporting Manager doc config.
-        invariants = InvariantConfig()
-        return [
-            LayoutDocConfig(
-                name="reporting-manager-architecture-proposal",
-                md="archive/reporting-manager-docs/ReportingManager_ArchitectureProposal_Enhanced.md",
-                profile="reporting-manager",
-                title="Reporting Manager Architecture Proposal (Enhanced)",
-                invariants=invariants,
-                generate_cover=True,
-                generate_toc=True,
-            )
-        ]
+        # Default fallback: return empty list if no config file exists
+        # Users should create layout_docs.yaml with their document paths
+        return []
 
     raw = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
     docs_raw: List[Dict[str, Any]] = raw.get("documents", [])
@@ -341,7 +331,7 @@ async def _run_single_doc_test(doc_cfg: LayoutDocConfig) -> bool:
     return False
 
 
-async def run_reporting_manager_visual_test() -> bool:
+async def run_project_docs_visual_test() -> bool:
     """
     Backwards-compatible entrypoint used by run_all_tests.py.
 
@@ -365,7 +355,7 @@ async def run_reporting_manager_visual_test() -> bool:
 
 
 if __name__ == "__main__":
-    result = asyncio.run(run_reporting_manager_visual_test())
+    result = asyncio.run(run_project_docs_visual_test())
     sys.exit(0 if result else 1)
 
 

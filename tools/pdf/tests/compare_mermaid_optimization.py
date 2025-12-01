@@ -15,7 +15,8 @@ from playwright.async_api import async_playwright
 REPO_ROOT = Path(__file__).parent.parent.parent.parent
 
 # Test document
-TEST_DOC = REPO_ROOT / "projects/reporting-2.0/proposals/reporting-manager/source/ReportingManager_ArchitectureProposal_Enhanced.md"
+# Update this path to point to your test document
+TEST_DOC = REPO_ROOT / "docs" / "examples" / "test-document.md"  # Update to your actual test document
 
 # Theme configs
 THEME_OLD = {
@@ -80,7 +81,7 @@ async def main():
     test_html = REPO_ROOT / "tools/pdf/tests/test_outputs/reporting-manager-architecture-proposal.html"
     
     if not test_html.exists():
-        print("[ERROR] Test HTML not found. Run test_reporting_manager_layout.py first.")
+        print("[ERROR] Test HTML not found. Run test_project_docs_layout.py first.")
         return
     
     print(f"[INFO] Analyzing: {test_html.name}")

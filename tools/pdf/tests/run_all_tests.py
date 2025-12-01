@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from test_scaling_with_frontmatter import run_all_tests as run_unit_tests
 from test_scaling_validation import run_all_validation_tests as run_validation_tests
 from test_scaling_visual_validation import run_visual_tests as run_visual_tests
-from test_reporting_manager_layout import run_reporting_manager_visual_test
+from test_project_docs_layout import run_project_docs_visual_test
 
 try:
     from colorama import Fore, Style, init as colorama_init
@@ -65,14 +65,14 @@ async def main():
         print(f"{FAIL} Visual tests failed: {e}")
         results['visual'] = False
     
-    # Reporting Manager doc-specific test
-    print(f"\n{HEADER}[4/4] Reporting Manager Layout (Document-Specific){RESET}")
+    # Project documentation doc-specific test
+    print(f"\n{HEADER}[4/4] Project Documentation Layout (Document-Specific){RESET}")
     print("-" * 70)
     try:
-        results['reporting_manager'] = await run_reporting_manager_visual_test()
+        results['project_docs'] = await run_project_docs_visual_test()
     except Exception as e:
-        print(f"{FAIL} Reporting Manager layout test failed: {e}")
-        results['reporting_manager'] = False
+        print(f"{FAIL} Project documentation layout test failed: {e}")
+        results['project_docs'] = False
     
     # Final summary
     print(f"\n{HEADER}{'='*70}")

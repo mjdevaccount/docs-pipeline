@@ -148,7 +148,7 @@ Complete examples in each tool directory:
 **PDF layout verification:**
 ```bash
 cd tools/pdf/tests
-python test_reporting_manager_layout.py
+python test_project_docs_layout.py
 ```
 
 **AI agents (requires API key):**

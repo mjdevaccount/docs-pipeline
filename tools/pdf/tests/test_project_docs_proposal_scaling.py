@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Reporting Manager Architecture Proposal – Scaling Verification
-==============================================================
+Project Documentation Architecture Proposal – Scaling Verification
+==================================================================
 
 This test uses the same Playwright-based layout analysis pipeline as the
 other scaling tests, but runs it against the *actual* generated HTML for:
@@ -30,18 +30,20 @@ from playwright_pdf.decorators.toc import inject_toc  # type: ignore[import]
 from convert_final import markdown_to_html, extract_metadata  # type: ignore[import]
 
 
-async def run_reporting_manager_scaling_test() -> bool:
+async def run_project_docs_scaling_test() -> bool:
     # tests/ -> pdf/ -> tools/ -> repo_root
     repo_root = Path(__file__).parent.parent.parent.parent
+    # Update this path to point to your actual test document
     md_file = (
         repo_root
-        / "archive"
-        / "reporting-manager-docs"
-        / "ReportingManager_ArchitectureProposal_Enhanced.md"
+        / "docs"
+        / "examples"
+        / "test-document.md"  # Update to your test document path
     )
 
     if not md_file.exists():
-        print(f"[WARN] Markdown file not found: {md_file}")
+        print(f"[WARN] Test document not found: {md_file}")
+        print(f"[INFO] Update the path in this test to point to your test document")
         return False
 
     # 1) Convert Markdown → HTML once using the same preprocessor as md2pdf
@@ -60,7 +62,7 @@ async def run_reporting_manager_scaling_test() -> bool:
         # Use frontmatter metadata for a realistic cover page
         metadata, _ = extract_metadata(md_file.read_text(encoding="utf-8"))
         cover_config = CoverConfig(
-            title=metadata.get("title", "Reporting Manager Architecture Proposal"),
+            title=metadata.get("title", "Project Documentation Architecture Proposal"),
             author=metadata.get("author", "Unknown"),
             organization=metadata.get("organization", "Unknown"),
             date=str(metadata.get("date", "")),
@@ -115,9 +117,9 @@ async def run_reporting_manager_scaling_test() -> bool:
 
 async def main() -> bool:
     print("\n" + "=" * 70)
-    print("REPORTING MANAGER – ARCHITECTURE PROPOSAL SCALING TEST")
+    print("PROJECT DOCUMENTATION – ARCHITECTURE PROPOSAL SCALING TEST")
     print("=" * 70)
-    ok = await run_reporting_manager_scaling_test()
+    ok = await run_project_docs_scaling_test()
     print("\nResult:", "OK" if ok else "FAIL")
     return ok
 

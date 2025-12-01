@@ -282,7 +282,7 @@ Define custom views in your DSL:
 views {
     systemContext etrmPlatform "SystemContext" {
         include *
-        title "System Context - Reporting Manager"
+        title "System Context - Project Documentation"
         autoLayout lr
     }
     

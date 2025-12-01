@@ -9,7 +9,8 @@ from pathlib import Path
 
 # Paths
 REPO_ROOT = Path(__file__).parent.parent.parent.parent
-PDF_FILE = REPO_ROOT / "tools/pdf/tests/test_outputs/reporting-manager-architecture-proposal.playwright.pdf"
+# Update this path to point to your generated PDF for verification
+PDF_FILE = REPO_ROOT / "tools/pdf/tests/test_outputs/project-docs-architecture-proposal.playwright.pdf"
 CACHE_DIR = REPO_ROOT / "tools/pdf/tests/test_outputs/diagram_cache"
 
 def main():
@@ -21,7 +22,8 @@ def main():
     # Check if PDF exists
     if not PDF_FILE.exists():
         print(f"❌ PDF not found: {PDF_FILE}")
-        print("Run: python tools/pdf/tests/test_reporting_manager_layout.py")
+        print("Run: python tools/pdf/tests/test_project_docs_layout.py")
+        print("Or update PDF_FILE path in this script to point to your generated PDF")
         return
     
     print(f"✅ PDF found: {PDF_FILE}")
@@ -88,7 +90,7 @@ def main():
     print("=" * 80)
     print()
     print(f"Open this file in your browser to see the HTML version:")
-    html_file = PDF_FILE.parent / "reporting-manager-architecture-proposal.html"
+    html_file = PDF_FILE.parent / "project-docs-architecture-proposal.html"
     if html_file.exists():
         print(f"  file:///{html_file.as_posix()}")
         print()

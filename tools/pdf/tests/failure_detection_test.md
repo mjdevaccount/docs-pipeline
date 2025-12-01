@@ -17,7 +17,7 @@ This document contains a single large diagram to test the scaling logic. The dia
 
 Before we get to the diagram, here's some background information to simulate real document content. This ensures we have content above the diagram, which is important for testing the scaling calculations.
 
-The Reporting Manager provides automatic failure detection and recovery capabilities. When a job stops sending heartbeats, the system detects the timeout and automatically classifies the failure type.
+The project documentation system provides automatic failure detection and recovery capabilities. When a job stops sending heartbeats, the system detects the timeout and automatically classifies the failure type.
 
 ### Failure Detection and Recovery
 

@@ -154,7 +154,7 @@ Examples:
   
   # With full metadata
   python pdf_playwright.py input.html output.pdf \\
-    --title "Reporting Manager Architecture" \\
+    --title "Project Documentation Architecture" \\
     --author "Matt Jeffcoat" \\
     --organization "Engineering Team" \\
     --date "November 2025" \\

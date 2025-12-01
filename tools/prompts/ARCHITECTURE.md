@@ -274,7 +274,7 @@ python -m tools.prompts.cli \
 
 python tools/pdf/md2pdf.py \
     polished.md \
-    --profile reporting-manager \
+    --profile project-docs \
     --generate-cover \
     --generate-toc
 ```

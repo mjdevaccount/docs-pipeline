@@ -45,7 +45,7 @@ Polish the document for final presentation:
 ## Style Guidelines
 
 **Terminology Standards:**
-- Use "Reporting Manager" (not "reporting manager" or "ReportingManager" in prose)
+- Use "Project Documentation" (not "project documentation" or "ProjectDocumentation" in prose)
 - Use "mark-to-market" (not "MTM" in formal sections)
 - Use "Azure Batch" (proper noun capitalization)
 

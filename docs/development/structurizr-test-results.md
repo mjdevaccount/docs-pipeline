@@ -33,8 +33,8 @@
 ## DSL File Analysis
 
 ### Structure
-- **Workspace:** "Reporting Manager Phase 0"
-- **Description:** Architecture model for Reporting Manager foundation infrastructure
+- **Workspace:** "Project Documentation Phase 0"
+- **Description:** Architecture model for project documentation foundation infrastructure
 - **Views Defined:** 7 views
   - System Context (Level 1)
   - Container Diagram (Level 2)
@@ -45,7 +45,7 @@
 ### Elements
 - **Persons:** 2 (Business User, Operations Team)
 - **Software Systems:** 2 (Market Data API, Price Service Bus)
-- **Containers:** 8 (Web Portal, Service Bus, Functions, Reporting Manager, Azure Batch, SQL, Redis)
+- **Containers:** 8 (Web Portal, Service Bus, Functions, Project Documentation, Azure Batch, SQL, Redis)
 - **Components:** 8 (APIs, Processors, Data Layer, Observability)
 - **Relationships:** 30+ relationships defined
 

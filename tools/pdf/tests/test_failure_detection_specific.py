@@ -56,7 +56,7 @@ async def test_failure_detection_from_actual_document():
             
             # Inject cover and TOC (same as production)
             cover_config = CoverConfig(
-                title="Reporting Manager Architecture Proposal",
+                title="Project Documentation Architecture Proposal",
                 author="Matt Jeffcoat",
                 organization="[Organization Name]",
                 date="November 2025"
@@ -67,7 +67,7 @@ async def test_failure_detection_from_actual_document():
             
             # Measure page dimensions (using new measurement system)
             header_html, footer_html = build_header_footer(
-                title="Reporting Manager Architecture Proposal",
+                title="Project Documentation Architecture Proposal",
                 organization="[Organization Name]",
                 author="Matt Jeffcoat",
                 date="November 2025"

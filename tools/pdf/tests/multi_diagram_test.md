@@ -15,13 +15,13 @@ This test document validates that the PDF generation pipeline correctly scales m
 
 ## Background
 
-The Reporting Manager provides comprehensive orchestration capabilities. This document includes three key architectural diagrams that demonstrate different aspects of the system.
+The project documentation system provides comprehensive orchestration capabilities. This document includes three key architectural diagrams that demonstrate different aspects of the system.
 
 ---
 
 ## Architecture Overview (Phase 0)
 
-The Reporting Manager architecture consists of multiple layers working together to provide unified job tracking and orchestration.
+The project documentation architecture consists of multiple layers working together to provide unified job tracking and orchestration.
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'fontSize':'12px'}}}%%
@@ -37,7 +37,7 @@ graph TB
         PortalFunc["Portal Function<br/>Azure Function<br/>Validates requests"]
     end
     
-    subgraph Manager["Reporting Manager"]
+    subgraph Manager["Project Documentation"]
         API["Heartbeat API<br/>HTTP<br/>Receives heartbeats"]
         Registry["Job Registry<br/>In-Memory + SQL<br/>Tracks jobs"]
         Processor["Processor<br/>Background Service<br/>Detects timeouts"]
@@ -99,7 +99,7 @@ sequenceDiagram
     actor User
     participant Portal
     participant Function as Portal Function
-    participant Manager as Reporting Manager
+    participant Manager as Project Documentation
     participant Batch as Azure Batch
     participant API as Market Data API
     participant DB as SQL Database

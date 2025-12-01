@@ -36,11 +36,11 @@ def _rel_from_repo_root(*parts: str) -> str:
 
 
 PROFILES: Dict[str, DocumentProfile] = {
-    # Default profile for the Reporting Manager documentation.
-    "reporting-manager": DocumentProfile(
-        name="reporting-manager",
-        # Logo lives in the reporting-manager proposal assets.
-        logo=_rel_from_repo_root("projects", "reporting-2.0", "proposals", "reporting-manager", "assets", "logo.png"),
+    # Default profile for project documentation.
+    "project-docs": DocumentProfile(
+        name="project-docs",
+        # Logo path - update to point to your project's logo if needed
+        logo=None,  # Set to your logo path: _rel_from_repo_root("path", "to", "logo.png")
         # Primary Playwright stylesheet with branded colors and typography.
         css=_rel_from_repo_root("tools", "pdf", "custom.css.playwright"),
         theme_config=_rel_from_repo_root("tools", "pdf", "pdf-mermaid-theme.json"),

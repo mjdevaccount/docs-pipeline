@@ -31,7 +31,7 @@ def convert_md_to_html(md_file, html_file):
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporting Manager Architecture Proposal</title>
+    <title>Project Documentation Architecture Proposal</title>
     <style>
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;

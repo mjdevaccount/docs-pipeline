@@ -46,7 +46,7 @@ python -m tools.prompts.cli \
 # Then generate PDF
 python tools/pdf/md2pdf.py \
     output/polished.md \
-    --profile reporting-manager \
+    --profile project-docs \
     --generate-cover \
     --generate-toc
 ```
@@ -169,7 +169,7 @@ python -m tools.prompts.cli \
 # Step 2: Generate PDF
 python tools/pdf/md2pdf.py \
     polished.md \
-    --profile reporting-manager \
+    --profile project-docs \
     --generate-cover \
     --generate-toc
 

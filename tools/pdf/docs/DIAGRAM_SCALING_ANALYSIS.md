@@ -24,7 +24,7 @@
 
 **Location:** `docs/architecture-proposal.md` (lines 197-259)  
 **Heading:** `### Architecture Overview (Phase 0)` (h3, line 195)  
-**Diagram Type:** Mermaid flowchart with 5 subgraphs (External Systems, Portal Layer, Reporting Manager, Execution Layer, Data Layer)
+**Diagram Type:** Mermaid flowchart with 5 subgraphs (External Systems, Portal Layer, Project Documentation, Execution Layer, Data Layer)
 
 ---
 

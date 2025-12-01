@@ -172,7 +172,7 @@ python -m cli \
 cd ../pdf
 python md2pdf.py \
     ../polished.md \
-    --profile reporting-manager \
+    --profile project-docs \
     --generate-cover \
     --generate-toc
 ```

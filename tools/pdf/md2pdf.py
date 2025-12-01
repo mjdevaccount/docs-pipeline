@@ -446,7 +446,7 @@ Markdown Syntax:
     parser.add_argument('--generate-cover', action='store_true', help='Generate professional cover page (Playwright only)')
     parser.add_argument('--generate-toc', action='store_true', help='Generate table of contents (Playwright only)')
     parser.add_argument('--watermark', help='Add watermark text (e.g., DRAFT) (Playwright only)')
-    parser.add_argument('--profile', help='Document profile name (e.g., reporting-manager, neutral)')
+    parser.add_argument('--profile', help='Document profile name (e.g., project-docs, neutral)')
     
     args = parser.parse_args()
     

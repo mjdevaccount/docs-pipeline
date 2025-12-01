@@ -700,7 +700,7 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
                 size: A4;
                 margin: 25mm 15mm 20mm 15mm;
                 @top-left {
-                    content: "Reporting Manager – Phase 0";
+                    content: "Project Documentation – Phase 0";
                     font-size: 9pt;
                     color: #666;
                     font-style: italic;

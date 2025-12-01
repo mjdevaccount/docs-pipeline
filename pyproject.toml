@@ -31,12 +31,16 @@ dependencies = [
 
 [project.optional-dependencies]
 pdf = [
+    "weasyprint>=60.0",
     "playwright>=1.40.0",
+    "PyPDF2>=3.0.0",
     "markdown>=3.5.0",
     "beautifulsoup4>=4.12.0",
     "lxml>=4.9.0",
     "python-markdown-math>=0.8",
     "pymdown-extensions>=10.0",
+    "colorama>=0.4.6",
+    "tqdm>=4.65.0",
 ]
 
 ai = [

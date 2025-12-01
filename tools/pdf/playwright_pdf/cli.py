@@ -60,7 +60,7 @@ Examples:
   
   # With full metadata
   python -m playwright_pdf.cli input.html output.pdf \\
-    --title "Reporting Manager Architecture" \\
+    --title "Project Documentation Architecture" \\
     --author "Matt Jeffcoat" \\
     --organization "Engineering Team" \\
     --date "November 2025" \\
