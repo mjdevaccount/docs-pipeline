@@ -57,6 +57,7 @@ class DockerExecutor(IContainerExecutor):
         command: str,
         args: Iterable[str],
         workspace_dir: Path,
+        additional_volumes: list[tuple[Path, str]] | None = None,
     ) -> bool:
         if not self.is_available():
             raise DockerError("Docker is not available on PATH or not running.")
@@ -71,9 +72,15 @@ class DockerExecutor(IContainerExecutor):
             f"{workspace_dir_norm}:/workspace",
             "-w",
             "/workspace",
-            self._image,
-            command,
         ]
+        
+        # Mount additional resource directories if provided
+        if additional_volumes:
+            for host_path, container_path in additional_volumes:
+                host_path_norm = _normalize_path_for_docker(host_path.resolve())
+                docker_cmd.extend(["-v", f"{host_path_norm}:{container_path}"])
+        
+        docker_cmd.extend([self._image, command])
         docker_cmd.extend(list(args))
 
         try:

@@ -77,8 +77,13 @@ def upload_file():
         # Import and run PDF conversion
         from convert_final import markdown_to_pdf
         
-        # Convert markdown to PDF (use Playwright renderer for Docker compatibility)
-        markdown_to_pdf(str(md_path), str(pdf_path), renderer='playwright')
+        # Get renderer from request (default to playwright for Docker compatibility)
+        renderer = request.args.get('renderer', 'playwright')
+        if renderer not in ['playwright', 'weasyprint']:
+            renderer = 'playwright'  # Fallback to safe default
+        
+        # Convert markdown to PDF
+        markdown_to_pdf(str(md_path), str(pdf_path), renderer=renderer)
         
         # Check if PDF was created
         if not pdf_path.exists():

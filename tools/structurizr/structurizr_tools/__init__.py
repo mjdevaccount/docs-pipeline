@@ -19,6 +19,7 @@ def export_workspace(
     fmt: str,
     output_dir: Path,
     image: str | None = None,
+    resource_dirs: list[Path] | None = None,
 ) -> bool:
     """
     Convenience API for exporting a single Structurizr DSL workspace.
@@ -28,9 +29,10 @@ def export_workspace(
         fmt: Export format (e.g. 'mermaid', 'svg', 'png', 'html', 'json').
         output_dir: Directory where generated files will be written.
         image: Optional Docker image override (defaults to structurizr/cli:latest).
+        resource_dirs: Optional list of resource directories to mount in Docker.
     """
     executor = DockerExecutor(image=image)
     exporter = WorkspaceExporter(executor)
-    return exporter.export(workspace_path, fmt, output_dir)
+    return exporter.export(workspace_path, fmt, output_dir, resource_dirs)
 
 

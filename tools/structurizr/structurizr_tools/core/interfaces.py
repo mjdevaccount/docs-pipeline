@@ -18,6 +18,7 @@ class IContainerExecutor(ABC):
         command: str,
         args: Iterable[str],
         workspace_dir: Path,
+        additional_volumes: list[tuple[Path, str]] | None = None,
     ) -> bool:
         """
         Execute a Structurizr CLI command inside a container.
@@ -26,6 +27,7 @@ class IContainerExecutor(ABC):
             command: CLI command (e.g. 'export', 'validate').
             args: Iterable of CLI arguments (e.g. ['--workspace', 'foo.dsl', ...]).
             workspace_dir: Directory that will be mounted into the container.
+            additional_volumes: Optional list of (host_path, container_path) tuples for additional mounts.
         """
 
 
@@ -42,6 +44,7 @@ class IWorkspaceExporter(ABC):
         workspace_path: Path,
         fmt: str,
         output_dir: Path,
+        resource_dirs: list[Path] | None = None,
     ) -> bool:
         """
         Export a workspace to a given format.
@@ -50,6 +53,7 @@ class IWorkspaceExporter(ABC):
             workspace_path: Path to workspace (.dsl or .json).
             fmt: Output format (mermaid, png, svg, html, json, ...).
             output_dir: Directory to write generated files to.
+            resource_dirs: Optional list of resource directories to mount.
         """
 
 

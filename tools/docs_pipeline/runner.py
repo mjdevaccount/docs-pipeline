@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import subprocess
 from pathlib import Path
 from typing import Any, Dict
@@ -153,26 +154,31 @@ def run_pipeline(config_path: Path, dry_run: bool = False, parallel: bool = Fals
             else:
                 workspace_dir = workspace_file.parent
             
-            # Note: Additional resources are typically in the workspace directory
-            # The Docker executor mounts the workspace_dir, so all files in that directory
-            # and subdirectories are available to Structurizr CLI
+            # Prepare resource directories for mounting
+            resource_dirs = None
             if ws.diagrams.resources:
-                print(f"      [INFO] Resource directories: {', '.join(str(r) for r in ws.diagrams.resources)}")
-                print(f"      [NOTE] Ensure resource files are accessible from workspace directory")
+                resource_dirs = [r for r in ws.diagrams.resources if r.exists()]
+                if resource_dirs:
+                    print(f"      [INFO] Mounting {len(resource_dirs)} resource directory(ies)")
+                else:
+                    print(f"      [WARN] Resource directories specified but not found")
             
             for fmt in ws.diagrams.formats:
                 if dry_run:
                     print(f"      [DRY RUN] Would export {fmt} to {ws.diagrams.output_dir}")
                     print(f"      [DRY RUN] Workspace: {workspace_file.name} from {workspace_dir}")
+                    if resource_dirs:
+                        print(f"      [DRY RUN] Would mount resources: {', '.join(str(r) for r in resource_dirs)}")
                     ok = True
                 else:
                     # The export_workspace function uses the workspace file path
-                    # The Docker executor will mount the workspace_dir (parent of file)
+                    # The Docker executor will mount the workspace_dir and resource directories
                     ok = export_workspace(
                         workspace_file,
                         fmt,
                         ws.diagrams.output_dir,
                         image=ws.diagrams.image,
+                        resource_dirs=resource_dirs,
                     )
                 status = "[OK]" if ok else "[FAIL]"
                 print(f"      {status} {fmt}")
@@ -183,8 +189,9 @@ def run_pipeline(config_path: Path, dry_run: bool = False, parallel: bool = Fals
             print(f"   [DOCUMENTS] Converting {len(ws.documents)} documents...")
             
             if parallel and not dry_run:
-                # Parallel execution
-                with ThreadPoolExecutor(max_workers=4) as executor:
+                # Parallel execution with configurable worker count
+                max_workers = int(os.getenv('PIPELINE_WORKERS', os.cpu_count() or 4))
+                with ThreadPoolExecutor(max_workers=max_workers) as executor:
                     futures = {}
                     for doc in ws.documents:
                         md_file = doc.input

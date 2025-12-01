@@ -37,6 +37,7 @@ class WorkspaceExporter(IWorkspaceExporter):
         workspace_path: Path,
         fmt: str,
         output_dir: Path,
+        resource_dirs: list[Path] | None = None,
     ) -> bool:
         fmt = fmt.lower()
         if not self.supports_format(fmt):
@@ -75,6 +76,17 @@ class WorkspaceExporter(IWorkspaceExporter):
             str(output_rel),
         ]
 
-        return self._executor.execute("export", args, workspace_dir)
+        # Prepare additional volume mounts for resource directories
+        additional_volumes = None
+        if resource_dirs:
+            additional_volumes = []
+            for resource_dir in resource_dirs:
+                resource_dir = resource_dir.resolve()
+                if resource_dir.exists():
+                    # Mount to /resources/{name} in container
+                    container_path = f"/resources/{resource_dir.name}"
+                    additional_volumes.append((resource_dir, container_path))
+
+        return self._executor.execute("export", args, workspace_dir, additional_volumes)
 
 
