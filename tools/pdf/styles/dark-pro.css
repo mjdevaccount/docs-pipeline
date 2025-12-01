@@ -8,6 +8,7 @@
 @page {
     size: A4;
     margin: 2cm 1.8cm 2cm 1.8cm;
+    background-color: #0f172a;  /* Dark navy page background */
 }
 
 /* Base typography - Dark background */
