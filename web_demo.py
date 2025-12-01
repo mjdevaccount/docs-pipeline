@@ -133,43 +133,74 @@ def download_file(filepath):
 
 @app.route('/examples')
 def list_examples():
-    """List pre-generated example PDFs"""
-    examples = [
+    """List pre-generated example PDFs with profile variants"""
+    
+    base_examples = [
         {
-            'name': 'SOLID Implementation Analysis',
-            'description': 'Deep dive into SOLID principles in the PDF generation system',
-            'file': 'solid-implementation.pdf',
-            'source': 'docs/development/pdf-solid-implementation.md',
-            'size': '2.3 MB'
+            'name': 'Advanced Markdown Showcase',
+            'description': 'Kitchen sink demo - complex tables, Mermaid diagrams, math equations, multi-language code blocks',
+            'base_file': 'showcase',
+            'source': 'docs/examples/advanced-markdown-showcase.md',
+            'profiles': ['tech', 'dark', 'minimalist', 'enterprise']
         },
         {
-            'name': 'Structurizr Architecture Evaluation',
-            'description': 'Evaluation of Structurizr CLI for architecture diagrams',
-            'file': 'structurizr-evaluation.pdf',
-            'source': 'docs/development/structurizr-solid-evaluation.md',
-            'size': '1.8 MB'
+            'name': 'Technical White Paper',
+            'description': 'Event-driven microservices architecture - production-grade engineering documentation',
+            'base_file': 'whitepaper',
+            'source': 'docs/examples/technical-white-paper.md',
+            'profiles': ['tech', 'dark', 'minimalist', 'enterprise']
         },
         {
-            'name': 'PDF Generation Setup Guide',
-            'description': 'Complete setup and configuration documentation',
-            'file': 'pdf-setup-guide.pdf',
-            'source': 'tools/pdf/docs/PDF_GENERATION_SETUP.md',
-            'size': '1.2 MB'
+            'name': 'Product Requirements Document',
+            'description': 'Real-time collaboration platform PRD - business-facing product documentation',
+            'base_file': 'prd',
+            'source': 'docs/examples/product-requirements-doc.md',
+            'profiles': ['tech', 'dark', 'minimalist', 'enterprise']
         }
     ]
     
-    # Filter to only examples that actually exist
-    available_examples = []
-    for example in examples:
-        example_path = EXAMPLES_FOLDER / example['file']
-        if example_path.exists():
-            example['available'] = True
-            available_examples.append(example)
-        else:
-            example['available'] = False
-            available_examples.append(example)
+    result = []
     
-    return jsonify(available_examples)
+    for example in base_examples:
+        # Check each profile variant
+        available_files = []
+        for profile in example['profiles']:
+            filename = f"{example['base_file']}-{profile}.pdf"
+            file_path = EXAMPLES_FOLDER / filename
+            
+            if file_path.exists():
+                size_bytes = file_path.stat().st_size
+                size_mb = size_bytes / 1024 / 1024
+                available_files.append({
+                    'profile': profile,
+                    'filename': filename,
+                    'size': f"{size_mb:.1f} MB"
+                })
+        
+        if available_files:
+            # Add primary file (tech profile) for main display
+            result.append({
+                'name': example['name'],
+                'description': example['description'],
+                'source': example['source'],
+                'file': available_files[0]['filename'],  # Default to first available
+                'size': available_files[0]['size'],
+                'available': True,
+                'profiles': available_files
+            })
+        else:
+            # Show as unavailable
+            result.append({
+                'name': example['name'],
+                'description': example['description'],
+                'source': example['source'],
+                'file': f"{example['base_file']}-tech.pdf",
+                'size': 'N/A',
+                'available': False,
+                'profiles': []
+            })
+    
+    return jsonify(result)
 
 
 @app.route('/example/<filename>')

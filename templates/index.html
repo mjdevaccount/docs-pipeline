@@ -351,7 +351,12 @@
 <body>
     <div class="container">
         <h1>📄 docs-pipeline<span class="badge">LIVE DEMO</span></h1>
-        <p class="subtitle">Professional Markdown → PDF conversion with Mermaid diagrams, architecture visualization, and beautiful styling</p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+            <span class="badge" style="background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);">Mermaid Diagrams</span>
+            <span class="badge" style="background: linear-gradient(135deg, #805ad5 0%, #6b46c1 100%);">4 Visual Profiles</span>
+            <span class="badge" style="background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%);">Production Ready</span>
+        </div>
+        <p class="subtitle">Transform technical Markdown into publication-quality PDFs with architecture diagrams, syntax highlighting, and professional styling</p>
         
         <div class="upload-area" id="uploadArea">
             <div class="upload-icon">📁</div>
@@ -433,8 +438,24 @@
             </div>
         </div>
         
+        <div class="cta-section" style="margin-top: 60px; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; text-align: center; color: white;">
+            <h2 style="color: white; font-size: 2.5rem; margin-bottom: 20px;">Ready to Transform Your Docs?</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.95;">
+                Open source, production-ready, and built for technical teams
+            </p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <a href="https://github.com/mjdevaccount/docs-pipeline" target="_blank" class="btn" style="background: white; color: #667eea; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
+                    ⭐ Star on GitHub
+                </a>
+                <a href="https://github.com/mjdevaccount/docs-pipeline#readme" target="_blank" class="btn" style="background: rgba(255,255,255,0.2); color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; border: 2px solid white;">
+                    📖 Read the Docs
+                </a>
+            </div>
+        </div>
+        
         <div class="footer">
-            Built with ❤️ using <a href="https://github.com/mjdevaccount/docs-pipeline" target="_blank">docs-pipeline</a>
+            Built with ❤️ by <a href="https://github.com/mjdevaccount" target="_blank">@mjdevaccount</a> using 
+            <a href="https://github.com/mjdevaccount/docs-pipeline" target="_blank">docs-pipeline</a>
             <br>
             Powered by Playwright • Pandoc • Mermaid • Python
         </div>
