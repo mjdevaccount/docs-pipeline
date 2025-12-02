@@ -205,6 +205,32 @@ graph TB
 </td>
 <td width="50%">
 
+#### 📝 Metadata Customization
+
+```bash
+# CLI arguments
+--author "Your Name" --organization "Company"
+
+# Environment variables
+export USER_NAME="Your Name"
+export ORGANIZATION="Company"
+export DOC_LOGO_PATH="$HOME/Documents/logo.png"
+
+# YAML frontmatter
+---
+author: Your Name
+version: 1.0
+classification: CONFIDENTIAL
+---
+```
+
+*Flexible metadata with multiple override levels*
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
 #### 🧪 Tested & Validated
 
 ```
@@ -216,6 +242,26 @@ tests/
 ```
 
 *100KB+ of tests covering layout, scaling, diagrams*
+
+</td>
+<td width="50%">
+
+#### 🔄 YAML Pipeline Support
+
+```yaml
+workspaces:
+  default:
+    defaults:
+      author: "Your Name"
+      organization: "Company"
+    documents:
+      - input: doc.md
+        metadata:
+          version: "1.0"
+          classification: "CONFIDENTIAL"
+```
+
+*Batch processing with workspace defaults*
 
 </td>
 </tr>
@@ -285,6 +331,65 @@ docs-pipeline/
 
 ---
 
+## 🔧 Configuration
+
+### Environment Variables
+
+Set these once in your shell for automatic metadata:
+
+```bash
+export USER_NAME="Your Name"
+export ORGANIZATION="Your Company"
+export DOC_LOGO_PATH="$HOME/Documents/logo.png"
+```
+
+These values are used as defaults when not specified in frontmatter or CLI arguments.
+
+### Metadata Customization
+
+Metadata can be set in three ways (priority order):
+
+1. **CLI Arguments** (highest priority)
+   ```bash
+   python md2pdf.py doc.md --author "John Doe" --version "2.0"
+   ```
+
+2. **YAML Frontmatter** (in markdown file)
+   ```yaml
+   ---
+   author: John Doe
+   version: 2.0
+   classification: CONFIDENTIAL
+   ---
+   ```
+
+3. **Environment Variables** (lowest priority, used as defaults)
+   ```bash
+   export USER_NAME="John Doe"
+   export ORGANIZATION="Acme Corp"
+   ```
+
+### YAML Pipeline Configuration
+
+For batch processing, use workspace defaults:
+
+```yaml
+workspaces:
+  default:
+    defaults:
+      author: "Your Name"
+      organization: "Your Company"
+    documents:
+      - input: doc1.md
+        output: doc1.pdf
+        metadata:
+          version: "1.0"
+      - input: doc2.md
+        output: doc2.pdf
+        metadata:
+          version: "2.0"
+```
+
 ## 🔧 Troubleshooting
 
 | Problem | Solution |
@@ -293,6 +398,7 @@ docs-pipeline/
 | Mermaid diagrams not rendering | Check `--renderer playwright` (not weasyprint) |
 | PDFs look different than expected | Try `--profile tech-whitepaper` explicitly |
 | Docker demo won't start | Ensure port 8080 is free: `lsof -i :8080` (Linux/Mac) or `netstat -ano \| findstr :8080` (Windows) |
+| Logo not found | Set `DOC_LOGO_PATH` env var or place logo at `$HOME/Documents/logo.png` |
 
 **Still stuck?** [Open an issue](https://github.com/mjdevaccount/docs-pipeline/issues) with:
 

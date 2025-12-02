@@ -428,6 +428,53 @@ def render_all_diagrams(md_content, work_dir, also_png=False, cache_dir=None, us
     
     return md_with_all, svg_files
 
+def _validate_metadata(metadata):
+    """
+    Validate and sanitize metadata fields to prevent PDF generation errors.
+    
+    Args:
+        metadata: Dictionary of metadata fields
+        
+    Returns:
+        Sanitized metadata dictionary
+    """
+    if not metadata:
+        return {}
+    
+    validated = metadata.copy()
+    
+    # Sanitize version field - remove characters that could break PDF metadata
+    if 'version' in validated and validated['version']:
+        validated['version'] = re.sub(r'[<>]', '', str(validated['version']))
+    
+    # Validate date format (allow freeform, but try to parse if it looks structured)
+    if 'date' in validated and validated['date']:
+        date_str = str(validated['date'])
+        # Try to parse common date formats, but allow freeform
+        try:
+            from datetime import datetime
+            # Try common formats
+            for fmt in ['%B %Y', '%Y-%m-%d', '%m/%d/%Y', '%d %B %Y']:
+                try:
+                    datetime.strptime(date_str, fmt)
+                    break
+                except ValueError:
+                    continue
+        except:
+            pass  # Allow freeform dates
+    
+    # Sanitize classification - ensure it's a valid string
+    if 'classification' in validated and validated['classification']:
+        validated['classification'] = str(validated['classification']).strip().upper()
+    
+    # Ensure all string fields are properly encoded
+    for key in ['title', 'author', 'organization', 'type']:
+        if key in validated and validated[key]:
+            validated[key] = str(validated[key]).strip()
+    
+    return validated
+
+
 def expand_glossary(md_content, glossary_file=None):
     """Expand glossary terms and acronyms in markdown content"""
     if not glossary_file or not Path(glossary_file).exists():
@@ -495,6 +542,23 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
             # profiles module not available, continue without profile
             pass
     
+    # Resolve logo path with environment variable support and fallbacks
+    if logo_path is None:
+        # Try environment variable first
+        env_logo = os.environ.get('DOC_LOGO_PATH')
+        if env_logo and Path(env_logo).exists():
+            logo_path = env_logo
+        else:
+            # Try common locations
+            possible_logos = [
+                Path.home() / 'Documents' / 'logo.png',
+                Path(__file__).parent.parent / 'docs' / 'logo.png',
+            ]
+            for loc in possible_logos:
+                if loc.exists():
+                    logo_path = loc
+                    break
+    
     md_path = Path(md_file)
     output_path = Path(output_pdf)
     
@@ -517,6 +581,9 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
         # custom_metadata wins over frontmatter
         if custom_metadata:
             metadata = {**metadata, **custom_metadata}
+        
+        # Validate and sanitize metadata
+        metadata = _validate_metadata(metadata)
         
         # Apply sensible defaults with environment variable support
         from datetime import datetime
@@ -650,11 +717,8 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
             print("  [3/5] HTML ready for Playwright formatting...")
             # For Playwright, we want clean HTML without WeasyPrint title page
             # Just ensure logo_path is available for Playwright cover page
-            if logo_path is None:
-                # Default logo path relative to project root (one level up from pdf-tools/)
-                logo_path = Path(__file__).parent.parent / 'docs' / 'logo.png'
-                logo_path = logo_path.resolve()
-            else:
+            # (logo_path already resolved earlier with env var support)
+            if logo_path:
                 logo_path = Path(logo_path).resolve()
             
             # Extract document title from HTML for Playwright cover page
@@ -696,11 +760,8 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
             html_content = tmp_html.read_text(encoding='utf-8')
             
             # Build professional title page
-            if logo_path is None:
-                # Default logo path relative to project root (one level up from pdf-tools/)
-                logo_path = Path(__file__).parent.parent / 'docs' / 'logo.png'
-                logo_path = logo_path.resolve()
-            else:
+            # (logo_path already resolved earlier with env var support)
+            if logo_path:
                 logo_path = Path(logo_path).resolve()
             
             if logo_path.exists():

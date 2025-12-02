@@ -53,6 +53,9 @@ def _load_pipeline_config(path: Path) -> PipelineConfig:
                 resources=resources,
             )
 
+        # Parse workspace-level defaults
+        defaults = cfg.get("defaults") or {}
+
         docs_cfg = cfg.get("documents") or []
         documents = [
             DocumentConfig(
@@ -60,6 +63,7 @@ def _load_pipeline_config(path: Path) -> PipelineConfig:
                 output=(config_dir / d["output"]).resolve() if d.get("output") else None,
                 format=d.get("format"),
                 profile=d.get("profile"),
+                metadata=d.get("metadata"),  # Document-specific metadata
             )
             for d in docs_cfg
         ]
@@ -69,6 +73,7 @@ def _load_pipeline_config(path: Path) -> PipelineConfig:
                 name=name,
                 diagrams=diagrams,
                 documents=documents,
+                defaults=defaults if defaults else None,  # Workspace-level defaults
             )
         )
 
@@ -80,12 +85,20 @@ def _run_md2pdf(
     output: Path | None,
     fmt: str | None,
     profile: str | None,
+    metadata: Dict[str, Any] | None = None,
 ) -> bool:
     """
     Invoke the existing md2pdf.py CLI for a single document.
 
     This keeps the docs pipeline thin and lets md2pdf own all
     conversion concerns (frontmatter, diagrams, CSS, etc.).
+    
+    Args:
+        md_file: Input markdown file
+        output: Output file path
+        fmt: Output format (pdf, docx, html)
+        profile: Document profile name
+        metadata: Metadata dict to pass as CLI arguments (overrides frontmatter)
     """
     script = Path(__file__).parent.parent / "pdf" / "md2pdf.py"
     cmd = ["python", str(script), str(md_file)]
@@ -95,6 +108,23 @@ def _run_md2pdf(
         cmd.extend(["--format", fmt])
     if profile:
         cmd.extend(["--profile", profile])
+    
+    # Add metadata arguments if provided
+    if metadata:
+        if metadata.get("title"):
+            cmd.extend(["--title", str(metadata["title"])])
+        if metadata.get("author"):
+            cmd.extend(["--author", str(metadata["author"])])
+        if metadata.get("organization"):
+            cmd.extend(["--organization", str(metadata["organization"])])
+        if metadata.get("date"):
+            cmd.extend(["--date", str(metadata["date"])])
+        if metadata.get("version"):
+            cmd.extend(["--version", str(metadata["version"])])
+        if metadata.get("classification"):
+            cmd.extend(["--classification", str(metadata["classification"])])
+        if metadata.get("type"):
+            cmd.extend(["--doc-type", str(metadata["type"])])
 
     result = subprocess.run(cmd, text=True)
     return result.returncode == 0
@@ -201,12 +231,20 @@ def run_pipeline(config_path: Path, dry_run: bool = False, parallel: bool = Fals
                             suffix = ".pdf" if (doc.format or "pdf") == "pdf" else f".{doc.format}"
                             output = md_file.with_suffix(suffix)
                         
+                        # Merge workspace defaults with document metadata (document wins)
+                        merged_metadata = {}
+                        if ws.defaults:
+                            merged_metadata.update(ws.defaults)
+                        if doc.metadata:
+                            merged_metadata.update(doc.metadata)
+                        
                         future = executor.submit(
                             _run_md2pdf,
                             md_file,
                             output,
                             doc.format,
                             doc.profile,
+                            merged_metadata if merged_metadata else None,
                         )
                         futures[future] = (doc, output)
                     
@@ -227,8 +265,17 @@ def run_pipeline(config_path: Path, dry_run: bool = False, parallel: bool = Fals
                         suffix = ".pdf" if (doc.format or "pdf") == "pdf" else f".{doc.format}"
                         output = md_file.with_suffix(suffix)
 
+                    # Merge workspace defaults with document metadata (document wins)
+                    merged_metadata = {}
+                    if ws.defaults:
+                        merged_metadata.update(ws.defaults)
+                    if doc.metadata:
+                        merged_metadata.update(doc.metadata)
+
                     if dry_run:
                         print(f"      [DRY RUN] Would convert: {md_file.name} -> {output.name}")
+                        if merged_metadata:
+                            print(f"      [DRY RUN] Metadata: {merged_metadata}")
                         ok = True
                     else:
                         ok = _run_md2pdf(
@@ -236,6 +283,7 @@ def run_pipeline(config_path: Path, dry_run: bool = False, parallel: bool = Fals
                             output=output,
                             fmt=doc.format,
                             profile=doc.profile,
+                            metadata=merged_metadata if merged_metadata else None,
                         )
                     status = "[OK]" if ok else "[FAIL]"
                     print(f"      {status} [{i}/{len(ws.documents)}] {doc.input.name}")

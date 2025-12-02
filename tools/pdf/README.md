@@ -298,6 +298,15 @@ md2pdf.py input.md [output.pdf|output.docx]
 --theme-config PATH            # Mermaid diagram theme config JSON file
 --reference-docx PATH           # DOCX template
 
+# Metadata customization (overrides frontmatter)
+--title TEXT                   # Document title
+--author TEXT                  # Author name
+--organization TEXT            # Organization name
+--date TEXT                    # Document date (e.g., "December 2024")
+--version TEXT                 # Document version (e.g., "1.0")
+--classification TEXT          # Classification level (e.g., "CONFIDENTIAL")
+--doc-type TEXT                # Document type (e.g., "Technical Report")
+
 # Batch processing & performance
 --batch file1.md file2.md ...  # Multiple files
 --config config.json           # Config file
@@ -320,6 +329,36 @@ md2pdf.py input.md [output.pdf|output.docx]
 --formats                      # List supported formats
 --help                         # Full help
 ```
+
+### YAML Pipeline Configuration
+
+For batch processing with workspace defaults and document-level metadata:
+
+```yaml
+workspaces:
+  default:
+    defaults:
+      author: "Your Name"
+      organization: "Your Company"
+    documents:
+      - input: doc1.md
+        output: doc1.pdf
+        metadata:
+          title: "Document Title"
+          version: "1.0"
+          classification: "CONFIDENTIAL"
+      - input: doc2.md
+        output: doc2.pdf
+        metadata:
+          version: "2.0"
+          # Inherits author and organization from defaults
+```
+
+**Metadata Precedence:**
+1. Document-level `metadata:` (highest priority)
+2. Workspace-level `defaults:`
+3. Environment variables
+4. Hardcoded defaults
 
 ### Config File Format (`pdf-config.json`)
 
@@ -422,16 +461,29 @@ prepared_for: Executive Team
 
 **All Supported Fields:**
 - `title` - Document title (extracted from first H1 if missing)
-- `author` - Author name (default: "Matt Jeffcoat")
-- `organization` - Organization name (default: "Your Organization")
-- `date` - Publication date (default: "November 2025")
+- `author` - Author name (default: from `USER_NAME` env var or "Author Name")
+- `organization` - Organization name (default: from `ORGANIZATION` env var or "Organization")
+- `date` - Publication date (default: current month/year)
 - `version` - Document version (default: "1.0")
-- `type` - Document type (default: "Technical Specification")
-- `classification` - Security classification (default: "CONFIDENTIAL – INTERNAL USE ONLY")
+- `type` - Document type (default: "Technical Document")
+- `classification` - Security classification (default: empty string)
 - `department` - Department name (optional, shown if present)
 - `review_status` - Review status (optional, shown if present)
 - `doc_id` or `document_id` - Document identifier (optional, shown if present)
 - `prepared_for` or `preparedFor` - Recipient name (optional, shown if present)
+
+**Metadata Priority (highest to lowest):**
+1. CLI arguments (`--author`, `--version`, etc.)
+2. YAML frontmatter in markdown file
+3. Environment variables (`USER_NAME`, `ORGANIZATION`)
+4. Hardcoded defaults
+
+**Environment Variables:**
+```bash
+export USER_NAME="Your Name"              # Default author
+export ORGANIZATION="Your Company"        # Default organization
+export DOC_LOGO_PATH="$HOME/Documents/logo.png"  # Default logo path
+```
 
 ### Reference DOCX Template (DOCX)
 

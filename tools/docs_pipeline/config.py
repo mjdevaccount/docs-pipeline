@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 
 @dataclass
@@ -21,6 +21,7 @@ class DocumentConfig:
     output: Optional[Path] = None
     format: Optional[str] = None  # pdf | docx | html
     profile: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None  # Document-specific metadata (overrides workspace defaults)
 
 
 @dataclass
@@ -28,6 +29,7 @@ class WorkspaceConfig:
     name: str
     diagrams: Optional[DiagramConfig] = None
     documents: List[DocumentConfig] | None = None
+    defaults: Optional[Dict[str, Any]] = None  # Workspace-level default metadata
 
 
 @dataclass
