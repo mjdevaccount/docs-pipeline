@@ -2,6 +2,11 @@
 """
 Professional Markdown to PDF with Mermaid pre-rendering
 Pandoc + WeasyPrint + mermaid-cli
+
+REFACTORED: Now uses SOLID-compliant modules for:
+- External tools (PandocExecutor, MermaidCLI, KatexCLI)
+- Diagram rendering (DiagramOrchestrator with pluggable renderers)
+- Platform-independent executable resolution
 """
 import subprocess
 import os
@@ -11,10 +16,23 @@ import tempfile
 import hashlib
 import yaml
 
-# Add MSYS2 GTK to PATH for WeasyPrint
-os.environ['PATH'] = r'C:\msys64\mingw64\bin;' + os.environ['PATH']
+# Add MSYS2 GTK to PATH for WeasyPrint (Windows-specific)
+if os.name == 'nt':
+    msys_path = r'C:\msys64\mingw64\bin'
+    if Path(msys_path).exists():
+        os.environ['PATH'] = f'{msys_path};' + os.environ['PATH']
 
 from weasyprint import HTML, CSS
+
+# Import SOLID-compliant modules
+try:
+    from external_tools import PandocExecutor, KatexCLI, ToolNotFoundError
+    from diagram_rendering import DiagramOrchestrator, DiagramCache, DiagramFormat
+    USE_NEW_ARCHITECTURE = True
+except ImportError as e:
+    print(f"[WARN] New architecture modules not available: {e}")
+    print("[WARN] Falling back to legacy implementation")
+    USE_NEW_ARCHITECTURE = False
 
 def extract_metadata(md_content):
     """Extract YAML frontmatter from Markdown"""
@@ -70,12 +88,48 @@ def optimize_svg_file(svg_path):
 
 def render_math_with_katex(md_content, work_dir):
     """
-    Pre-render math with KaTeX server-side before Pandoc
-    Converts $inline$ and $$display$$ math to HTML-rendered equations
+    Pre-render math with KaTeX server-side before Pandoc.
+    Converts $inline$ and $$display$$ math to HTML-rendered equations.
+    
+    REFACTORED: Now uses KatexCLI wrapper for better abstraction and testability.
+    Falls back to legacy implementation if new architecture not available.
     
     Requires: npm install -g katex-cli
     """
-    # Pattern: $inline$ or $$display$$
+    if USE_NEW_ARCHITECTURE:
+        # NEW: Use KatexCLI wrapper
+        try:
+            katex_cli = KatexCLI()
+        except ToolNotFoundError:
+            # KaTeX not available - return original content
+            return md_content
+        
+        math_pattern = r'\$\$([^\$]+)\$\$|\$([^\$]+)\$'
+        
+        def replace_math(match):
+            is_display = match.group(1) is not None
+            math_code = match.group(1) or match.group(2)
+            
+            try:
+                if is_display:
+                    html_output = katex_cli.render_display(math_code)
+                else:
+                    html_output = katex_cli.render_inline(math_code)
+                
+                if html_output:
+                    if is_display:
+                        return f'<div class="math-display">{html_output}</div>'
+                    else:
+                        return f'<span class="math-inline">{html_output}</span>'
+            except Exception:
+                pass
+            
+            # Fallback to original
+            return match.group(0)
+        
+        return re.sub(math_pattern, replace_math, md_content)
+    
+    # LEGACY: Original implementation
     math_pattern = r'\$\$([^\$]+)\$\$|\$([^\$]+)\$'
     
     def replace_math(match):
@@ -384,7 +438,35 @@ def render_graphviz_to_svg(dot_code, work_dir, code_hash, cache_path=None, use_c
     return None, False
 
 def render_all_diagrams(md_content, work_dir, also_png=False, cache_dir=None, use_cache=True, theme_config=None):
-    """Render all diagram types (Mermaid, PlantUML, Graphviz) and replace with image refs"""
+    """
+    Render all diagram types (Mermaid, PlantUML, Graphviz) and replace with image refs.
+    
+    REFACTORED: Now uses DiagramOrchestrator for extensible, SOLID-compliant rendering.
+    Falls back to legacy implementation if new architecture not available.
+    """
+    if USE_NEW_ARCHITECTURE:
+        # NEW: Use DiagramOrchestrator
+        try:
+            cache = DiagramCache(cache_dir) if use_cache and cache_dir else None
+            orchestrator = DiagramOrchestrator(
+                cache=cache,
+                theme_config=Path(theme_config) if theme_config else None,
+                optimize_svg=True
+            )
+            
+            output_format = DiagramFormat.PNG if also_png else DiagramFormat.SVG
+            md_with_diagrams, rendered_files = orchestrator.process_markdown(
+                md_content,
+                work_dir,
+                output_format=output_format
+            )
+            
+            return md_with_diagrams, rendered_files
+        except Exception as e:
+            print(f"[WARN] DiagramOrchestrator failed: {e}, falling back to legacy")
+            # Fall through to legacy implementation
+    
+    # LEGACY: Original implementation (kept for backward compatibility)
     svg_files = []
     cache_path = get_cache_dir(cache_dir) if use_cache else None
     
@@ -528,7 +610,7 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
     # If profile is specified, use it to set defaults for missing arguments
     if profile:
         try:
-            from profiles import get_profile
+            from config.profiles import get_profile
             profile_obj = get_profile(profile)
             if profile_obj:
                 # Only use profile values if explicit arguments not provided
@@ -626,76 +708,103 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
         print(f"  [2/5] Pandoc parsing Markdown ({len(svg_files)} diagrams embedded)...")
         tmp_html = work_dir / 'output.html'
         
-        # Find Pandoc executable (robust detection)
-        import shutil
-        pandoc_exe = None
+        if USE_NEW_ARCHITECTURE:
+            # NEW: Use PandocExecutor wrapper for platform-independent execution
+            try:
+                pandoc = PandocExecutor()
+                extensions = pandoc.get_default_markdown_extensions()
+                
+                # Build extra args for crossref
+                extra_args = []
+                if crossref_config and Path(crossref_config).exists():
+                    import shutil
+                    crossref_filter = shutil.which('pandoc-crossref') or 'pandoc-crossref'
+                    extra_args.extend(['--filter', crossref_filter])
+                    extra_args.extend(['--metadata', f'crossrefYaml={crossref_config}'])
+                
+                success = pandoc.convert_markdown_to_html(
+                    tmp_md,
+                    tmp_html,
+                    extensions=extensions,
+                    highlight_style=highlight_style or 'pygments',
+                    resource_path=work_dir,
+                    extra_args=extra_args if extra_args else None
+                )
+                
+                if not success:
+                    raise RuntimeError("Pandoc conversion failed")
+                    
+            except (ToolNotFoundError, RuntimeError) as e:
+                print(f"[WARN] PandocExecutor failed: {e}, falling back to legacy")
+                USE_NEW_ARCHITECTURE = False  # Fall through to legacy
         
-        # Try common Windows locations first
-        windows_paths = [
-            r'C:\Program Files\Pandoc\pandoc.exe',
-            r'C:\Program Files (x86)\Pandoc\pandoc.exe',
-            Path.home() / 'AppData' / 'Local' / 'Pandoc' / 'pandoc.exe',
-        ]
-        
-        for path in windows_paths:
-            if Path(path).exists():
-                pandoc_exe = str(path)
-                break
-        
-        # Fallback to PATH lookup
-        if not pandoc_exe:
-            pandoc_exe = shutil.which('pandoc')
-        
-        # Final fallback
-        if not pandoc_exe:
-            pandoc_exe = 'pandoc'
-        
-        # Build Pandoc format string with all extensions
-        markdown_extensions = [
-            'pipe_tables',
-            'backtick_code_blocks',
-            'fenced_code_attributes',
-            'smart',
-            'tex_math_dollars',  # Math: $...$ and $$...$$
-            'tex_math_double_backslash',  # Math: \[...\] and \(...\)
-            'raw_html',  # Allow raw HTML
-            'fenced_code_blocks',  # Explicit code blocks
-            'autolink_bare_uris',  # Auto-link URLs
-            'strikeout',  # ~~strikethrough~~
-            'superscript',  # ^superscript^
-            'subscript',  # ~subscript~
-        ]
-        markdown_format = 'markdown+' + '+'.join(markdown_extensions)
-        
-        pandoc_cmd = [
-            pandoc_exe,
-            str(tmp_md),
-            '-f', markdown_format,
-            '-t', 'html5',
-            '--standalone',
-            '--toc',
-            '--toc-depth=3',
-            '--resource-path', str(work_dir),
-            '--mathjax',  # Use MathJax for math rendering in HTML
-            '-o', str(tmp_html)
-        ]
-        
-        # Add code highlighting style if specified
-        if highlight_style:
-            pandoc_cmd.extend(['--highlight-style', highlight_style])
-        else:
-            pandoc_cmd.extend(['--highlight-style', 'pygments'])  # Default to pygments style
-        
-        # Add pandoc-crossref filter if available and config provided
-        if crossref_config and Path(crossref_config).exists():
-            # Check if pandoc-crossref is available
+        if not USE_NEW_ARCHITECTURE:
+            # LEGACY: Original Pandoc subprocess invocation
             import shutil
-            crossref_filter = shutil.which('pandoc-crossref') or 'pandoc-crossref'
-            pandoc_cmd.extend(['--filter', crossref_filter])
-            if Path(crossref_config).exists():
-                pandoc_cmd.extend(['--metadata', f'crossrefYaml={crossref_config}'])
-        
-        subprocess.run(pandoc_cmd, check=True, capture_output=True, text=True, shell=False)
+            pandoc_exe = None
+            
+            # Try common Windows locations first
+            windows_paths = [
+                r'C:\Program Files\Pandoc\pandoc.exe',
+                r'C:\Program Files (x86)\Pandoc\pandoc.exe',
+                Path.home() / 'AppData' / 'Local' / 'Pandoc' / 'pandoc.exe',
+            ]
+            
+            for path in windows_paths:
+                if Path(path).exists():
+                    pandoc_exe = str(path)
+                    break
+            
+            # Fallback to PATH lookup
+            if not pandoc_exe:
+                pandoc_exe = shutil.which('pandoc')
+            
+            # Final fallback
+            if not pandoc_exe:
+                pandoc_exe = 'pandoc'
+            
+            # Build Pandoc format string with all extensions
+            markdown_extensions = [
+                'pipe_tables',
+                'backtick_code_blocks',
+                'fenced_code_attributes',
+                'smart',
+                'tex_math_dollars',
+                'tex_math_double_backslash',
+                'raw_html',
+                'fenced_code_blocks',
+                'autolink_bare_uris',
+                'strikeout',
+                'superscript',
+                'subscript',
+            ]
+            markdown_format = 'markdown+' + '+'.join(markdown_extensions)
+            
+            pandoc_cmd = [
+                pandoc_exe,
+                str(tmp_md),
+                '-f', markdown_format,
+                '-t', 'html5',
+                '--standalone',
+                '--toc',
+                '--toc-depth=3',
+                '--resource-path', str(work_dir),
+                '--mathjax',
+                '-o', str(tmp_html)
+            ]
+            
+            if highlight_style:
+                pandoc_cmd.extend(['--highlight-style', highlight_style])
+            else:
+                pandoc_cmd.extend(['--highlight-style', 'pygments'])
+            
+            if crossref_config and Path(crossref_config).exists():
+                crossref_filter = shutil.which('pandoc-crossref') or 'pandoc-crossref'
+                pandoc_cmd.extend(['--filter', crossref_filter])
+                if Path(crossref_config).exists():
+                    pandoc_cmd.extend(['--metadata', f'crossrefYaml={crossref_config}'])
+            
+            subprocess.run(pandoc_cmd, check=True, capture_output=True, text=True, shell=False)
         
         # Step 2.5: Strip Pandoc's embedded CSS to avoid conflicts with profile CSS
         # Pandoc's --standalone flag embeds its own <style> blocks which can interfere
@@ -1124,47 +1233,45 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
             try:
                 # Import Playwright PDF generator
                 import sys
-                pdf_playwright_path = Path(__file__).parent / 'pdf_playwright.py'
-                if pdf_playwright_path.exists():
-                    sys.path.insert(0, str(Path(__file__).parent))
-                    from pdf_playwright import generate_pdf_from_html
-                    import asyncio
-                    
-                    # Extract metadata for header/footer (already merged with custom_metadata)
-                    title = metadata.get("title") or doc_title
-                    author = metadata.get("author", "Matt Jeffcoat")
-                    organization = metadata.get("organization", "[Organization Name]")
-                    date = metadata.get("date", "November 2025")
-                    version = metadata.get("version", "1.0")
-                    doc_type = metadata.get("type", "Technical Document")
-                    classification = metadata.get("classification", "")
-                    
-                    # Generate PDF with Playwright - Pass all metadata including custom fields
-                    success = asyncio.run(generate_pdf_from_html(
-                        str(tmp_html),
-                        str(output_path),
-                        title=title,
-                        author=author,
-                        organization=organization,
-                        date=date,
-                        version=version,
-                        doc_type=doc_type,
-                        classification=classification,
-                        logo_path=str(logo_path) if logo_path and logo_path.exists() else None,
-                        generate_toc=generate_toc,
-                        generate_cover=generate_cover,
-                        watermark=watermark,
-                        css_file=css_file,
-                        verbose=verbose
-                    ))
-                    
-                    if success:
-                        print(f"[OK] Created: {output_pdf}")
-                    else:
-                        raise Exception("Playwright PDF generation failed")
+                sys.path.insert(0, str(Path(__file__).parent))
+                from renderers.playwright_renderer import generate_pdf_from_html
+                import asyncio
+                
+                # Extract metadata for header/footer (already merged with custom_metadata)
+                title = metadata.get("title") or doc_title
+                author = metadata.get("author", "Matt Jeffcoat")
+                organization = metadata.get("organization", "[Organization Name]")
+                date = metadata.get("date", "November 2025")
+                version = metadata.get("version", "1.0")
+                doc_type = metadata.get("type", "Technical Document")
+                classification = metadata.get("classification", "")
+                
+                # Generate PDF with Playwright - Pass all metadata including custom fields
+                success = asyncio.run(generate_pdf_from_html(
+                    str(tmp_html),
+                    str(output_path),
+                    title=title,
+                    author=author,
+                    organization=organization,
+                    date=date,
+                    version=version,
+                    doc_type=doc_type,
+                    classification=classification,
+                    logo_path=str(logo_path) if logo_path and logo_path.exists() else None,
+                    generate_toc=generate_toc,
+                    generate_cover=generate_cover,
+                    watermark=watermark,
+                    css_file=css_file,
+                    verbose=verbose
+                ))
+                
+                if success:
+                    print(f"[OK] Created: {output_pdf}")
                 else:
-                    print("[WARN] Playwright module not found, falling back to WeasyPrint")
-                    renderer = 'weasyprint'
+                    raise Exception("Playwright PDF generation failed")
+            except FileNotFoundError:
+                print("[WARN] Playwright module not found, falling back to WeasyPrint")
+                renderer = 'weasyprint'
             except ImportError as e:
                 print(f"[WARN] Playwright not available ({e}), falling back to WeasyPrint")
                 renderer = 'weasyprint'
