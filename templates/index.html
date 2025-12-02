@@ -418,6 +418,71 @@
             <strong>💡 Tip:</strong> Profiles change the PDF look without changing your content. Try different styles to see dramatic visual differences!
         </div>
         
+        <!-- Metadata Options (Collapsible) -->
+        <div style="margin-top: 30px; background: white; border-radius: 12px; border: 2px solid #e2e8f0; overflow: hidden;">
+            <div style="padding: 18px 24px; background: #f7fafc; border-bottom: 2px solid #e2e8f0; cursor: pointer;" onclick="toggleMetadata()">
+                <button type="button" style="background: none; border: none; font-size: 1.1rem; font-weight: 600; color: #2d3748; cursor: pointer; width: 100%; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+                    <span>📝 Customize Metadata (Optional)</span>
+                    <span id="metadataToggle" style="font-size: 1.2rem;">▼</span>
+                </button>
+            </div>
+            <div id="metadataOptions" style="display: none; padding: 24px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <label for="author" style="font-size: 0.95rem; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">Author:</label>
+                        <input type="text" id="author" name="author" style="width: 100%; padding: 10px 15px; border-radius: 8px; border: 2px solid #cbd5e0; font-size: 1rem; background: white;" placeholder="Your Name" />
+                    </div>
+                    <div>
+                        <label for="organization" style="font-size: 0.95rem; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">Organization:</label>
+                        <input type="text" id="organization" name="organization" style="width: 100%; padding: 10px 15px; border-radius: 8px; border: 2px solid #cbd5e0; font-size: 1rem; background: white;" placeholder="Your Company" />
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <label for="version" style="font-size: 0.95rem; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">Version:</label>
+                        <input type="text" id="version" name="version" style="width: 100%; padding: 10px 15px; border-radius: 8px; border: 2px solid #cbd5e0; font-size: 1rem; background: white;" placeholder="1.0" />
+                    </div>
+                    <div>
+                        <label for="classification" style="font-size: 0.95rem; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">Classification:</label>
+                        <select id="classification" name="classification" style="width: 100%; padding: 10px 15px; border-radius: 8px; border: 2px solid #cbd5e0; font-size: 1rem; background: white; cursor: pointer;">
+                            <option value="">None</option>
+                            <option value="PUBLIC">Public</option>
+                            <option value="INTERNAL">Internal</option>
+                            <option value="CONFIDENTIAL">Confidential</option>
+                            <option value="RESTRICTED">Restricted</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="generate_cover" name="generate_cover" checked style="width: 18px; height: 18px; cursor: pointer;" />
+                        <span style="font-size: 0.95rem; color: #4a5568; font-weight: 500;">Generate Professional Cover Page</span>
+                    </label>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="generate_toc" name="generate_toc" checked style="width: 18px; height: 18px; cursor: pointer;" />
+                        <span style="font-size: 0.95rem; color: #4a5568; font-weight: 500;">Generate Table of Contents</span>
+                    </label>
+                </div>
+                
+                <div>
+                    <label for="watermark" style="font-size: 0.95rem; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">Watermark (optional):</label>
+                    <input type="text" id="watermark" name="watermark" style="width: 100%; padding: 10px 15px; border-radius: 8px; border: 2px solid #cbd5e0; font-size: 1rem; background: white;" placeholder="DRAFT, CONFIDENTIAL, etc." />
+                </div>
+            </div>
+        </div>
+        
+        <!-- Logo Upload -->
+        <div style="margin-top: 30px;">
+            <label for="logo" style="font-size: 0.95rem; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">Custom Logo (optional):</label>
+            <input type="file" id="logo" name="logo" accept="image/*" style="width: 100%; padding: 10px 15px; border-radius: 8px; border: 2px solid #cbd5e0; font-size: 1rem; background: white; cursor: pointer;" />
+            <small style="display: block; margin-top: 6px; color: #718096; font-size: 0.85rem;">PNG or JPG, recommended: 300x100px</small>
+        </div>
+        
         <button class="btn" id="generateBtn" disabled>🚀 Generate PDF</button>
         
         <div class="loading" id="loading">
@@ -546,6 +611,29 @@
             const profile = document.getElementById('profileSelect').value;
             formData.append('renderer', renderer);
             formData.append('profile', profile);
+            
+            // Add metadata fields
+            const author = document.getElementById('author').value;
+            const organization = document.getElementById('organization').value;
+            const version = document.getElementById('version').value;
+            const classification = document.getElementById('classification').value;
+            const generateCover = document.getElementById('generate_cover').checked;
+            const generateToc = document.getElementById('generate_toc').checked;
+            const watermark = document.getElementById('watermark').value;
+            
+            if (author) formData.append('author', author);
+            if (organization) formData.append('organization', organization);
+            if (version) formData.append('version', version);
+            if (classification) formData.append('classification', classification);
+            if (generateCover) formData.append('generate_cover', 'on');
+            if (generateToc) formData.append('generate_toc', 'on');
+            if (watermark) formData.append('watermark', watermark);
+            
+            // Add logo if selected
+            const logoInput = document.getElementById('logo');
+            if (logoInput.files && logoInput.files[0]) {
+                formData.append('logo', logoInput.files[0]);
+            }
             
             loading.classList.add('show');
             status.style.display = 'none';
@@ -698,6 +786,19 @@
         
         // Load examples on page load
         loadExamples();
+        
+        // Toggle metadata options
+        function toggleMetadata() {
+            const options = document.getElementById('metadataOptions');
+            const toggle = document.getElementById('metadataToggle');
+            if (options.style.display === 'none') {
+                options.style.display = 'block';
+                toggle.textContent = '▲';
+            } else {
+                options.style.display = 'none';
+                toggle.textContent = '▼';
+            }
+        }
         
         // Pipeline functionality
         const pipelineUploadArea = document.getElementById('pipelineUploadArea');

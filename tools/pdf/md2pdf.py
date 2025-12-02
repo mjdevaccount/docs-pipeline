@@ -355,12 +355,12 @@ def convert_single_file(task):
     """Wrapper function for parallel processing
     
     Args:
-        task: Tuple of (md_file, output_file, output_format, logo, reference_docx, css_file, cache_dir, use_cache, theme_config, highlight_style, crossref_config, glossary_file, renderer)
+        task: Tuple of (md_file, output_file, output_format, logo, reference_docx, css_file, cache_dir, use_cache, theme_config, highlight_style, crossref_config, glossary_file, renderer, custom_metadata)
     
     Returns:
         Tuple of (success: bool, md_file: str, output_file: str, error: str or None)
     """
-    md_file, output_file, output_format, logo, reference_docx, css_file, cache_dir, use_cache, theme_config, highlight_style, crossref_config, glossary_file, renderer = task
+    md_file, output_file, output_format, logo, reference_docx, css_file, cache_dir, use_cache, theme_config, highlight_style, crossref_config, glossary_file, renderer, custom_metadata = task
     
     try:
         common_args = {
@@ -377,7 +377,7 @@ def convert_single_file(task):
         elif output_format == 'docx':
             markdown_to_docx(md_file, output_file, reference_docx=reference_docx, **common_args)
         else:
-            markdown_to_pdf(md_file, output_file, logo_path=logo, css_file=css_file, renderer=renderer, verbose=verbose, **common_args)
+            markdown_to_pdf(md_file, output_file, logo_path=logo, css_file=css_file, renderer=renderer, verbose=False, custom_metadata=custom_metadata, **common_args)
         return True, md_file, output_file, None
     except Exception as e:
         return False, md_file, output_file, str(e)
@@ -452,7 +452,33 @@ Markdown Syntax:
     parser.add_argument('--watermark', help='Add watermark text (e.g., DRAFT) (Playwright only)')
     parser.add_argument('--profile', help='Document profile name (e.g., project-docs, neutral)')
     
+    # Metadata customization
+    parser.add_argument('--title', help='Document title (overrides frontmatter)')
+    parser.add_argument('--author', help='Author name (overrides frontmatter)')
+    parser.add_argument('--organization', '--org', help='Organization name (overrides frontmatter)')
+    parser.add_argument('--date', help='Document date (overrides frontmatter)')
+    parser.add_argument('--version', help='Document version (overrides frontmatter)')
+    parser.add_argument('--classification', help='Classification level (e.g., CONFIDENTIAL)')
+    parser.add_argument('--doc-type', help='Document type (e.g., Technical Report)')
+    
     args = parser.parse_args()
+    
+    # Build metadata dict from CLI args
+    custom_metadata = {}
+    if args.title:
+        custom_metadata['title'] = args.title
+    if args.author:
+        custom_metadata['author'] = args.author
+    if args.organization:
+        custom_metadata['organization'] = args.organization
+    if args.date:
+        custom_metadata['date'] = args.date
+    if args.version:
+        custom_metadata['version'] = args.version
+    if args.classification:
+        custom_metadata['classification'] = args.classification
+    if args.doc_type:
+        custom_metadata['type'] = args.doc_type
     
     # Setup logging if requested
     logger = setup_logging(args.log, args.verbose) if args.log or args.verbose else None
@@ -561,7 +587,15 @@ Markdown Syntax:
                         failures += 1
                         continue
                 
-                file_tasks.append((md_file, output_file, item_format, item_logo, item_reference, item_css, cache_dir, use_cache, item_theme, item_highlight, item_crossref, item_glossary, config_renderer, item_profile))
+                # Extract metadata from YAML config (item-level metadata)
+                item_metadata = {}
+                if isinstance(item, dict) and 'metadata' in item:
+                    item_metadata = item.get('metadata', {})
+                
+                # Merge: CLI custom_metadata wins over YAML item metadata
+                merged_metadata = {**item_metadata, **custom_metadata} if custom_metadata else item_metadata
+                
+                file_tasks.append((md_file, output_file, item_format, item_logo, item_reference, item_css, cache_dir, use_cache, item_theme, item_highlight, item_crossref, item_glossary, config_renderer, item_profile, merged_metadata))
                 
             except Exception as e:
                 failures += 1
@@ -627,7 +661,7 @@ Markdown Syntax:
                     elif item_format == 'docx':
                         markdown_to_docx(md_file, output_file, reference_docx=item_reference, **common_args)
                     else:
-                        markdown_to_pdf(md_file, output_file, logo_path=item_logo, css_file=item_css, renderer=renderer, generate_toc=args.generate_toc, generate_cover=args.generate_cover, watermark=args.watermark, verbose=args.verbose, **common_args)
+                        markdown_to_pdf(md_file, output_file, logo_path=item_logo, css_file=item_css, renderer=renderer, generate_toc=args.generate_toc, generate_cover=args.generate_cover, watermark=args.watermark, verbose=args.verbose, custom_metadata=custom_metadata, **common_args)
                     print(f"{OK} Generated: {output_file}")
                     
                 except Exception as e:
@@ -687,7 +721,7 @@ Markdown Syntax:
             # Apply output directory if specified
             output_file = resolve_output_path(output_file, args.output_dir)
             
-            file_tasks.append((md_file, output_file, output_format, args.logo, reference_docx, args.css, cache_dir, use_cache, theme_config, highlight_style, crossref_config, glossary_file, args.renderer))
+                file_tasks.append((md_file, output_file, output_format, args.logo, reference_docx, args.css, cache_dir, use_cache, theme_config, highlight_style, crossref_config, glossary_file, args.renderer, custom_metadata))
         
         if failures:
             print(f"\n{ERR} {failures} file(s) failed validation.")
@@ -750,7 +784,7 @@ Markdown Syntax:
                     elif output_format == 'docx':
                         markdown_to_docx(md_file, output_file, reference_docx=reference_docx, **common_args)
                     else:
-                        markdown_to_pdf(md_file, output_file, logo_path=logo, css_file=css_file, renderer=args.renderer, generate_toc=args.generate_toc, generate_cover=args.generate_cover, watermark=args.watermark, verbose=args.verbose, **common_args)
+                        markdown_to_pdf(md_file, output_file, logo_path=logo, css_file=css_file, renderer=args.renderer, generate_toc=args.generate_toc, generate_cover=args.generate_cover, watermark=args.watermark, verbose=args.verbose, custom_metadata=custom_metadata, **common_args)
                     print(f"{OK} Generated: {output_file}")
                     
                 except Exception as e:
@@ -870,7 +904,7 @@ Markdown Syntax:
             markdown_to_docx(md_file, output_file, reference_docx=reference_docx, **common_args)
             print(f"\n{OK} DOCX generated: {output_file}")
         else:
-            markdown_to_pdf(md_file, output_file, logo_path=args.logo, css_file=args.css, renderer=args.renderer, generate_toc=args.generate_toc, generate_cover=args.generate_cover, watermark=args.watermark, verbose=args.verbose, **common_args)
+            markdown_to_pdf(md_file, output_file, logo_path=args.logo, css_file=args.css, renderer=args.renderer, generate_toc=args.generate_toc, generate_cover=args.generate_cover, watermark=args.watermark, verbose=args.verbose, custom_metadata=custom_metadata, **common_args)
             print(f"\n{OK} PDF generated: {output_file}")
     except Exception as e:
         print(f"\n{ERR} Conversion failed: {e}")

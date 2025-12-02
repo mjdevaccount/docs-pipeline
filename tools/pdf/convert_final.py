@@ -461,7 +461,7 @@ def expand_glossary(md_content, glossary_file=None):
         print(f"    ! Warning: Glossary expansion failed: {e}")
         return md_content
 
-def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_dir=None, use_cache=True, theme_config=None, highlight_style=None, crossref_config=None, glossary_file=None, renderer='weasyprint', generate_toc=False, generate_cover=False, watermark=None, verbose=False, profile=None):
+def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_dir=None, use_cache=True, theme_config=None, highlight_style=None, crossref_config=None, glossary_file=None, renderer='weasyprint', generate_toc=False, generate_cover=False, watermark=None, verbose=False, profile=None, custom_metadata=None):
     """Convert Markdown to PDF via Pandoc + WeasyPrint/Playwright with Mermaid pre-rendering
     
     Args:
@@ -475,6 +475,7 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
         renderer: PDF renderer to use ('weasyprint' or 'playwright'). Playwright provides perfect SVG foreignObject support.
         profile: Optional profile name (e.g., 'tech-whitepaper', 'dark-pro', 'minimalist', 'enterprise-blue')
                  Profile provides CSS, theme config, and logo defaults. Explicit arguments override profile settings.
+        custom_metadata: Optional dict of metadata to override frontmatter (e.g., {'author': 'John Doe', 'version': '2.0'})
     """
     
     # If profile is specified, use it to set defaults for missing arguments
@@ -510,6 +511,27 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
         # If no frontmatter, use original content
         if not metadata:
             md_content_clean = md_content
+            metadata = {}
+        
+        # Merge custom_metadata (CLI/web overrides) with frontmatter
+        # custom_metadata wins over frontmatter
+        if custom_metadata:
+            metadata = {**metadata, **custom_metadata}
+        
+        # Apply sensible defaults with environment variable support
+        from datetime import datetime
+        if not metadata.get('author'):
+            metadata['author'] = os.environ.get('USER_NAME', 'Author Name')
+        if not metadata.get('organization'):
+            metadata['organization'] = os.environ.get('ORGANIZATION', 'Organization')
+        if not metadata.get('date'):
+            metadata['date'] = datetime.now().strftime('%B %Y')
+        if not metadata.get('version'):
+            metadata['version'] = '1.0'
+        if not metadata.get('classification'):
+            metadata['classification'] = ''
+        if not metadata.get('type'):
+            metadata['type'] = 'Technical Document'
         
         # Step 0.5: Expand glossary terms and acronyms
         if glossary_file:
@@ -639,6 +661,35 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
             html_content = tmp_html.read_text(encoding='utf-8')
             title_match = re.search(r'<h1[^>]*>(.+?)</h1>', html_content)
             doc_title = title_match.group(1) if title_match else "Technical Specification"
+            
+            # Inject metadata as HTML meta tags for Playwright pipeline to extract
+            meta_tags = []
+            if metadata.get('title'):
+                meta_tags.append(f'<meta name="title" content="{metadata["title"]}" />')
+            if metadata.get('author'):
+                meta_tags.append(f'<meta name="author" content="{metadata["author"]}" />')
+            if metadata.get('organization'):
+                meta_tags.append(f'<meta name="organization" content="{metadata["organization"]}" />')
+            if metadata.get('date'):
+                meta_tags.append(f'<meta name="date" content="{metadata["date"]}" />')
+            if metadata.get('version'):
+                meta_tags.append(f'<meta name="version" content="{metadata["version"]}" />')
+            if metadata.get('type'):
+                meta_tags.append(f'<meta name="type" content="{metadata["type"]}" />')
+            if metadata.get('classification'):
+                meta_tags.append(f'<meta name="classification" content="{metadata["classification"]}" />')
+            
+            # Insert meta tags into <head>
+            if meta_tags:
+                meta_html = '\n    '.join(meta_tags)
+                if '<head>' in html_content:
+                    html_content = html_content.replace('<head>', f'<head>\n    {meta_html}', 1)
+                elif '</head>' in html_content:
+                    html_content = html_content.replace('</head>', f'    {meta_html}\n</head>', 1)
+                else:
+                    # No head tag, add one
+                    html_content = html_content.replace('<html>', f'<html>\n<head>\n    {meta_html}\n</head>', 1)
+                tmp_html.write_text(html_content, encoding='utf-8')
         else:
             # WeasyPrint path: inject title page HTML
             print("  [3/4] Structuring document with logo...")
@@ -1018,13 +1069,16 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
                     from pdf_playwright import generate_pdf_from_html
                     import asyncio
                     
-                    # Extract metadata for header/footer
+                    # Extract metadata for header/footer (already merged with custom_metadata)
                     title = metadata.get("title") or doc_title
                     author = metadata.get("author", "Matt Jeffcoat")
                     organization = metadata.get("organization", "[Organization Name]")
                     date = metadata.get("date", "November 2025")
+                    version = metadata.get("version", "1.0")
+                    doc_type = metadata.get("type", "Technical Document")
+                    classification = metadata.get("classification", "")
                     
-                    # Generate PDF with Playwright - FIXED: Pass all flags!
+                    # Generate PDF with Playwright - Pass all metadata including custom fields
                     success = asyncio.run(generate_pdf_from_html(
                         str(tmp_html),
                         str(output_path),
@@ -1032,6 +1086,9 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
                         author=author,
                         organization=organization,
                         date=date,
+                        version=version,
+                        doc_type=doc_type,
+                        classification=classification,
                         logo_path=str(logo_path) if logo_path and logo_path.exists() else None,
                         generate_toc=generate_toc,
                         generate_cover=generate_cover,

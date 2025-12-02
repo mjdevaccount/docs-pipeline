@@ -57,6 +57,50 @@ workspaces:
         output: docs/examples/generated/executive-summary.docx
         format: docx
 
+  # Example workspace with metadata options
+  default:
+    # Workspace-level defaults (can be overridden per document)
+    defaults:
+      author: "Your Name"
+      organization: "Your Company"
+      logo: "path/to/logo.png"
+      generate_toc: true
+      generate_cover: true
+      renderer: "playwright"
+      profile: "tech-whitepaper"
+    
+    documents:
+      - input: docs/report.md
+        output: output/report.pdf
+        format: pdf
+        renderer: playwright
+        profile: tech-whitepaper
+        
+        # Document-specific metadata (overrides defaults)
+        metadata:
+          title: "Technical Specification"  # Override markdown frontmatter
+          author: "John Doe"
+          organization: "Acme Corp"
+          date: "December 2024"
+          version: "2.0"
+          type: "Technical Report"
+          classification: "CONFIDENTIAL"
+        
+        # Cover page options (Playwright only)
+        cover:
+          enabled: true
+          logo: "docs/acme-logo.png"
+          background_color: "#1a202c"  # Optional
+          text_color: "#ffffff"         # Optional
+        
+        # Table of contents (Playwright only)
+        toc:
+          enabled: true
+          depth: 3  # Heading levels to include
+        
+        # Watermark (Playwright only)
+        watermark: "DRAFT"  # Optional
+
   # Example workspace: SOLID Principles Documentation
   solid-docs:
     diagrams:

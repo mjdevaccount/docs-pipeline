@@ -61,7 +61,8 @@ async def generate_pdf_from_html(
     html_file, pdf_file, title=None, author=None,
     organization=None, date=None, logo_path=None,
     generate_toc=False, generate_cover=False,
-    watermark=None, css_file=None, page_format='A4', verbose=False
+    watermark=None, css_file=None, page_format='A4', verbose=False,
+    version=None, doc_type=None, classification=None
 ):
     """
     Legacy function for backward compatibility.
@@ -74,6 +75,9 @@ async def generate_pdf_from_html(
         author=author,
         organization=organization,
         date=date,
+        version=version,
+        type=doc_type,
+        classification=classification,
         logo_path=Path(logo_path) if logo_path else None,
         generate_toc=generate_toc,
         generate_cover=generate_cover,

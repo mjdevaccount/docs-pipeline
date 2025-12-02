@@ -91,8 +91,44 @@ def upload_file():
         if profile and profile not in ['tech-whitepaper', 'dark-pro', 'minimalist', 'enterprise-blue']:
             profile = None  # Invalid profile, ignore
         
-        # Convert markdown to PDF
-        markdown_to_pdf(str(md_path), str(pdf_path), renderer=renderer, profile=profile)
+        # Get metadata from form
+        custom_metadata = {}
+        if request.form.get('author'):
+            custom_metadata['author'] = request.form.get('author')
+        if request.form.get('organization'):
+            custom_metadata['organization'] = request.form.get('organization')
+        if request.form.get('version'):
+            custom_metadata['version'] = request.form.get('version')
+        if request.form.get('classification'):
+            custom_metadata['classification'] = request.form.get('classification')
+        
+        # Get options
+        generate_cover = request.form.get('generate_cover') == 'on'
+        generate_toc = request.form.get('generate_toc') == 'on'
+        watermark = request.form.get('watermark', None)
+        
+        # Handle logo upload
+        logo_path = None
+        if 'logo' in request.files:
+            logo_file = request.files['logo']
+            if logo_file and logo_file.filename:
+                logo_filename = secure_filename(logo_file.filename)
+                logo_path = UPLOAD_FOLDER / logo_filename
+                logo_file.save(logo_path)
+                logo_path = str(logo_path)
+        
+        # Convert markdown to PDF with all options
+        markdown_to_pdf(
+            str(md_path), 
+            str(pdf_path), 
+            renderer=renderer, 
+            profile=profile,
+            logo_path=logo_path,
+            generate_cover=generate_cover,
+            generate_toc=generate_toc,
+            watermark=watermark,
+            custom_metadata=custom_metadata
+        )
         
         # Check if PDF was created
         if not pdf_path.exists():
