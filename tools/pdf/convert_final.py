@@ -610,7 +610,7 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
     # If profile is specified, use it to set defaults for missing arguments
     if profile:
         try:
-            from profiles import get_profile
+            from config.profiles import get_profile
             profile_obj = get_profile(profile)
             if profile_obj:
                 # Only use profile values if explicit arguments not provided
@@ -1233,47 +1233,45 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
             try:
                 # Import Playwright PDF generator
                 import sys
-                pdf_playwright_path = Path(__file__).parent / 'pdf_playwright.py'
-                if pdf_playwright_path.exists():
-                    sys.path.insert(0, str(Path(__file__).parent))
-                    from pdf_playwright import generate_pdf_from_html
-                    import asyncio
-                    
-                    # Extract metadata for header/footer (already merged with custom_metadata)
-                    title = metadata.get("title") or doc_title
-                    author = metadata.get("author", "Matt Jeffcoat")
-                    organization = metadata.get("organization", "[Organization Name]")
-                    date = metadata.get("date", "November 2025")
-                    version = metadata.get("version", "1.0")
-                    doc_type = metadata.get("type", "Technical Document")
-                    classification = metadata.get("classification", "")
-                    
-                    # Generate PDF with Playwright - Pass all metadata including custom fields
-                    success = asyncio.run(generate_pdf_from_html(
-                        str(tmp_html),
-                        str(output_path),
-                        title=title,
-                        author=author,
-                        organization=organization,
-                        date=date,
-                        version=version,
-                        doc_type=doc_type,
-                        classification=classification,
-                        logo_path=str(logo_path) if logo_path and logo_path.exists() else None,
-                        generate_toc=generate_toc,
-                        generate_cover=generate_cover,
-                        watermark=watermark,
-                        css_file=css_file,
-                        verbose=verbose
-                    ))
-                    
-                    if success:
-                        print(f"[OK] Created: {output_pdf}")
-                    else:
-                        raise Exception("Playwright PDF generation failed")
+                sys.path.insert(0, str(Path(__file__).parent))
+                from renderers.playwright_renderer import generate_pdf_from_html
+                import asyncio
+                
+                # Extract metadata for header/footer (already merged with custom_metadata)
+                title = metadata.get("title") or doc_title
+                author = metadata.get("author", "Matt Jeffcoat")
+                organization = metadata.get("organization", "[Organization Name]")
+                date = metadata.get("date", "November 2025")
+                version = metadata.get("version", "1.0")
+                doc_type = metadata.get("type", "Technical Document")
+                classification = metadata.get("classification", "")
+                
+                # Generate PDF with Playwright - Pass all metadata including custom fields
+                success = asyncio.run(generate_pdf_from_html(
+                    str(tmp_html),
+                    str(output_path),
+                    title=title,
+                    author=author,
+                    organization=organization,
+                    date=date,
+                    version=version,
+                    doc_type=doc_type,
+                    classification=classification,
+                    logo_path=str(logo_path) if logo_path and logo_path.exists() else None,
+                    generate_toc=generate_toc,
+                    generate_cover=generate_cover,
+                    watermark=watermark,
+                    css_file=css_file,
+                    verbose=verbose
+                ))
+                
+                if success:
+                    print(f"[OK] Created: {output_pdf}")
                 else:
-                    print("[WARN] Playwright module not found, falling back to WeasyPrint")
-                    renderer = 'weasyprint'
+                    raise Exception("Playwright PDF generation failed")
+            except FileNotFoundError:
+                print("[WARN] Playwright module not found, falling back to WeasyPrint")
+                renderer = 'weasyprint'
             except ImportError as e:
                 print(f"[WARN] Playwright not available ({e}), falling back to WeasyPrint")
                 renderer = 'weasyprint'

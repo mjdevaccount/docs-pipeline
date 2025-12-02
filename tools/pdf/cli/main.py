@@ -53,19 +53,20 @@ except ImportError:
     ERR = "[ERROR]"
     INFO = "[INFO]"
 
-# Import the conversion functions from convert_final
+# Import the conversion functions from convert_final (parent directory)
 try:
-    from .convert_final import markdown_to_pdf, markdown_to_docx, markdown_to_html, extract_metadata, get_cache_dir
+    from ..convert_final import markdown_to_pdf, markdown_to_docx, markdown_to_html, extract_metadata, get_cache_dir
 except ImportError:
-    # Fallback for standalone execution
+    # Fallback for standalone execution - parent directory
+    sys.path.insert(0, str(Path(__file__).parent.parent))
     from convert_final import markdown_to_pdf, markdown_to_docx, markdown_to_html, extract_metadata, get_cache_dir
 
 # Optional: document profiles (brand/layout presets)
 try:
-    from .profiles import get_profile
+    from ..config.profiles import get_profile
 except ImportError:
     try:
-        from profiles import get_profile
+        from config.profiles import get_profile
     except ImportError:
         # When imported as a module or run from a different CWD, local import may fail.
         # In that case, profile support is simply unavailable.
