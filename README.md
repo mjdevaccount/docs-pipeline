@@ -158,6 +158,67 @@ python -m tools.pdf.convert_final hello.md hello.pdf --profile tech-whitepaper
 
 ---
 
+### Real-World Examples
+
+#### Generate a Professional Resume
+
+```bash
+# Set your personal defaults once
+export USER_NAME="Your Name"
+export ORGANIZATION="Senior Software Engineer"
+export DOC_LOGO_PATH="$HOME/Documents/headshot.png"
+
+# Generate resume
+python tools/pdf/md2pdf.py docs/examples/resume-template.md \
+    resume.pdf \
+    --profile minimalist \
+    --version "2024.12" \
+    --generate-cover
+```
+
+#### Create a Client Proposal
+
+```bash
+python tools/pdf/md2pdf.py proposal.md client-proposal.pdf \
+    --author "Your Name" \
+    --organization "Your Company" \
+    --classification "CONFIDENTIAL" \
+    --profile enterprise-blue \
+    --logo "client-logo.png" \
+    --generate-cover \
+    --generate-toc
+```
+
+#### Batch Generate Portfolio Documents
+
+Create `portfolio.yaml`:
+```yaml
+workspaces:
+  portfolio:
+    defaults:
+      author: "Your Name"
+      organization: "Portfolio"
+      classification: "PUBLIC"
+    documents:
+      - input: projects/project1.md
+        output: output/project1.pdf
+        metadata:
+          title: "Project Title"
+          version: "1.0"
+      - input: projects/project2.md
+        output: output/project2.pdf
+        metadata:
+          title: "Another Project"
+          version: "2.0"
+```
+
+Run:
+```bash
+python -m tools.docs_pipeline.cli --config portfolio.yaml
+```
+
+---
+
 ## ✨ Features
 
 <table>
@@ -422,12 +483,19 @@ workspaces:
 Complete examples in each tool directory:
 
 - `docs/examples/` - Sample markdown documents with diagrams
+  - `resume-template.md` - Professional resume template with optimal frontmatter
+  - `advanced-markdown-showcase.md` - Demonstrates all features
 - `tools/prompts/examples/` - Rough drafts and pipeline configurations
 - `tools/structurizr/` - Example DSL files and export configs
 
-Generate all example PDFs:
+**Quick Start Examples:**
 
 ```bash
+# Generate resume
+python tools/pdf/md2pdf.py docs/examples/resume-template.md resume.pdf \
+    --profile minimalist --version "2024.12"
+
+# Generate all example PDFs
 ./scripts/generate-examples.sh
 ```
 
