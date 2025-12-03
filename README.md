@@ -63,6 +63,8 @@ python -m tools.pdf.convert_final spec.md output.pdf --profile enterprise-blue #
 
 #### Tech Whitepaper
 
+![Tech Whitepaper Example](docs/images/tech-whitepaper-example.png)
+
 *Clean technical style with structured layout*
 
 Best for: API docs, technical specs, developer guides
@@ -71,6 +73,8 @@ Best for: API docs, technical specs, developer guides
 <td width="50%">
 
 #### Dark Pro
+
+![Dark Pro Example](docs/images/dark-pro-example.png)
 
 *High contrast with dramatic shadows*
 
@@ -83,6 +87,8 @@ Best for: Presentations, demo materials, portfolio pieces
 
 #### Minimalist
 
+![Minimalist Example](docs/images/minimalist-example.png)
+
 *Maximum whitespace, thin typography*
 
 Best for: Architecture Decision Records, RFCs, executive summaries
@@ -91,6 +97,8 @@ Best for: Architecture Decision Records, RFCs, executive summaries
 <td width="50%">
 
 #### Enterprise Blue
+
+![Enterprise Blue Example](docs/images/enterprise-blue-example.png)
 
 *Conservative blue/gray corporate style*
 
