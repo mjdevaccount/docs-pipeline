@@ -25,42 +25,32 @@ def convert_pdf_to_image_pdf2image(pdf_path, output_path, dpi=150):
         return True
     return False
 
-def convert_pdf_to_image_pymupdf(pdf_path, output_path, page_num=3, zoom=2.0):
+def convert_pdf_to_image_pymupdf(pdf_path, output_path, page_num=6, zoom=3.0):
     """Convert a specific page of PDF to image using PyMuPDF
     
     Args:
         pdf_path: Path to PDF file
         output_path: Path to save PNG image
-        page_num: Page number to extract (0-indexed, default 3 = 4th page, after cover/TOC)
-        zoom: Zoom factor for higher quality (default 2.0 = 2x)
+        page_num: Page number to extract (0-indexed, default 6 = 7th page with code blocks)
+        zoom: Zoom factor for higher quality (default 3.0 = 3x for better quality)
     """
     doc = fitz.open(pdf_path)
     total_pages = len(doc)
     
-    # Find a good content page (skip cover page and TOC)
-    # Try page 3 (4th page) first, fall back to later pages if needed
+    # Use page 6 (7th page) which has code blocks that show profile differences well
+    # Page 6 typically has "Code Examples" section with syntax highlighting
     target_page = min(page_num, total_pages - 1)
-    
-    # If we have enough pages, try to find a page with substantial content
-    if total_pages > 4:
-        # Check pages 3-5 to find one with good content
-        best_page = target_page
-        max_chars = 0
-        for i in range(3, min(6, total_pages)):
-            text = doc[i].get_text().strip()
-            if len(text) > max_chars:
-                max_chars = len(text)
-                best_page = i
-        
-        target_page = best_page
-        print(f"    Using page {target_page + 1} (has {max_chars} chars of content)")
     
     if total_pages > 0:
         page = doc[target_page]
+        # Use higher zoom for better quality and ensure color mode
         mat = fitz.Matrix(zoom, zoom)
-        pix = page.get_pixmap(matrix=mat)
+        # Create pixmap in RGB color mode (not grayscale)
+        pix = page.get_pixmap(matrix=mat, alpha=False)
+        # Save as PNG with color
         pix.save(output_path)
         doc.close()
+        print(f"    Using page {target_page + 1} with {zoom}x zoom (RGB color mode)")
         return True
     doc.close()
     return False
@@ -128,7 +118,8 @@ def main():
         
         if not success and PYMUPDF_AVAILABLE:
             try:
-                success = convert_pdf_to_image_pymupdf(str(pdf_path), str(output_path), page_num=3)
+                # Use page 2 (3rd page) which has colored Mermaid diagrams that show profile differences best
+                success = convert_pdf_to_image_pymupdf(str(pdf_path), str(output_path), page_num=2, zoom=3.0)
             except Exception as e:
                 print(f"    PyMuPDF failed: {e}")
         
