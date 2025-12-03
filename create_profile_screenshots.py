@@ -25,11 +25,38 @@ def convert_pdf_to_image_pdf2image(pdf_path, output_path, dpi=150):
         return True
     return False
 
-def convert_pdf_to_image_pymupdf(pdf_path, output_path, zoom=2.0):
-    """Convert first page of PDF to image using PyMuPDF"""
+def convert_pdf_to_image_pymupdf(pdf_path, output_path, page_num=3, zoom=2.0):
+    """Convert a specific page of PDF to image using PyMuPDF
+    
+    Args:
+        pdf_path: Path to PDF file
+        output_path: Path to save PNG image
+        page_num: Page number to extract (0-indexed, default 3 = 4th page, after cover/TOC)
+        zoom: Zoom factor for higher quality (default 2.0 = 2x)
+    """
     doc = fitz.open(pdf_path)
-    if len(doc) > 0:
-        page = doc[0]
+    total_pages = len(doc)
+    
+    # Find a good content page (skip cover page and TOC)
+    # Try page 3 (4th page) first, fall back to later pages if needed
+    target_page = min(page_num, total_pages - 1)
+    
+    # If we have enough pages, try to find a page with substantial content
+    if total_pages > 4:
+        # Check pages 3-5 to find one with good content
+        best_page = target_page
+        max_chars = 0
+        for i in range(3, min(6, total_pages)):
+            text = doc[i].get_text().strip()
+            if len(text) > max_chars:
+                max_chars = len(text)
+                best_page = i
+        
+        target_page = best_page
+        print(f"    Using page {target_page + 1} (has {max_chars} chars of content)")
+    
+    if total_pages > 0:
+        page = doc[target_page]
         mat = fitz.Matrix(zoom, zoom)
         pix = page.get_pixmap(matrix=mat)
         pix.save(output_path)
@@ -101,7 +128,7 @@ def main():
         
         if not success and PYMUPDF_AVAILABLE:
             try:
-                success = convert_pdf_to_image_pymupdf(str(pdf_path), str(output_path))
+                success = convert_pdf_to_image_pymupdf(str(pdf_path), str(output_path), page_num=3)
             except Exception as e:
                 print(f"    PyMuPDF failed: {e}")
         
