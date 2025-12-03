@@ -8,7 +8,14 @@ REFACTORED: Now uses SOLID-compliant modules for:
 - Diagram rendering (DiagramOrchestrator with pluggable renderers)
 - Metadata handling (process_metadata with extraction, validation, merging)
 - Renderer strategy (RendererFactory with pluggable PDF backends)
+- Pipeline orchestration (Pipeline with composable steps)
 - Platform-independent executable resolution
+
+NOTE: For new code, prefer using the pipeline module:
+    from pipeline import create_pdf_pipeline, PipelineContext
+    pipeline = create_pdf_pipeline()
+    context = PipelineContext(input_file='doc.md', output_file='doc.pdf', work_dir=tmp)
+    success = pipeline.execute(context)
 """
 import subprocess
 import os
