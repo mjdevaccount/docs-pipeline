@@ -4,10 +4,10 @@
 
 **Transform Markdown into publication-quality PDFs with professional styling, Mermaid diagrams, and zero configuration.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Docker Ready](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)](docker-compose.yml)
-[![Profiles](https://img.shields.io/badge/Profiles-4%20Themes-green)](tools/pdf/styles/)
+![Release](https://img.shields.io/github/v/release/mjdevaccount/docs-pipeline?label=latest)
+![Tests](https://img.shields.io/badge/tests-140KB%2B-success)
+![Docker](https://img.shields.io/badge/docker-ready-blue)
+![License](https://img.shields.io/github/license/mjdevaccount/docs-pipeline)
 
 [🚀 Quick Start](#-quick-start) · [📖 Documentation](#-documentation) · [✨ Features](#-features) · [💻 Examples](#-examples)
 
