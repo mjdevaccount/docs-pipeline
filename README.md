@@ -357,7 +357,7 @@ graph TB
 </td>
 <td width="50%">
 
-#### 📝 Metadata Customization
+#### ⚙️ Metadata Customization
 
 ```bash
 # CLI arguments
