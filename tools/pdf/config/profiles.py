@@ -27,11 +27,11 @@ def _rel_from_repo_root(*parts: str) -> str:
     """
     Build a path relative to the repository root.
 
-    Assumes this file lives under <repo>/tools/pdf/profiles.py.
-    Going two parents up should land at the repo root in this workspace layout.
+    Assumes this file lives under <repo>/tools/pdf/config/profiles.py.
+    Going three parents up should land at the repo root in this workspace layout.
     """
-    base = Path(__file__).parent
-    repo_root = base.parent.parent
+    base = Path(__file__).parent  # tools/pdf/config
+    repo_root = base.parent.parent.parent  # Go up: config -> pdf -> tools -> repo_root
     return str(repo_root.joinpath(*parts))
 
 
