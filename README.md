@@ -6,9 +6,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![GitHub release](https://img.shields.io/github/v/release/mjdevaccount/docs-pipeline)](https://github.com/mjdevaccount/docs-pipeline/releases)
-[![GitHub stars](https://img.shields.io/github/stars/mjdevaccount/docs-pipeline?style=social)](https://github.com/mjdevaccount/docs-pipeline/stargazers)
-[![GitHub last commit](https://img.shields.io/github/last-commit/mjdevaccount/docs-pipeline)](https://github.com/mjdevaccount/docs-pipeline/commits/main)
+[![Docker Ready](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)](docker-compose.yml)
+[![Profiles](https://img.shields.io/badge/Profiles-4%20Themes-green)](tools/pdf/styles/)
 
 [🚀 Quick Start](#-quick-start) · [📖 Documentation](#-documentation) · [✨ Features](#-features) · [💻 Examples](#-examples)
 
@@ -38,7 +37,7 @@ Works out-of-the-box with sensible defaults. Customize only what matters.
 
 ### 🧪 Battle-Tested
 
-100KB+ of tests covering layout, scaling, and diagram rendering
+140KB of tests covering layout, scaling, and diagram rendering
 
 </td>
 </tr>
@@ -80,10 +79,11 @@ Works out-of-the-box with sensible defaults. Customize only what matters.
 Generate drastically different-looking PDFs from the **same Markdown** by changing one flag:
 
 ```bash
-python -m tools.pdf.convert_final spec.md output.pdf --profile tech-whitepaper  # Clean, technical
-python -m tools.pdf.convert_final spec.md output.pdf --profile dark-pro         # Modern, dark theme
-python -m tools.pdf.convert_final spec.md output.pdf --profile minimalist      # Spacious, elegant
-python -m tools.pdf.convert_final spec.md output.pdf --profile enterprise-blue # Corporate-friendly
+# All commands use the same canonical invocation pattern
+python -m tools.pdf.convert_final spec.md output.pdf --profile tech-whitepaper   # Clean, technical
+python -m tools.pdf.convert_final spec.md output.pdf --profile dark-pro          # Modern, dark theme
+python -m tools.pdf.convert_final spec.md output.pdf --profile minimalist        # Spacious, elegant
+python -m tools.pdf.convert_final spec.md output.pdf --profile enterprise-blue   # Corporate-friendly
 ```
 
 <table>
@@ -247,6 +247,9 @@ python -m tools.pdf.convert_final \
     --profile dark-pro
 ```
 
+> 💡 **Canonical Command:** All examples use `python -m tools.pdf.convert_final` for consistency.  
+> For backward compatibility, `python tools/pdf/md2pdf.py` also works.
+
 ---
 
 ### Real-World Examples
@@ -256,11 +259,11 @@ python -m tools.pdf.convert_final \
 ```bash
 # Set your personal defaults once
 export USER_NAME="Your Name"
-export ORGANIZATION="Senior Software Engineer"
+export USER_TITLE="Senior Software Engineer"
 export DOC_LOGO_PATH="$HOME/Documents/headshot.png"
 
 # Generate resume
-python tools/pdf/md2pdf.py docs/examples/resume-template.md \
+python -m tools.pdf.convert_final docs/examples/resume-template.md \
     resume.pdf \
     --profile minimalist \
     --version "2024.12" \
@@ -270,7 +273,7 @@ python tools/pdf/md2pdf.py docs/examples/resume-template.md \
 #### Create a Client Proposal
 
 ```bash
-python tools/pdf/md2pdf.py proposal.md client-proposal.pdf \
+python -m tools.pdf.convert_final proposal.md client-proposal.pdf \
     --author "Your Name" \
     --organization "Your Company" \
     --classification "CONFIDENTIAL" \
@@ -393,7 +396,7 @@ tests/
 └── verify_pdf_diagrams.py
 ```
 
-*100KB+ of tests covering layout, scaling, diagrams*
+*140KB of tests covering layout, scaling, diagrams*
 
 </td>
 <td width="50%">
@@ -433,8 +436,10 @@ docs-pipeline/
 │
 ├── 📦 tools/
 │   ├── pdf/                    # Core PDF Generation Engine
+│   │   ├── md2pdf.py           # CLI wrapper (backward compat)
+│   │   ├── convert_final.py    # Main entry point
 │   │   ├── cli/                # Command-line interface
-│   │   │   ├── main.py         # Entry point (was md2pdf.py)
+│   │   │   ├── main.py         # Full CLI implementation
 │   │   │   └── md2pdf.bat      # Windows batch file
 │   │   ├── config/             # Configuration management
 │   │   │   ├── profiles.py     # Visual profile system
@@ -459,9 +464,8 @@ docs-pipeline/
 │   │   │   └── layout.css
 │   │   ├── playwright_pdf/     # Playwright integration
 │   │   ├── examples/           # Usage examples
-│   │   ├── tests/              # 100KB+ test suite
+│   │   ├── tests/              # 140KB test suite
 │   │   ├── docs/               # Internal docs
-│   │   ├── convert_final.py    # Main entry point
 │   │   └── REORGANIZATION_SUMMARY.md
 │   │
 │   ├── docs_pipeline/          # Multi-doc orchestration
@@ -496,7 +500,7 @@ docs-pipeline/
 
 - ✅ **SOLID Principles** - Single responsibility, dependency injection, interface segregation
 - ✅ **Extensible** - Add profiles/renderers/diagrams without modifying core
-- ✅ **Tested** - 100KB+ real test coverage (not aspirational claims)
+- ✅ **Tested** - 140KB real test coverage (verified, not aspirational)
 - ✅ **Professional** - Industry-standard Python package structure
 - ✅ **Refactored** - Reduced `tools/pdf/` clutter by 70% (17 files → 5)
 - ✅ **Docker-First** - All dependencies containerized for zero-config setup
@@ -599,7 +603,7 @@ Metadata can be set in three ways (priority order):
 
 1. **CLI Arguments** (highest priority)
    ```bash
-   python md2pdf.py doc.md --author "John Doe" --version "2.0"
+   python -m tools.pdf.convert_final doc.md output.pdf --author "John Doe" --version "2.0"
    ```
 
 2. **YAML Frontmatter** (in markdown file)
@@ -681,7 +685,7 @@ Complete examples in each tool directory:
 
 ```bash
 # Generate resume
-python tools/pdf/md2pdf.py docs/examples/resume-template.md resume.pdf \
+python -m tools.pdf.convert_final docs/examples/resume-template.md resume.pdf \
     --profile minimalist --version "2024.12"
 
 # Generate all example PDFs

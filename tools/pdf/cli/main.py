@@ -722,7 +722,7 @@ Markdown Syntax:
             # Apply output directory if specified
             output_file = resolve_output_path(output_file, args.output_dir)
             
-                file_tasks.append((md_file, output_file, output_format, args.logo, reference_docx, args.css, cache_dir, use_cache, theme_config, highlight_style, crossref_config, glossary_file, args.renderer, custom_metadata))
+            file_tasks.append((md_file, output_file, output_format, args.logo, reference_docx, args.css, cache_dir, use_cache, theme_config, highlight_style, crossref_config, glossary_file, args.renderer, custom_metadata))
         
         if failures:
             print(f"\n{ERR} {failures} file(s) failed validation.")
