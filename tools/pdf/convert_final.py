@@ -6,6 +6,8 @@ Pandoc + WeasyPrint + mermaid-cli
 REFACTORED: Now uses SOLID-compliant modules for:
 - External tools (PandocExecutor, MermaidCLI, KatexCLI)
 - Diagram rendering (DiagramOrchestrator with pluggable renderers)
+- Metadata handling (process_metadata with extraction, validation, merging)
+- Renderer strategy (RendererFactory with pluggable PDF backends)
 - Platform-independent executable resolution
 """
 import subprocess
@@ -32,6 +34,7 @@ try:
         DocumentMetadata, MetadataExtractor, MetadataValidator,
         MetadataMerger, MetadataDefaults, HTMLMetadataInjector, process_metadata
     )
+    from renderers import RendererFactory, RenderConfig, RendererType, RenderError
     USE_NEW_ARCHITECTURE = True
 except ImportError as e:
     print(f"[WARN] New architecture modules not available: {e}")
@@ -1265,98 +1268,124 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
             }
         """)
         
-        if renderer == 'playwright':
-            print("  [4/5] Playwright generating professional PDF (perfect SVG rendering)...")
+        # Step 4: Generate PDF using renderer strategy pattern
+        if USE_NEW_ARCHITECTURE:
+            # NEW: Use RendererFactory with Strategy pattern
             try:
-                # Import Playwright PDF generator
-                import sys
-                sys.path.insert(0, str(Path(__file__).parent))
-                from renderers.playwright_renderer import generate_pdf_from_html
-                import asyncio
+                from renderers import RendererFactory, RenderConfig, RendererType
                 
-                # Extract metadata for header/footer (already merged with custom_metadata)
-                title = metadata.get("title") or doc_title
-                author = metadata.get("author", "Matt Jeffcoat")
-                organization = metadata.get("organization", "[Organization Name]")
-                date = metadata.get("date", "November 2025")
-                version = metadata.get("version", "1.0")
-                doc_type = metadata.get("type", "Technical Document")
-                classification = metadata.get("classification", "")
+                # Map string renderer name to RendererType enum
+                renderer_type = RendererType(renderer)  # 'playwright' -> RendererType.PLAYWRIGHT
+                fallback_type = RendererType.WEASYPRINT
                 
-                # Generate PDF with Playwright - Pass all metadata including custom fields
-                success = asyncio.run(generate_pdf_from_html(
-                    str(tmp_html),
-                    str(output_path),
-                    title=title,
-                    author=author,
-                    organization=organization,
-                    date=date,
-                    version=version,
-                    doc_type=doc_type,
-                    classification=classification,
-                    logo_path=str(logo_path) if logo_path and logo_path.exists() else None,
+                print(f"  [4/5] Generating PDF with {renderer} renderer...")
+                
+                # Get renderer with automatic fallback
+                pdf_renderer = RendererFactory.get_renderer_with_fallback(
+                    preferred=renderer_type,
+                    fallback=fallback_type,
+                    verbose=verbose
+                )
+                
+                # Build configuration
+                config = RenderConfig(
+                    html_file=tmp_html,
+                    output_file=output_path,
+                    css_file=Path(css_file) if css_file else None,
                     generate_toc=generate_toc,
                     generate_cover=generate_cover,
                     watermark=watermark,
-                    css_file=css_file,
+                    title=metadata.get('title') or doc_title,
+                    author=metadata.get('author'),
+                    organization=metadata.get('organization'),
+                    date=metadata.get('date'),
+                    version=metadata.get('version'),
+                    doc_type=metadata.get('type'),
+                    classification=metadata.get('classification'),
+                    logo_path=Path(logo_path) if logo_path and Path(logo_path).exists() else None,
                     verbose=verbose
-                ))
+                )
+                
+                # Render PDF
+                success = pdf_renderer.render(config)
                 
                 if success:
                     print(f"[OK] Created: {output_pdf}")
                 else:
-                    raise Exception("Playwright PDF generation failed")
-            except FileNotFoundError:
-                print("[WARN] Playwright module not found, falling back to WeasyPrint")
-                renderer = 'weasyprint'
+                    raise Exception(f"{pdf_renderer.get_name()} PDF generation failed")
+                    
             except ImportError as e:
-                print(f"[WARN] Playwright not available ({e}), falling back to WeasyPrint")
-                renderer = 'weasyprint'
+                print(f"[WARN] Renderer strategy module not available ({e}), falling back to legacy")
+                USE_NEW_ARCHITECTURE_RENDERER = False
             except Exception as e:
-                print(f"[WARN] Playwright failed ({e}), falling back to WeasyPrint")
-                renderer = 'weasyprint'
-        
-        if renderer == 'weasyprint':
-            print("  [4/5] WeasyPrint generating professional PDF...")
+                print(f"[ERROR] Renderer strategy failed: {e}")
+                raise
+        else:
+            # LEGACY: Original if/elif renderer selection
+            if renderer == 'playwright':
+                print("  [4/5] Playwright generating professional PDF (perfect SVG rendering)...")
+                try:
+                    import sys
+                    sys.path.insert(0, str(Path(__file__).parent))
+                    from renderers.playwright_renderer import generate_pdf_from_html
+                    import asyncio
+                    
+                    title = metadata.get("title") or doc_title
+                    author = metadata.get("author", "Matt Jeffcoat")
+                    organization = metadata.get("organization", "[Organization Name]")
+                    date = metadata.get("date", "November 2025")
+                    version = metadata.get("version", "1.0")
+                    doc_type = metadata.get("type", "Technical Document")
+                    classification = metadata.get("classification", "")
+                    
+                    success = asyncio.run(generate_pdf_from_html(
+                        str(tmp_html),
+                        str(output_path),
+                        title=title,
+                        author=author,
+                        organization=organization,
+                        date=date,
+                        version=version,
+                        doc_type=doc_type,
+                        classification=classification,
+                        logo_path=str(logo_path) if logo_path and logo_path.exists() else None,
+                        generate_toc=generate_toc,
+                        generate_cover=generate_cover,
+                        watermark=watermark,
+                        css_file=css_file,
+                        verbose=verbose
+                    ))
+                    
+                    if success:
+                        print(f"[OK] Created: {output_pdf}")
+                    else:
+                        raise Exception("Playwright PDF generation failed")
+                except (FileNotFoundError, ImportError) as e:
+                    print(f"[WARN] Playwright not available ({e}), falling back to WeasyPrint")
+                    renderer = 'weasyprint'
             
-            # Load CSS from file if provided, otherwise use default
-            # Note: WeasyPrint doesn't support all CSS properties (e.g., -webkit-print-color-adjust, break-after/break-inside)
-            # If a Playwright CSS file is provided, warn and use default CSS instead
-            if css_file and Path(css_file).exists():
-                css_file_lower = str(css_file).lower()
-                if 'playwright' in css_file_lower:
-                    print(f"    [WARN] CSS file '{css_file}' appears to be for Playwright renderer")
-                    print(f"    [WARN] WeasyPrint may not support all properties in this CSS file")
-                    print(f"    [WARN] Using default WeasyPrint CSS instead")
-                    custom_css = default_weasyprint_css
+            if renderer == 'weasyprint':
+                print("  [4/5] WeasyPrint generating professional PDF...")
+                
+                if css_file and Path(css_file).exists():
+                    css_file_lower = str(css_file).lower()
+                    if 'playwright' in css_file_lower:
+                        print(f"    [WARN] CSS file appears to be for Playwright renderer")
+                        custom_css = default_weasyprint_css
+                    else:
+                        try:
+                            custom_css = CSS(filename=str(css_file))
+                        except Exception as e:
+                            print(f"    [WARN] Failed to load CSS: {e}")
+                            custom_css = default_weasyprint_css
                 else:
-                    print(f"    Using external CSS: {css_file}")
-                    try:
-                        custom_css = CSS(filename=str(css_file))
-                    except Exception as e:
-                        print(f"    [WARN] Failed to load CSS file: {e}")
-                        print(f"    [WARN] Using default CSS instead")
-                        # Use the default CSS defined above
-                        custom_css = CSS(string="""
-                        @page {
-                            size: A4;
-                            margin: 25mm 15mm 20mm 15mm;
-                        }
-                        body {
-                            font-family: 'Segoe UI', Arial, sans-serif;
-                            font-size: 11pt;
-                            line-height: 1.6;
-                        }
-                        """)
-            else:
-                # Use default embedded CSS
-                custom_css = default_weasyprint_css
-            
-            HTML(filename=str(tmp_html)).write_pdf(
-                str(output_path),
-                stylesheets=[custom_css]
-            )
-            print(f"[OK] Created: {output_pdf}")
+                    custom_css = default_weasyprint_css
+                
+                HTML(filename=str(tmp_html)).write_pdf(
+                    str(output_path),
+                    stylesheets=[custom_css]
+                )
+                print(f"[OK] Created: {output_pdf}")
         
     except subprocess.CalledProcessError as e:
         print(f"[ERROR] Command failed: {e.stderr if e.stderr else e}")
