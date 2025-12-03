@@ -58,12 +58,17 @@ class PdfRenderingStep(PipelineStep):
                         try:
                             import sys
                             from pathlib import Path
-                            # Add parent directory to path for imports
-                            sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+                            # Add tools/pdf directory to path for imports
+                            pdf_tools_dir = Path(__file__).parent.parent.parent
+                            if str(pdf_tools_dir) not in sys.path:
+                                sys.path.insert(0, str(pdf_tools_dir))
                             from config.profiles import get_profile
                             profile = get_profile(profile_name)
                             if profile and profile.css:
                                 css_file = profile.css
+                                # Resolve relative path to absolute
+                                if not Path(css_file).is_absolute():
+                                    css_file = str(pdf_tools_dir / css_file)
                                 self.log(f"Using CSS from profile '{profile_name}': {css_file}", context)
                         except (ImportError, Exception) as e:
                             if context.verbose:
@@ -122,12 +127,17 @@ class PdfRenderingStep(PipelineStep):
                     try:
                         import sys
                         from pathlib import Path
-                        # Add parent directory to path for imports
-                        sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+                        # Add tools/pdf directory to path for imports
+                        pdf_tools_dir = Path(__file__).parent.parent.parent
+                        if str(pdf_tools_dir) not in sys.path:
+                            sys.path.insert(0, str(pdf_tools_dir))
                         from config.profiles import get_profile
                         profile = get_profile(profile_name)
                         if profile and profile.css:
                             css_file = profile.css
+                            # Resolve relative path to absolute
+                            if not Path(css_file).is_absolute():
+                                css_file = str(pdf_tools_dir / css_file)
                             self.log(f"Using CSS from profile '{profile_name}': {css_file}", context)
                     except (ImportError, Exception) as e:
                         if context.verbose:
