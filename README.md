@@ -46,6 +46,35 @@ Works out-of-the-box with sensible defaults. Customize only what matters.
 
 ---
 
+## 🆚 How Does It Compare?
+
+| Feature | docs-pipeline | Pandoc Alone | Sphinx | MkDocs + PDF Plugin |
+|---------|--------------|--------------|---------|---------------------|
+| **Setup Time** | ⚡ 30 seconds (Docker) | ⚠️ 15-30 min (manual deps) | ⚠️ 30-60 min (complex config) | ⚠️ 20-30 min (plugins) |
+| **Mermaid Auto-Render** | ✅ Built-in, theme-matched | ❌ Manual preprocessing | ⚠️ Requires sphinx-mermaid | ⚠️ Requires plugin |
+| **Visual Profiles** | ✅ 4 production-ready | ❌ Write CSS from scratch | ❌ Complex LaTeX templates | ⚠️ HTML themes (not PDF) |
+| **Single Command** | ✅ `convert_final.py` | ⚠️ Multi-step shell pipeline | ❌ sphinx-build + config | ❌ mkdocs + pandoc chain |
+| **PDF Quality** | ✅ 300 DPI print-ready | ✅ High quality | ✅ LaTeX-quality | ⚠️ Print CSS limitations |
+| **Web Interface** | ✅ Flask demo included | ❌ None | ❌ None | ✅ Live server (HTML only) |
+| **Metadata System** | ✅ CLI/YAML/Env/Frontmatter | ⚠️ Frontmatter only | ⚠️ conf.py + frontmatter | ⚠️ mkdocs.yml only |
+| **Batch Processing** | ✅ YAML workspaces | ❌ Manual shell scripting | ⚠️ Makefile/script | ❌ Manual iteration |
+| **Docker Containerized** | ✅ Official image | ❌ Manual Dockerfile | ⚠️ Community images | ⚠️ Community images |
+| **Dependency Hell** | ✅ Solved (Docker) | ❌ Pandoc + filters + tools | ❌ Python + LaTeX + deps | ❌ Node + Python + Pandoc |
+| **Best For** | Quick professional PDFs | Universal doc conversion | Large technical docs | Documentation websites |
+
+**Why docs-pipeline wins:**
+- **Zero-config with Docker** - `docker-compose up` and you're done
+- **Opinionated workflows** - Pandoc is powerful but overwhelming; we wrap complexity into simple commands
+- **Production-ready styling** - 4 professional profiles instead of starting from blank CSS
+- **Modern stack** - Playwright rendering beats WeasyPrint for pixel-perfect output
+
+**When to use alternatives:**
+- **Pandoc alone:** You need maximum flexibility and custom Lua filters
+- **Sphinx:** You're building large multi-page technical documentation sites
+- **MkDocs:** You primarily need HTML docs and PDF is secondary
+
+---
+
 ## 📸 See the Difference
 
 Generate drastically different-looking PDFs from the **same Markdown** by changing one flag:
@@ -114,7 +143,9 @@ Best for: Client deliverables, business reports, proposals
 
 ## 🚀 Quick Start
 
-### Try the Live Demo (30 seconds)
+### 🐳 Docker Setup (Recommended - 30 seconds)
+
+**Docker is required** due to system dependencies (Pandoc, Playwright, Chromium, Node.js, Mermaid CLI).
 
 ```bash
 git clone https://github.com/mjdevaccount/docs-pipeline.git
@@ -132,44 +163,89 @@ Open http://localhost:8080
 
 ---
 
-### CLI Installation (2 minutes)
+### 🔧 Local Installation (Advanced - Manual Dependencies)
 
-**Install:**
+**⚠️ Warning:** Local setup requires manual installation of system dependencies. Docker is **strongly recommended** for most users.
 
+**System Requirements:**
+- Python 3.9+
+- Pandoc
+- Node.js 18+
+- 300MB+ for Playwright Chromium
+
+**Ubuntu/Debian:**
 ```bash
+# Install system dependencies
+sudo apt-get update
+sudo apt-get install -y pandoc curl git \
+    libpango-1.0-0 libpangoft2-1.0-0 libfontconfig1 libcairo2
+
+# Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Install Mermaid CLI
+sudo npm install -g @mermaid-js/mermaid-cli
+
+# Install Python dependencies
 pip install -r requirements.txt
 pip install -r tools/pdf/requirements-pdf.txt
+playwright install chromium
 ```
 
-**Generate PDF:**
-
+**macOS:**
 ```bash
-python -m tools.pdf.convert_final input.md output.pdf --profile dark-pro
+# Install system dependencies
+brew install pandoc node
+
+# Install Mermaid CLI
+npm install -g @mermaid-js/mermaid-cli
+
+# Install Python dependencies
+pip install -r requirements.txt
+pip install -r tools/pdf/requirements-pdf.txt
+playwright install chromium
+```
+
+**Windows:**
+```powershell
+# Install Chocolatey first: https://chocolatey.org/install
+choco install pandoc nodejs
+
+# Install Mermaid CLI
+npm install -g @mermaid-js/mermaid-cli
+
+# Install Python dependencies
+pip install -r requirements.txt
+pip install -r tools/pdf/requirements-pdf.txt
+playwright install chromium
 ```
 
 ---
 
-### Your First PDF (5 minutes)
+### 🎯 Generate Your First PDF
 
-1. **Use an example file:**
-
+**Using Docker (Recommended):**
 ```bash
-# Try one of the example documents
-cp docs/examples/advanced-markdown-showcase.md hello.md
+# Start container
+docker-compose up -d
+
+# Generate PDF via CLI inside container
+docker exec -it docs-pipeline-web python -m tools.pdf.convert_final \
+    docs/examples/advanced-markdown-showcase.md \
+    output/showcase.pdf \
+    --profile tech-whitepaper
+
+# Or use the web interface at http://localhost:8080
 ```
 
-Or create your own `hello.md` with Markdown content and Mermaid diagrams.
-
-2. **Generate PDF:**
-
+**Local Installation:**
 ```bash
-python -m tools.pdf.convert_final hello.md hello.pdf --profile tech-whitepaper
+python -m tools.pdf.convert_final \
+    docs/examples/advanced-markdown-showcase.md \
+    output/showcase.pdf \
+    --profile dark-pro
 ```
-
-3. **Done!** Open `hello.pdf` to see:
-   - Professional styling
-   - Rendered Mermaid diagram
-   - Page numbers and headers
 
 ---
 
@@ -347,29 +423,85 @@ workspaces:
 
 ## 🏗️ Architecture
 
-Built with clean separation of concerns:
+Built with **SOLID principles** and **clean separation of concerns**:
 
 ```
 docs-pipeline/
-├── tools/
-│   ├── pdf/                    # Core: Markdown → PDF conversion
-│   │   ├── playwright_pdf/     # Browser-based rendering
-│   │   ├── profiles/            # Visual styling profiles
-│   │   └── tests/               # Layout + scaling validation
-│   ├── docs_pipeline/          # CLI: Multi-document orchestration
-│   └── prompts/                # Optional: AI document enhancement
-├── web_demo.py                 # Live web interface
-└── docs/
-    ├── examples/                # Sample documents
-    └── images/                  # Screenshots
+├── 🐳 Docker Setup
+│   ├── Dockerfile              # Python 3.11 + all dependencies
+│   └── docker-compose.yml      # Web demo + optional Structurizr
+│
+├── 📦 tools/
+│   ├── pdf/                    # Core PDF Generation Engine
+│   │   ├── cli/                # Command-line interface
+│   │   │   ├── main.py         # Entry point (was md2pdf.py)
+│   │   │   └── md2pdf.bat      # Windows batch file
+│   │   ├── config/             # Configuration management
+│   │   │   ├── profiles.py     # Visual profile system
+│   │   │   └── examples/       # Config examples
+│   │   ├── diagram_rendering/  # Extensible diagram system
+│   │   │   ├── orchestrator.py # Diagram pipeline
+│   │   │   ├── mermaid.py      # Mermaid renderer
+│   │   │   └── base.py         # Renderer interface
+│   │   ├── external_tools/     # SOLID wrappers
+│   │   │   ├── pandoc.py       # Pandoc executor
+│   │   │   ├── mermaid_cli.py  # Mermaid CLI wrapper
+│   │   │   └── base.py         # Tool interface
+│   │   ├── metadata/           # Document metadata extraction
+│   │   ├── pipeline/           # Pipeline orchestration
+│   │   ├── renderers/          # PDF rendering backends
+│   │   │   └── playwright_renderer.py
+│   │   ├── styles/             # Visual profiles (CSS)
+│   │   │   ├── tech-whitepaper.css
+│   │   │   ├── dark-pro.css
+│   │   │   ├── minimalist.css
+│   │   │   ├── enterprise-blue.css
+│   │   │   └── layout.css
+│   │   ├── playwright_pdf/     # Playwright integration
+│   │   ├── examples/           # Usage examples
+│   │   ├── tests/              # 100KB+ test suite
+│   │   ├── docs/               # Internal docs
+│   │   ├── convert_final.py    # Main entry point
+│   │   └── REORGANIZATION_SUMMARY.md
+│   │
+│   ├── docs_pipeline/          # Multi-doc orchestration
+│   │   └── cli.py              # YAML pipeline processor
+│   │
+│   ├── prompts/                # AI enhancement (optional)
+│   │   └── agents/             # Multi-agent system
+│   │
+│   └── structurizr/            # C4 diagram generation
+│       └── docker/             # DSL to diagram export
+│
+├── 🛠️ scripts/                 # Automation utilities
+│   ├── create_profile_screenshots.py
+│   └── record_demo_gif.py
+│
+├── 🌐 web_demo.py              # Flask web interface (port 8080)
+├── 📄 CONTRIBUTING.md          # Contribution guidelines
+├── 📜 LICENSE                  # MIT License
+└── 📚 docs/
+    ├── examples/               # Sample documents
+    │   ├── resume-template.md
+    │   └── advanced-markdown-showcase.md
+    └── images/                 # Visual assets
+        ├── demo.gif            # 3.4MB demo animation
+        ├── tech-whitepaper-example.png
+        ├── dark-pro-example.png
+        ├── minimalist-example.png
+        └── enterprise-blue-example.png
 ```
 
 **Design Philosophy:**
 
-- ✅ Single Responsibility - Each module does one thing well
-- ✅ Tested - Real tests, not aspirational claims
-- ✅ Extensible - Add profiles/renderers without changing core
-- ✅ Practical - Works out-of-box, customize if needed
+- ✅ **SOLID Principles** - Single responsibility, dependency injection, interface segregation
+- ✅ **Extensible** - Add profiles/renderers/diagrams without modifying core
+- ✅ **Tested** - 100KB+ real test coverage (not aspirational claims)
+- ✅ **Professional** - Industry-standard Python package structure
+- ✅ **Refactored** - Reduced `tools/pdf/` clutter by 70% (17 files → 5)
+- ✅ **Docker-First** - All dependencies containerized for zero-config setup
+
+**Recent Refactor:** Reorganized `tools/pdf/` from monolithic structure to focused packages. [See details](tools/pdf/REORGANIZATION_SUMMARY.md).
 
 ---
 
@@ -387,23 +519,63 @@ docs-pipeline/
 
 ## 📋 Requirements
 
-### Minimum
+### 🐳 Docker Installation (Recommended)
 
+**Required:**
+- Docker 20.10+
+- Docker Compose 2.0+
+- 2GB disk space (for images and dependencies)
+- 4GB RAM (recommended for large documents)
+
+**All dependencies are handled automatically in the container:**
+- Python 3.11
+- Pandoc
+- Playwright + Chromium browser
+- Node.js + Mermaid CLI
+- WeasyPrint dependencies (Pango, Cairo, Fontconfig)
+
+**Why Docker?** Zero manual setup, guaranteed consistency, works identically on Mac/Linux/Windows.
+
+---
+
+### 💻 Local Installation (Advanced)
+
+**If you must run locally without Docker:**
+
+**System Dependencies (Manual Installation Required):**
 - Python 3.9+
-- 50MB disk space
+- Pandoc 2.18+
+- Node.js 18+
+- Playwright with Chromium (300MB+ download)
+- Mermaid CLI (Node.js package)
+- WeasyPrint system libraries (Linux/Mac)
 
-### Optional
+**Python Dependencies:**
+```bash
+pip install -r requirements.txt
+pip install -r tools/pdf/requirements-pdf.txt
+playwright install chromium
+```
 
-- Docker (for web demo)
-- OpenAI/Anthropic API key (for AI document enhancement)
+**Platform-Specific Setup:**
+- Ubuntu/Debian: See [Local Installation](#-local-installation-advanced---manual-dependencies) above
+- macOS: Requires Homebrew for Pandoc and system libraries
+- Windows: Requires Chocolatey or manual installs
 
-### Automatically Installed
+**Storage:**
+- 300MB+ for Playwright Chromium
+- 50MB for Python packages
+- 100MB for Node.js and Mermaid CLI
 
-- Playwright (browser automation)
-- Pandoc (Markdown processing)
-- All Python dependencies
+---
 
-**No manual setup required.** `pip install` handles everything.
+### 🤖 Optional Features
+
+**AI Document Enhancement:**
+- OpenAI API key (for `tools/prompts/` functionality)
+- Anthropic API key (alternative provider)
+
+**Not required for core PDF generation.**
 
 ---
 
@@ -470,10 +642,12 @@ workspaces:
 
 | Problem | Solution |
 |---------|----------|
+| **Docker not starting** | Ensure Docker Desktop is running and port 8080 is free: `docker ps`, `lsof -i :8080` (Mac/Linux) or `netstat -ano \| findstr :8080` (Windows) |
+| **Local install fails** | Use Docker instead - local installation requires complex system dependencies |
+| **Playwright install fails** | In Docker container: `docker exec -it docs-pipeline-web playwright install chromium` |
 | `ModuleNotFoundError: playwright` | Run `playwright install chromium` |
 | Mermaid diagrams not rendering | Check `--renderer playwright` (not weasyprint) |
 | PDFs look different than expected | Try `--profile tech-whitepaper` explicitly |
-| Docker demo won't start | Ensure port 8080 is free: `lsof -i :8080` (Linux/Mac) or `netstat -ano \| findstr :8080` (Windows) |
 | Logo not found | Set `DOC_LOGO_PATH` env var or place logo at `$HOME/Documents/logo.png` |
 
 **Still stuck?** [Open an issue](https://github.com/mjdevaccount/docs-pipeline/issues) with:
