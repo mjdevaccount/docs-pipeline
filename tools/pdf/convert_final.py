@@ -28,6 +28,10 @@ from weasyprint import HTML, CSS
 try:
     from external_tools import PandocExecutor, KatexCLI, ToolNotFoundError
     from diagram_rendering import DiagramOrchestrator, DiagramCache, DiagramFormat
+    from metadata import (
+        DocumentMetadata, MetadataExtractor, MetadataValidator,
+        MetadataMerger, MetadataDefaults, HTMLMetadataInjector, process_metadata
+    )
     USE_NEW_ARCHITECTURE = True
 except ImportError as e:
     print(f"[WARN] New architecture modules not available: {e}")
@@ -650,37 +654,59 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
     work_dir = Path(tempfile.mkdtemp(prefix='pdf_'))
     
     try:
-        # Step 0: Extract metadata from frontmatter
+        # Step 0: Extract, validate, merge metadata using new metadata module
         md_content = md_path.read_text(encoding='utf-8')
-        metadata, md_content_clean = extract_metadata(md_content)
         
-        # If no frontmatter, use original content
-        if not metadata:
-            md_content_clean = md_content
-            metadata = {}
-        
-        # Merge custom_metadata (CLI/web overrides) with frontmatter
-        # custom_metadata wins over frontmatter
-        if custom_metadata:
-            metadata = {**metadata, **custom_metadata}
-        
-        # Validate and sanitize metadata
-        metadata = _validate_metadata(metadata)
-        
-        # Apply sensible defaults with environment variable support
-        from datetime import datetime
-        if not metadata.get('author'):
-            metadata['author'] = os.environ.get('USER_NAME', 'Author Name')
-        if not metadata.get('organization'):
-            metadata['organization'] = os.environ.get('ORGANIZATION', 'Organization')
-        if not metadata.get('date'):
-            metadata['date'] = datetime.now().strftime('%B %Y')
-        if not metadata.get('version'):
-            metadata['version'] = '1.0'
-        if not metadata.get('classification'):
-            metadata['classification'] = ''
-        if not metadata.get('type'):
-            metadata['type'] = 'Technical Document'
+        if USE_NEW_ARCHITECTURE:
+            # NEW: Use metadata module for extraction, validation, merging
+            extractor = MetadataExtractor()
+            frontmatter, md_content_clean = extractor.extract_from_string(md_content)
+            
+            validator = MetadataValidator()
+            validated_frontmatter = validator.validate(frontmatter)
+            validated_overrides = validator.validate(custom_metadata) if custom_metadata else None
+            
+            defaults = MetadataDefaults.get_defaults()
+            
+            merger = MetadataMerger()
+            metadata_obj = merger.merge(
+                frontmatter=validated_frontmatter,
+                overrides=validated_overrides,
+                defaults=defaults
+            )
+            
+            # Convert to dict for backward compatibility with existing code
+            metadata = metadata_obj.to_dict()
+        else:
+            # LEGACY: Original implementation
+            metadata, md_content_clean = extract_metadata(md_content)
+            
+            # If no frontmatter, use original content
+            if not metadata:
+                md_content_clean = md_content
+                metadata = {}
+            
+            # Merge custom_metadata (CLI/web overrides) with frontmatter
+            if custom_metadata:
+                metadata = {**metadata, **custom_metadata}
+            
+            # Validate and sanitize metadata
+            metadata = _validate_metadata(metadata)
+            
+            # Apply sensible defaults with environment variable support
+            from datetime import datetime
+            if not metadata.get('author'):
+                metadata['author'] = os.environ.get('USER_NAME', 'Author Name')
+            if not metadata.get('organization'):
+                metadata['organization'] = os.environ.get('ORGANIZATION', 'Organization')
+            if not metadata.get('date'):
+                metadata['date'] = datetime.now().strftime('%B %Y')
+            if not metadata.get('version'):
+                metadata['version'] = '1.0'
+            if not metadata.get('classification'):
+                metadata['classification'] = ''
+            if not metadata.get('type'):
+                metadata['type'] = 'Technical Document'
         
         # Step 0.5: Expand glossary terms and acronyms
         if glossary_file:
@@ -836,33 +862,44 @@ def markdown_to_pdf(md_file, output_pdf, logo_path=None, css_file=None, cache_di
             doc_title = title_match.group(1) if title_match else "Technical Specification"
             
             # Inject metadata as HTML meta tags for Playwright pipeline to extract
-            meta_tags = []
-            if metadata.get('title'):
-                meta_tags.append(f'<meta name="title" content="{metadata["title"]}" />')
-            if metadata.get('author'):
-                meta_tags.append(f'<meta name="author" content="{metadata["author"]}" />')
-            if metadata.get('organization'):
-                meta_tags.append(f'<meta name="organization" content="{metadata["organization"]}" />')
-            if metadata.get('date'):
-                meta_tags.append(f'<meta name="date" content="{metadata["date"]}" />')
-            if metadata.get('version'):
-                meta_tags.append(f'<meta name="version" content="{metadata["version"]}" />')
-            if metadata.get('type'):
-                meta_tags.append(f'<meta name="type" content="{metadata["type"]}" />')
-            if metadata.get('classification'):
-                meta_tags.append(f'<meta name="classification" content="{metadata["classification"]}" />')
-            
-            # Insert meta tags into <head>
-            if meta_tags:
-                meta_html = '\n    '.join(meta_tags)
-                if '<head>' in html_content:
-                    html_content = html_content.replace('<head>', f'<head>\n    {meta_html}', 1)
-                elif '</head>' in html_content:
-                    html_content = html_content.replace('</head>', f'    {meta_html}\n</head>', 1)
+            if USE_NEW_ARCHITECTURE:
+                # NEW: Use HTMLMetadataInjector
+                injector = HTMLMetadataInjector()
+                # Create DocumentMetadata from dict if we have dict
+                if isinstance(metadata, dict):
+                    metadata_obj = DocumentMetadata.from_dict(metadata)
                 else:
-                    # No head tag, add one
-                    html_content = html_content.replace('<html>', f'<html>\n<head>\n    {meta_html}\n</head>', 1)
-                tmp_html.write_text(html_content, encoding='utf-8')
+                    metadata_obj = metadata
+                injector.inject_into_file(tmp_html, metadata_obj)
+            else:
+                # LEGACY: Manual meta tag injection
+                meta_tags = []
+                if metadata.get('title'):
+                    meta_tags.append(f'<meta name="title" content="{metadata["title"]}" />')
+                if metadata.get('author'):
+                    meta_tags.append(f'<meta name="author" content="{metadata["author"]}" />')
+                if metadata.get('organization'):
+                    meta_tags.append(f'<meta name="organization" content="{metadata["organization"]}" />')
+                if metadata.get('date'):
+                    meta_tags.append(f'<meta name="date" content="{metadata["date"]}" />')
+                if metadata.get('version'):
+                    meta_tags.append(f'<meta name="version" content="{metadata["version"]}" />')
+                if metadata.get('type'):
+                    meta_tags.append(f'<meta name="type" content="{metadata["type"]}" />')
+                if metadata.get('classification'):
+                    meta_tags.append(f'<meta name="classification" content="{metadata["classification"]}" />')
+                
+                # Insert meta tags into <head>
+                if meta_tags:
+                    meta_html = '\n    '.join(meta_tags)
+                    if '<head>' in html_content:
+                        html_content = html_content.replace('<head>', f'<head>\n    {meta_html}', 1)
+                    elif '</head>' in html_content:
+                        html_content = html_content.replace('</head>', f'    {meta_html}\n</head>', 1)
+                    else:
+                        # No head tag, add one
+                        html_content = html_content.replace('<html>', f'<html>\n<head>\n    {meta_html}\n</head>', 1)
+                    tmp_html.write_text(html_content, encoding='utf-8')
         else:
             # WeasyPrint path: inject title page HTML
             print("  [3/4] Structuring document with logo...")
