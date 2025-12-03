@@ -64,6 +64,7 @@ output/
 uploads/
 temp/
 tmp/
+demo_screenshots/
 
 # Company-specific (add your patterns)
 *REDACTED*
