@@ -118,6 +118,10 @@ Open http://localhost:8080
 
 **That's it.** Upload a Markdown file, download your PDF.
 
+![Live Demo](docs/images/demo.gif)
+
+*Interactive web interface with profile selection, metadata customization, and example PDFs*
+
 ---
 
 ### CLI Installation (2 minutes)
