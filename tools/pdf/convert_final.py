@@ -136,6 +136,7 @@ def markdown_to_pdf(
         'generate_cover': generate_cover,
         'watermark': watermark,
         'verbose': verbose,
+        'profile': profile,  # CRITICAL: Include profile so CSS is loaded
         'custom_metadata': custom_metadata or {}
     }
     

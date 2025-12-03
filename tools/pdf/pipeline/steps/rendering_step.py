@@ -50,11 +50,31 @@ class PdfRenderingStep(PipelineStep):
                     verbose=context.verbose
                 )
                 
+                # Handle profile - load CSS from profile if no explicit css_file provided
+                css_file = context.get_config('css_file')
+                if not css_file:
+                    profile_name = context.get_config('profile')
+                    if profile_name:
+                        try:
+                            import sys
+                            from pathlib import Path
+                            # Add parent directory to path for imports
+                            sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+                            from config.profiles import get_profile
+                            profile = get_profile(profile_name)
+                            if profile and profile.css:
+                                css_file = profile.css
+                                self.log(f"Using CSS from profile '{profile_name}': {css_file}", context)
+                        except (ImportError, Exception) as e:
+                            if context.verbose:
+                                self.log(f"Profile loading failed: {e}", context)
+                            pass  # Profile system not available
+                
                 # Build configuration
                 config = RenderConfig(
                     html_file=context.html_file,
                     output_file=context.output_file,
-                    css_file=Path(context.get_config('css_file')) if context.get_config('css_file') else None,
+                    css_file=Path(css_file) if css_file else None,
                     generate_toc=context.get_config('generate_toc', False),
                     generate_cover=context.get_config('generate_cover', False),
                     watermark=context.get_config('watermark'),
@@ -94,7 +114,26 @@ class PdfRenderingStep(PipelineStep):
             
             html = HTML(filename=str(context.html_file))
             
+            # Handle profile - load CSS from profile if no explicit css_file provided
             css_file = context.get_config('css_file')
+            if not css_file:
+                profile_name = context.get_config('profile')
+                if profile_name:
+                    try:
+                        import sys
+                        from pathlib import Path
+                        # Add parent directory to path for imports
+                        sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+                        from config.profiles import get_profile
+                        profile = get_profile(profile_name)
+                        if profile and profile.css:
+                            css_file = profile.css
+                            self.log(f"Using CSS from profile '{profile_name}': {css_file}", context)
+                    except (ImportError, Exception) as e:
+                        if context.verbose:
+                            self.log(f"Profile loading failed: {e}", context)
+                        pass  # Profile system not available
+            
             if css_file and Path(css_file).exists():
                 stylesheets = [CSS(filename=str(css_file))]
             else:
