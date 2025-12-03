@@ -6,6 +6,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![GitHub release](https://img.shields.io/github/v/release/mjdevaccount/docs-pipeline)](https://github.com/mjdevaccount/docs-pipeline/releases)
+[![GitHub stars](https://img.shields.io/github/stars/mjdevaccount/docs-pipeline?style=social)](https://github.com/mjdevaccount/docs-pipeline/stargazers)
+[![GitHub last commit](https://img.shields.io/github/last-commit/mjdevaccount/docs-pipeline)](https://github.com/mjdevaccount/docs-pipeline/commits/main)
 
 [🚀 Quick Start](#-quick-start) · [📖 Documentation](#-documentation) · [✨ Features](#-features) · [💻 Examples](#-examples)
 
