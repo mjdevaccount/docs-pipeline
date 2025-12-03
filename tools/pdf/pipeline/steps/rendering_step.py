@@ -66,9 +66,14 @@ class PdfRenderingStep(PipelineStep):
                             profile = get_profile(profile_name)
                             if profile and profile.css:
                                 css_file = profile.css
-                                # Resolve relative path to absolute
-                                if not Path(css_file).is_absolute():
-                                    css_file = str(pdf_tools_dir / css_file)
+                                # Profile CSS paths are already relative to repo root, resolve them
+                                css_path = Path(css_file)
+                                if not css_path.is_absolute():
+                                    # Go up from tools/pdf to repo root, then use the path
+                                    repo_root = pdf_tools_dir.parent.parent
+                                    css_file = str(repo_root / css_path)
+                                else:
+                                    css_file = str(css_path)
                                 self.log(f"Using CSS from profile '{profile_name}': {css_file}", context)
                         except (ImportError, Exception) as e:
                             if context.verbose:
@@ -135,9 +140,14 @@ class PdfRenderingStep(PipelineStep):
                         profile = get_profile(profile_name)
                         if profile and profile.css:
                             css_file = profile.css
-                            # Resolve relative path to absolute
-                            if not Path(css_file).is_absolute():
-                                css_file = str(pdf_tools_dir / css_file)
+                            # Profile CSS paths are already relative to repo root, resolve them
+                            css_path = Path(css_file)
+                            if not css_path.is_absolute():
+                                # Go up from tools/pdf to repo root, then use the path
+                                repo_root = pdf_tools_dir.parent.parent
+                                css_file = str(repo_root / css_path)
+                            else:
+                                css_file = str(css_path)
                             self.log(f"Using CSS from profile '{profile_name}': {css_file}", context)
                     except (ImportError, Exception) as e:
                         if context.verbose:
