@@ -1,0 +1,227 @@
+# Business Glossary
+# Common business and organizational terms
+
+terms:
+  - term: "Stakeholder"
+    definition: "Any person or entity with an interest in the success or failure of a project or organization."
+    category: "Management"
+    synonyms: ["Party", "Interested Party"]
+    see_also: ["Project", "Organization", "Engagement"]
+    example: "We scheduled stakeholder meetings to gather requirements."
+
+  - term: "ROI"
+    definition: "Return on Investment - a measure of the profit or loss generated from an investment relative to the amount invested."
+    category: "Finance"
+    synonyms: ["Return on Investment"]
+    see_also: ["Investment", "Profit", "Cost"]
+    example: "The new system had a 40% ROI within the first year."
+
+  - term: "KPI"
+    definition: "Key Performance Indicator - a measurable value that shows how effectively a goal is being achieved."
+    category: "Management"
+    synonyms: ["Key Performance Indicator", "Metric"]
+    see_also: ["Goal", "Objective", "Performance"]
+    example: "Customer satisfaction is one of our primary KPIs."
+
+  - term: "SLA"
+    definition: "Service Level Agreement - a contract that specifies the level of service expected from a service provider."
+    category: "Service Management"
+    synonyms: ["Service Level Agreement"]
+    see_also: ["Service", "Contract", "Support"]
+    example: "Our SLA guarantees 99.9% uptime for all critical services."
+
+  - term: "Roadmap"
+    definition: "A strategic plan that outlines the future direction and major milestones of a product or project."
+    category: "Planning"
+    synonyms: ["Product Roadmap", "Project Plan"]
+    see_also: ["Plan", "Strategy", "Milestone"]
+    example: "The product roadmap includes three major releases over the next year."
+
+  - term: "Sprint"
+    definition: "A fixed time period, typically 1-4 weeks, during which a team completes a defined set of work."
+    category: "Agile"
+    synonyms: ["Iteration", "Development Sprint"]
+    see_also: ["Agile", "Backlog", "Velocity"]
+    example: "Our two-week sprints allow for rapid iteration and feedback."
+
+  - term: "Backlog"
+    definition: "A prioritized list of features, improvements, and fixes that need to be completed."
+    category: "Agile"
+    synonyms: ["Product Backlog", "To-Do List"]
+    see_also: ["Sprint", "Story", "Task"]
+    example: "We prioritize items in the backlog based on customer feedback and business value."
+
+  - term: "Milestone"
+    definition: "A significant point or event in a project or timeline, often marking the completion of a major phase."
+    category: "Project Management"
+    synonyms: ["Checkpoint", "Target Date"]
+    see_also: ["Schedule", "Deadline", "Phase"]
+    example: "The beta release is our next major milestone."
+
+  - term: "Capacity Planning"
+    definition: "The process of determining the resources needed to meet future business demands."
+    category: "Planning"
+    synonyms: ["Resource Planning"]
+    see_also: ["Resource", "Planning", "Team"]
+    example: "Capacity planning helps us anticipate staffing needs."
+
+  - term: "Budget"
+    definition: "A plan for allocating financial resources to specific projects, departments, or activities."
+    category: "Finance"
+    synonyms: ["Financial Plan", "Allocation"]
+    see_also: ["Cost", "Expense", "Finance"]
+    example: "We allocated a $500,000 budget for infrastructure improvements."
+
+  - term: "Risk Assessment"
+    definition: "The process of identifying and analyzing potential risks that could impact a project or business."
+    category: "Management"
+    synonyms: ["Risk Analysis", "Risk Evaluation"]
+    see_also: ["Risk", "Mitigation", "Plan"]
+    example: "Risk assessment identified potential security vulnerabilities."
+
+  - term: "Compliance"
+    definition: "Adherence to laws, regulations, standards, and internal policies."
+    category: "Governance"
+    synonyms: ["Regulatory Compliance"]
+    see_also: ["Governance", "Policy", "Regulation"]
+    example: "We ensured compliance with GDPR regulations in our data handling."
+
+  - term: "Governance"
+    definition: "The system of rules, processes, and structures for making decisions and managing an organization."
+    category: "Governance"
+    synonyms: ["Corporate Governance"]
+    see_also: ["Policy", "Compliance", "Management"]
+    example: "Strong governance practices ensure accountability and transparency."
+
+  - term: "Agile"
+    definition: "A project management methodology that emphasizes iterative development, customer collaboration, and continuous improvement."
+    category: "Agile"
+    synonyms: ["Agile Methodology", "Agile Framework"]
+    see_also: ["Sprint", "Backlog", "Scrum"]
+    example: "We adopted Agile practices to improve our product delivery."
+
+  - term: "Scrum"
+    definition: "A specific implementation of Agile methodology that uses sprints, daily standups, and other ceremonies."
+    category: "Agile"
+    synonyms: ["Scrum Framework"]
+    see_also: ["Agile", "Sprint", "Team"]
+    example: "Our team uses Scrum as our primary project management framework."
+
+  - term: "DevOps"
+    definition: "A set of practices and cultural philosophies that emphasizes collaboration between development and operations teams."
+    category: "Organization"
+    synonyms: ["Development Operations"]
+    see_also: ["Development", "Operations", "Automation"]
+    example: "DevOps practices have enabled us to deploy updates daily."
+
+  - term: "Documentation"
+    definition: "Written materials that describe how a system works, how to use it, or how to maintain it."
+    category: "Technical Writing"
+    synonyms: ["Technical Documentation", "User Guide"]
+    see_also: ["Knowledge Base", "Manual", "Training"]
+    example: "We maintain comprehensive documentation for all our systems."
+
+  - term: "Knowledge Base"
+    definition: "A centralized repository of information, best practices, and solutions used within an organization."
+    category: "Knowledge Management"
+    synonyms: ["KB", "Information Repository"]
+    see_also: ["Documentation", "Wiki", "Support"]
+    example: "Our knowledge base includes articles on common issues and solutions."
+
+  - term: "Support"
+    definition: "The process of providing assistance to customers or users who encounter problems with a product or service."
+    category: "Service Management"
+    synonyms: ["Customer Support", "Technical Support"]
+    see_also: ["Service", "Help Desk", "Issue"]
+    example: "Our support team responds to customer inquiries within 2 hours."
+
+  - term: "Engagement"
+    definition: "The level of involvement and participation of stakeholders or customers in a project or organization."
+    category: "Management"
+    synonyms: ["Stakeholder Engagement"]
+    see_also: ["Stakeholder", "Communication", "Collaboration"]
+    example: "High stakeholder engagement led to better project outcomes."
+
+  - term: "Velocity"
+    definition: "A measure of the amount of work a team can complete during a sprint, used for planning and forecasting."
+    category: "Agile"
+    synonyms: ["Team Velocity"]
+    see_also: ["Sprint", "Capacity", "Planning"]
+    example: "Our team velocity is 45 story points per sprint."
+
+  - term: "User Story"
+    definition: "A simple description of a software feature written from the perspective of an end-user or stakeholder."
+    category: "Agile"
+    synonyms: ["Story"]
+    see_also: ["Backlog", "Requirement", "Sprint"]
+    example: "User stories help us focus on customer value during development."
+
+  - term: "Acceptance Criteria"
+    definition: "Specific conditions or standards that must be met for a feature or task to be considered complete."
+    category: "Agile"
+    synonyms: ["Definition of Done"]
+    see_also: ["Requirement", "Testing", "Quality"]
+    example: "Acceptance criteria ensure everyone understands what done means."
+
+  - term: "Technical Debt"
+    definition: "Accumulated shortcuts or compromises in code or design that create future maintenance and development challenges."
+    category: "Technical"
+    synonyms: ["Code Debt"]
+    see_also: ["Quality", "Refactoring", "Maintenance"]
+    example: "We allocated time each sprint to pay down technical debt."
+
+  - term: "Quality Assurance"
+    definition: "The process of ensuring that a product or service meets established quality standards."
+    category: "Quality"
+    synonyms: ["QA", "Quality Management"]
+    see_also: ["Testing", "Quality", "Standard"]
+    example: "Quality assurance testing caught critical bugs before release."
+
+  - term: "Release"
+    definition: "The act of making a new version of a software product available to customers or users."
+    category: "Release Management"
+    synonyms: ["Software Release", "Product Release"]
+    see_also: ["Deployment", "Version", "Launch"]
+    example: "We plan to release version 2.0 next quarter."
+
+  - term: "Version"
+    definition: "A specific iteration or release of a product or document, typically identified by a version number."
+    category: "Release Management"
+    synonyms: ["Release Version", "Build"]
+    see_also: ["Release", "Build", "Compatibility"]
+    example: "Version 1.5 includes important security updates."
+
+  - term: "Dependency"
+    definition: "A relationship between components where one component relies on another to function properly."
+    category: "Technical"
+    synonyms: ["Project Dependency", "Resource Dependency"]
+    see_also: ["Component", "Integration", "Coupling"]
+    example: "We identified all project dependencies before planning the release."
+
+  - term: "Integration"
+    definition: "The process of combining different components or systems to work together as a unified whole."
+    category: "Technical"
+    synonyms: ["System Integration", "Data Integration"]
+    see_also: ["Component", "Dependency", "Interface"]
+    example: "System integration required coordinating between three different teams."
+
+  - term: "User Experience"
+    definition: "The overall experience and satisfaction a user has when interacting with a product or service."
+    category: "Design"
+    synonyms: ["UX", "User Satisfaction"]
+    see_also: ["Design", "Interface", "Usability"]
+    example: "Improving user experience reduced customer support tickets by 30%."
+
+  - term: "User Interface"
+    definition: "The visual design and layout through which users interact with a product or application."
+    category: "Design"
+    synonyms: ["UI", "Interface", "Visual Design"]
+    see_also: ["Design", "User Experience", "Usability"]
+    example: "The user interface redesign improved navigation and discoverability."
+
+  - term: "Accessibility"
+    definition: "The design principle of making products and services usable for everyone, including people with disabilities."
+    category: "Design"
+    synonyms: ["Inclusive Design", "Accessibility Standards"]
+    see_also: ["Design", "User Experience", "Standard"]
+    example: "We ensured accessibility compliance with WCAG 2.1 guidelines."
