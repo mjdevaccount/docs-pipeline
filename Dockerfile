@@ -6,13 +6,6 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     make \
-    # WeasyPrint dependencies (Pango, Fontconfig, Cairo)
-    libpango-1.0-0 \
-    libpangoft2-1.0-0 \
-    libfontconfig1 \
-    libcairo2 \
-    libgdk-pixbuf-xlib-2.0-0 \
-    shared-mime-info \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g @mermaid-js/mermaid-cli \
@@ -47,4 +40,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 
 # Run web application
 CMD ["python", "web_demo.py"]
-
