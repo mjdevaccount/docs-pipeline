@@ -1,0 +1,88 @@
+---
+title: Design System Command Rules
+description: Cursor IDE rules for design system workflows and commands
+---
+
+# Design System Workflows
+
+These rules provide convenient shortcuts for common design system operations.
+
+## Build All Themes (Complete Workflow)
+
+```bash
+cd docs-pipeline && python tools/pdf/config/build_themes.py
+```
+
+**What it does**:
+1. Validates design tokens (WCAG AA compliance)
+2. Generates CSS for all 5 themes
+3. Creates theme index
+4. Validates CSS files exist
+5. Loads and validates profiles
+6. Prints complete summary
+
+## Validate Tokens Only
+
+```bash
+cd docs-pipeline && python tools/pdf/config/theme_validator.py tools/pdf/config/design-tokens.yml AA
+```
+
+**Options**:
+- `AA` - WCAG AA compliance (4.5:1 contrast)
+- `AAA` - WCAG AAA compliance (7:1 contrast, stricter)
+
+## Generate CSS Only
+
+```bash
+cd docs-pipeline && python tools/pdf/config/css_generator.py tools/pdf/styles/generated/
+```
+
+## Check Profiles
+
+```bash
+cd docs-pipeline && python tools/pdf/config/profile_loader.py
+```
+
+Lists all available themes and validates CSS files exist.
+
+## List Available Themes
+
+```bash
+cd docs-pipeline && python -c "
+from tools.pdf.config.profile_loader import ProfileLoader
+loader = ProfileLoader('tools/pdf/config')
+for info in loader.get_all_themes_info():
+    print(f'{info.name:25} | {info.mode:5} | {info.color_count:3} colors')
+"
+```
+
+## Update Colors Workflow
+
+1. Edit `tools/pdf/config/design-tokens.yml` (update color values)
+2. Run: `python tools/pdf/config/build_themes.py`
+3. All CSS automatically updated
+
+## Add New Theme Workflow
+
+1. Edit `tools/pdf/config/design-tokens.yml` (add theme colors)
+2. Edit `tools/pdf/config/profiles.toml` (add theme configuration)
+3. Run: `python tools/pdf/config/build_themes.py`
+4. New CSS generated automatically
+
+## Documentation References
+
+- **Complete Overview**: `docs/DESIGN_SYSTEM_COMPLETE.md`
+- **Phase 1 (Tokens)**: `docs/PHASE_1_DESIGN_TOKENS_COMPLETE.md`
+- **Phase 2 (Generation)**: `docs/PHASE_2_CSS_GENERATION_COMPLETE.md`
+- **Phase 3 (Integration)**: `docs/PHASE_3_INTEGRATION_COMPLETE.md`
+- **Status**: `DESIGN_SYSTEM_STATUS.md`
+
+## Key Files
+
+- `tools/pdf/config/design-tokens.yml` - Central token source (all colors)
+- `tools/pdf/config/profiles.toml` - Theme configuration
+- `tools/pdf/config/build_themes.py` - Build orchestration
+- `tools/pdf/config/css_generator.py` - CSS generation
+- `tools/pdf/config/theme_manager.py` - Unified management
+- `tools/pdf/config/theme_validator.py` - Token validation
+- `tools/pdf/config/profile_loader.py` - Profile loading
