@@ -1,0 +1,308 @@
+# PDF Generation CLI & Caching
+
+## Primary CLI Command
+
+**Entry Point**: `python -m tools.pdf.cli.main`
+
+### Basic Usage
+
+```bash
+# Single file conversion
+python -m tools.pdf.cli.main input.md output.pdf
+
+# Auto-detect output format
+python -m tools.pdf.cli.main input.md
+```
+
+### Full-Featured Generation (All Themes)
+
+```bash
+# Generate PDF with title page, TOC, verbose output, specific theme
+python -m tools.pdf.cli.main input.md output.pdf \
+  --profile <theme> \
+  --cover \
+  --toc \
+  --verbose
+
+# Available themes:
+# - dark-pro
+# - tech-whitepaper
+# - enterprise-blue
+# - minimalist
+```
+
+### Windows PowerShell (Encoding Fix)
+
+```powershell
+# Set UTF-8 encoding to avoid character encoding errors
+$env:PYTHONIOENCODING='utf-8'
+python -m tools.pdf.cli.main input.md output.pdf --profile dark-pro --cover --toc --verbose
+```
+
+### Generate All Theme Versions
+
+```bash
+# Generate for all available themes
+for theme in dark-pro tech-whitepaper enterprise-blue minimalist; do
+  python -m tools.pdf.cli.main input.md output-${theme}.pdf \
+    --profile ${theme} \
+    --cover \
+    --toc \
+    --verbose
+done
+```
+
+## Key CLI Flags
+
+### Output Control
+- `--format pdf|docx|html|markdown|epub` - Output format (default: pdf)
+- `--output-dir DIR` - Centralized output location
+- `--profile <name>` - Style profile (dark-pro, tech-whitepaper, enterprise-blue, minimalist)
+
+### Document Features
+- `--cover` / `--generate-cover` - Generate title page from frontmatter
+- `--toc` / `--generate-toc` - Generate table of contents
+- `--watermark TEXT` - Add watermark text (e.g., "DRAFT")
+
+### Metadata Overrides
+- `--title TEXT` - Document title (overrides frontmatter)
+- `--author TEXT` - Author name
+- `--organization TEXT` - Organization name
+- `--date TEXT` - Document date
+- `--doc-version TEXT` - Document version
+- `--classification TEXT` - Classification level
+- `--doc-type TEXT` - Document type
+
+### Styling
+- `--css PATH` - Custom CSS file
+- `--logo PATH` - Logo image path (PDF only)
+- `--highlight <style>` - Code highlighting style (default: pygments)
+
+### Performance & Caching
+- `--no-cache` - Disable diagram caching (default: enabled)
+- `--cache-dir DIR` - Custom cache directory (default: `tools/pdf/output/pdf-diagrams/`)
+- `--threads N` - Parallel processing for batch (default: 1)
+
+### Batch Processing
+- `--batch file1.md file2.md ...` - Convert multiple files
+- `--config config.json` - JSON config file for batch
+- `--threads N` - Parallel workers (2-4x speedup)
+
+### Diagnostics
+- `--verbose` / `-v` - Verbose output with metrics and tracebacks
+- `--check` - Check dependencies and exit
+- `--lint` - Validate Markdown and YAML frontmatter
+- `--log FILE` - File logging for CI/automation
+
+## Caching System
+
+### Two-Level Caching Architecture
+
+#### 1. Diagram Cache (`DiagramCache`)
+**Purpose**: Cache rendered Mermaid/PlantUML/Graphviz diagrams by content hash
+
+**Location**: `tools/pdf/output/pdf-diagrams/` (configurable via `--cache-dir`)
+
+**Cache Key**: MD5 hash of:
+- Diagram source code
+- Output format (SVG/PNG)
+- Renderer-specific options
+
+**Benefits**:
+- 2-5x faster on subsequent runs with unchanged diagrams
+- Automatic cache hit/miss tracking
+- Cache metrics available in verbose mode
+
+**Usage**:
+```bash
+# Caching enabled by default
+python -m tools.pdf.cli.main doc.md doc.pdf
+
+# Disable caching
+python -m tools.pdf.cli.main doc.md doc.pdf --no-cache
+
+# Custom cache directory
+python -m tools.pdf.cli.main doc.md doc.pdf --cache-dir ./my-cache
+```
+
+**Cache Metrics** (shown in `--verbose` mode):
+- Hit ratio (% of diagrams served from cache)
+- Time saved (ms)
+- Size reduction (%)
+
+#### 2. Build Cache (`BuildCache`)
+**Purpose**: Track document builds and detect what changed for incremental rebuilds
+
+**Location**: `.build-cache/` directory
+
+**Tracks**:
+- File content hashes (MD5)
+- File modification times
+- File sizes
+- Diagram dependencies
+- Build history
+
+**Features**:
+- Detects modified source files
+- Tracks diagram code changes
+- Only re-renders changed diagrams
+- Speeds up large multi-file builds (3-5x faster)
+
+**Usage**:
+```python
+from tools.pdf.core.build_cache import BuildCache
+
+cache = BuildCache()
+
+# Check if rebuild needed
+if cache.needs_rebuild('document.md'):
+    # Rebuild document
+    convert_document('document.md', 'output.pdf')
+    # Record build
+    cache.record_build('document.md', 'output.pdf', diagrams=[...])
+```
+
+**Incremental Processing**:
+```python
+from tools.pdf.core.incremental_processor import IncrementalProcessor
+
+processor = IncrementalProcessor(use_cache=True)
+
+# Only processes changed content
+if processor.needs_rebuild('doc.md'):
+    result = processor.process_document('doc.md', 'output.pdf')
+```
+
+## Performance Optimization
+
+### Diagram Caching
+- **First Run**: All diagrams rendered and cached
+- **Subsequent Runs**: Unchanged diagrams loaded from cache (2-5x faster)
+- **Cache Location**: `tools/pdf/output/pdf-diagrams/` by default
+
+### Parallel Processing
+- Use `--threads N` for batch conversions
+- 2-4x speedup on multi-core systems
+- Example: `python -m tools.pdf.cli.main --batch *.md --threads 4`
+
+### Incremental Builds
+- Build cache tracks file changes
+- Only re-renders modified diagrams
+- 3-5x faster for unchanged content
+
+### Best Practices
+```bash
+# Fast batch conversion with all optimizations
+python -m tools.pdf.cli.main \
+  --config pdf-config.json \
+  --threads 4 \
+  --cache-dir ./cache \
+  --verbose
+```
+
+## Common Patterns
+
+### Generate All Themes for a Document
+
+```bash
+# PowerShell
+$themes = @('dark-pro', 'tech-whitepaper', 'enterprise-blue', 'minimalist')
+foreach ($theme in $themes) {
+  $env:PYTHONIOENCODING='utf-8'
+  python -m tools.pdf.cli.main `
+    uploads/document.md `
+    output/document-${theme}.pdf `
+    --profile $theme `
+    --cover `
+    --toc `
+    --verbose
+}
+```
+
+### Batch Processing with Config
+
+```json
+{
+  "files": [
+    {
+      "input": "doc1.md",
+      "output": "doc1.pdf",
+      "profile": "tech-whitepaper",
+      "cover": true,
+      "toc": true
+    },
+    {
+      "input": "doc2.md",
+      "output": "doc2.pdf",
+      "profile": "dark-pro"
+    }
+  ],
+  "threads": 4,
+  "cache_dir": "./cache"
+}
+```
+
+```bash
+python -m tools.pdf.cli.main --config config.json --verbose
+```
+
+### Watch Mode (Development)
+
+```bash
+python -m tools.pdf.cli.watch_mode input.md output.pdf \
+  --profile tech-whitepaper \
+  --cover \
+  --toc \
+  --verbose
+```
+
+## Pipeline Steps
+
+The PDF generation pipeline consists of 11 steps:
+
+1. **Read Content** - Loads markdown file
+2. **Metadata Extraction** - Extracts YAML frontmatter
+3. **Glossary Expansion** - Expands acronyms/terms (if glossary provided)
+4. **Math Rendering** - Processes LaTeX math (if present)
+5. **Diagram Rendering** - Renders Mermaid/PlantUML/Graphviz to SVG
+   - Uses cache if available
+   - Falls back to rendering if cache miss
+6. **Pandoc Conversion** - Converts markdown to HTML
+7. **Mermaid Enhancement** - Injects Mermaid 11 client-side JS (for CSS variable theming)
+8. **CSS Stripping** - Removes inline styles
+9. **Title Page Injection** - Adds cover page (Playwright handles this)
+10. **Metadata Injection** - Embeds PDF metadata
+11. **PDF Rendering** - Playwright renders HTML to PDF with theme CSS
+
+## Cache Statistics
+
+When using `--verbose`, cache metrics are reported:
+
+```
+[INFO] Cache Performance Report
+       Hit Ratio: 75.0% (3/4)
+       Time Saved: 1500ms
+       Size Reduction: 12.5%
+```
+
+## Troubleshooting
+
+### Encoding Errors (Windows)
+```powershell
+# Set UTF-8 encoding before running
+$env:PYTHONIOENCODING='utf-8'
+python -m tools.pdf.cli.main ...
+```
+
+### Cache Issues
+```bash
+# Clear cache and rebuild
+rm -rf tools/pdf/output/pdf-diagrams/
+python -m tools.pdf.cli.main doc.md doc.pdf --verbose
+```
+
+### Performance Issues
+- Enable caching: `--cache-dir ./cache` (explicit)
+- Use parallel processing: `--threads 4`
+- Check cache hit ratio in verbose output
+- Consider incremental builds for large document sets

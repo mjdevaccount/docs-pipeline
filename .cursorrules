@@ -6,6 +6,7 @@ This project uses modular rules in `.cursor/rules/` directory. See those files f
 
 - **Architecture**: See `.cursor/rules/architecture.mdc` for system design, Docker stack, data flow
 - **CLI Workflows**: See `.cursor/rules/cli-workflows.mdc` for commands, flags, exit codes
+- **PDF Generation**: See `.cursor/rules/pdf-generation.mdc` for PDF CLI usage, caching, performance
 - **Docker Operations**: See `.cursor/rules/docker-ops.mdc` for container best practices
 - **Code Generation**: See `.cursor/rules/codegen-patterns.mdc` for Python standards, Pydantic, Jinja2
 - **Testing**: See `.cursor/rules/testing-standards.mdc` for test structure, fixtures, coverage
