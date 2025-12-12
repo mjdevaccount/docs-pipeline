@@ -9,7 +9,7 @@
  * - Automatic dark mode support
  * - GitHub-inspired table styling
  * - Better accessibility and contrast
- * - Full-width layout using calc(100% + margins)
+ * - Full-width layout using negative margins (stays within page)
  */
 
 /* ============================================================================
@@ -267,9 +267,15 @@ pre {
     overflow-x: auto;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    /* Full-width using calc(100% + 2cm left + 2cm right margins) */
-    width: calc(100% + 4cm);
-    max-width: none;
+    /* Full-width using negative margin approach */
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    /* But constrain to not go past page edges */
+    max-width: 100%;
     /* page-break rules removed - handled by layout.css */
 }
 
@@ -325,8 +331,8 @@ li::marker {
    ========================================================================== */
 
 table {
-    /* Full-width using calc(100% + 2cm left + 2cm right margins) */
-    width: calc(100% + 4cm);
+    /* Stay within page bounds - use regular width, no full-width expansion */
+    width: 100%;
     border-collapse: separate;
     border-spacing: 0;
     font-size: 0.925rem;
@@ -394,8 +400,8 @@ blockquote {
     margin: 1.5em 0;
     margin-left: 0;
     margin-right: 0;
-    /* Full-width using calc(100% + 2cm left + 2cm right margins) */
-    width: calc(100% + 4cm);
+    /* Stay within page bounds - use regular width */
+    width: 100%;
     max-width: none;
     font-style: italic;
     color: var(--color-blockquote-text);
