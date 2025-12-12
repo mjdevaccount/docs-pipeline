@@ -308,15 +308,16 @@ ul ul, ol ol, ul ol, ol ul {
     padding-left: 1.5rem;
 }
 
-/* Modern list markers */
+/* Modern list markers - improved spacing and appearance */
 ul {
-    list-style-type: '▹';  /* Modern bullet point */
+    list-style-type: '•';  /* Modern bullet point (better than triangle) */
 }
 
-/* Marker styling */
+/* Marker styling - better spacing and alignment */
 li::marker {
     color: var(--color-primary);
     font-weight: 500;
+    margin-right: 0.75em;  /* Increased gap from 0.5em for better clarity */
 }
 
 /* ============================================================================
