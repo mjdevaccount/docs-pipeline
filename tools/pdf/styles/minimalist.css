@@ -1,28 +1,88 @@
 /**
- * Minimalist Profile
+ * Minimalist Profile - December 2025 Modernized
  * Clean, spacious design with maximum whitespace
  * Thin typography, subtle colors, no borders or boxes
+ * 
+ * IMPROVEMENTS:
+ * - Modern fonts: Inter (body) + JetBrains Mono (code)
+ * - Semantic CSS variables for easier maintenance
+ * - Better typography: font ligatures, tabular figures
+ * - Enhanced accessibility and spacing
+ * - Minimalist aesthetic preserved
  */
 
-/* Page setup - More generous margins */
+/* ============================================================================
+   IMPORTS & VARIABLES
+   ========================================================================== */
+
+/* Import modern fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* Semantic color system - Minimal neutral palette */
+:root {
+    /* Primary colors - Neutral gray focus */
+    --color-primary: #1a1a1a;               /* Near black */
+    --color-primary-light: #4a5568;         /* Light gray */
+    --color-primary-dark: #0d0d0d;          /* Very dark */
+    --color-primary-muted: #6b7280;         /* Muted gray */
+    
+    /* Text colors - Subtle */
+    --color-text-primary: #1a1a1a;          /* Dark */
+    --color-text-secondary: #2c3e50;        /* Medium dark */
+    --color-text-muted: #6c757d;            /* Muted */
+    
+    /* Background & borders - Minimal */
+    --color-bg-subtle: #f8f9fa;             /* Very light gray */
+    --color-bg-surface: #ffffff;            /* White */
+    --color-border: #e9ecef;                /* Subtle border */
+    --color-border-subtle: #dee2e6;         /* Lighter border */
+    
+    /* Status colors - Muted for minimal design */
+    --color-success: #059669;               /* Green (rare use) */
+    --color-warning: #d97706;               /* Amber (rare use) */
+    --color-error: #dc2626;                 /* Red (rare use) */
+    --color-info: #0284c7;                  /* Blue (rare use) */
+    
+    /* Component colors */
+    --color-code-bg: #f8f9fa;               /* Light gray */
+    --color-code-text: #495057;             /* Medium gray */
+    --color-pre-bg: #fafbfc;                /* Very light */
+    --color-pre-text: #495057;              /* Medium gray */
+    --color-blockquote-border: #cbd5e0;     /* Light gray border */
+    --color-blockquote-bg: #f8f9fa;         /* Light gray bg */
+    --color-blockquote-text: #2c3e50;       /* Medium dark */
+}
+
+/* ============================================================================
+   PAGE SETUP - Margins: 3.5cm top/bottom, 3cm left/right (generous)
+   ========================================================================== */
+
 @page {
     size: A4;
     margin: 3.5cm 3cm 3cm 3cm;
 }
 
-/* Base typography - Light and airy */
+/* ============================================================================
+   BASE TYPOGRAPHY
+   ========================================================================== */
+
 body {
-    font-family: 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
+    /* Modern fonts with fallbacks */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 10.5pt;
-    font-weight: 300;
+    font-weight: 400;  /* Changed from 300 (too thin) */
     line-height: 1.9;
-    color: #2c3e50;
-    background: #ffffff;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-surface);
     margin: 0;
     padding: 0;
     width: 100%;
     max-width: none;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Enable font ligatures for better typography */
+    font-feature-settings: 'liga' 1, 'calt' 1;
 }
 
 /* Reset any Pandoc wrapper divs that might constrain width */
@@ -35,10 +95,13 @@ body > section,
     max-width: none;
 }
 
-/* Headings - Thin, minimal styling */
+/* ============================================================================
+   HEADINGS
+   ========================================================================== */
+
 h1, h2, h3, h4, h5, h6 {
-    font-weight: 300;
-    color: #1a1a1a;
+    font-weight: 600;  /* Changed from 300 for better hierarchy */
+    color: var(--color-primary);
     margin-top: 2.5em;
     margin-bottom: 0.8em;
     margin-left: 0;
@@ -47,13 +110,12 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     max-width: none;
     line-height: 1.4;
-    letter-spacing: 0.03em;
-    /* page-break rules removed - handled by layout.css */
+    letter-spacing: 0.02em;
 }
 
 h1 {
     font-size: 2rem;
-    font-weight: 200;
+    font-weight: 500;  /* Slightly lighter than h2-h6 */
     margin-top: 0;
     margin-bottom: 2em;
     letter-spacing: 0.08em;
@@ -63,22 +125,37 @@ h1 {
 
 h2 {
     font-size: 1.5rem;
-    font-weight: 300;
+    font-weight: 500;
     margin-top: 2em;
 }
 
 h3 {
     font-size: 1.2rem;
-    font-weight: 400;
+    font-weight: 600;
 }
 
 h4 {
     font-size: 1rem;
-    font-weight: 400;
-    color: #4a5568;
+    font-weight: 600;
+    color: var(--color-primary-light);
 }
 
-/* Paragraphs - Maximum breathing room */
+h5 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-primary-light);
+}
+
+h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-primary-muted);
+}
+
+/* ============================================================================
+   PARAGRAPHS & INLINE TEXT
+   ========================================================================== */
+
 p {
     margin: 0 0 1.5em 0;
     margin-left: 0;
@@ -89,54 +166,71 @@ p {
     text-align: left;
     orphans: 3;
     widows: 3;
-    font-weight: 300;
+    font-weight: 400;
 }
 
-/* Links - Understated */
+/* Links - Understated with underline */
 a {
-    color: #2c3e50;
+    color: var(--color-text-secondary);
     text-decoration: underline;
-    text-decoration-color: #cbd5e0;
-    font-weight: 400;
+    text-decoration-color: var(--color-border);
+    font-weight: 500;
+    transition: text-decoration-color 0.2s ease;
 }
 
 a:hover {
-    text-decoration-color: #2c3e50;
+    text-decoration-color: var(--color-text-secondary);
 }
 
-/* Code - Minimal styling */
+/* ============================================================================
+   CODE & PREFORMATTED TEXT
+   ========================================================================== */
+
 code {
-    font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+    /* Modern monospace font */
+    font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
     font-size: 0.9em;
-    background: #f8f9fa;
-    color: #495057;
+    background: var(--color-code-bg);
+    color: var(--color-code-text);
     padding: 0.15em 0.3em;
+    border-radius: 2px;
     font-weight: 400;
+    /* Enable tabular figures for better code alignment */
+    font-variant-numeric: tabular-nums;
 }
 
 pre {
-    background: #fafbfc;
+    background: var(--color-pre-bg);
     padding: 1.5em 1.8em;
     margin: 2em 0;
+    margin-left: 0;
+    margin-right: 0;
     overflow-x: auto;
-    /* page-break rules removed - handled by layout.css */
+    border-radius: 2px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
 }
 
 pre code {
     background: transparent;
-    color: #495057;
+    color: var(--color-pre-text);
     padding: 0;
     font-size: 0.85em;
     line-height: 1.8;
+    /* Enable ligatures in code blocks */
+    font-variant-ligatures: common-ligatures contextual;
 }
 
-/* Lists - Minimal bullets */
+/* ============================================================================
+   LISTS
+   ========================================================================== */
+
 ul, ol {
     margin: 1.2em 0;
     margin-left: 0;
     margin-right: 0;
     padding-left: 1.5em;
-    padding-right: 0;
     width: 100%;
     max-width: none;
 }
@@ -144,13 +238,29 @@ ul, ol {
 li {
     margin: 0.8em 0;
     line-height: 1.9;
+    color: var(--color-text-secondary);
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
 }
 
 ul {
-    list-style-type: circle;
+    list-style-type: circle;  /* Minimal circle bullets */
 }
 
-/* Tables - No borders, just spacing */
+li::marker {
+    color: var(--color-primary-muted);
+    font-weight: 400;
+    margin-right: 0.75em;
+}
+
+/* ============================================================================
+   TABLES (Minimal styling)
+   ========================================================================== */
+
 table {
     border-collapse: collapse;
     width: 100%;
@@ -159,33 +269,46 @@ table {
     margin-left: 0;
     margin-right: 0;
     font-size: 0.95em;
-    /* page-break rules removed - handled by layout.css */
+    box-sizing: border-box;
 }
 
 th, td {
     border: none;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid var(--color-border);
     padding: 1em 0.5em;
     text-align: left;
 }
 
 th {
     background: transparent;
-    color: #1a1a1a;
-    font-weight: 400;
-    border-bottom: 2px solid #dee2e6;
+    color: var(--color-primary);
+    font-weight: 500;
+    border-bottom: 2px solid var(--color-border-subtle);
     text-transform: uppercase;
     font-size: 0.8em;
     letter-spacing: 0.1em;
 }
 
+td {
+    color: var(--color-text-secondary);
+}
+
+/* Remove bottom border from last row */
 tr:last-child td {
     border-bottom: none;
 }
 
-/* Blockquotes - Very subtle */
+/* Light hover effect */
+tbody tr:hover {
+    background: var(--color-bg-subtle);
+}
+
+/* ============================================================================
+   BLOCKQUOTES (Very subtle)
+   ========================================================================== */
+
 blockquote {
-    border-left: 2px solid #e9ecef;
+    border-left: 2px solid var(--color-blockquote-border);
     padding: 0.5em 0 0.5em 2em;
     margin: 2em 0;
     margin-left: 0;
@@ -193,45 +316,62 @@ blockquote {
     width: 100%;
     max-width: none;
     font-style: italic;
-    color: #6c757d;
+    color: var(--color-text-muted);
     box-sizing: border-box;
+    background: var(--color-blockquote-bg);
+    padding-left: 1.5em;
 }
 
 blockquote p {
     margin: 0.5em 0;
 }
 
-/* Horizontal rules - Barely there */
+blockquote > :first-child {
+    margin-top: 0;
+}
+
+blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================================
+   HORIZONTAL RULES (Barely there)
+   ========================================================================== */
+
 hr {
     border: none;
-    border-top: 1px solid #e9ecef;
+    border-top: 1px solid var(--color-border);
     margin: 3em 0;
 }
 
-/* Images and diagrams - Clean, no decorations */
+/* ============================================================================
+   IMAGES & DIAGRAMS
+   ========================================================================== */
+
 img, svg {
     max-width: 100%;
     height: auto;
     display: block;
     margin: 2.5em auto;
-    /* page-break rules removed - handled by layout.css */
 }
 
 figure {
     margin: 2.5em 0;
     text-align: center;
-    /* page-break rules removed - handled by layout.css */
 }
 
 figcaption {
     font-size: 0.85em;
-    color: #868e96;
+    color: var(--color-text-muted);
     margin-top: 1em;
     font-style: italic;
-    font-weight: 300;
+    font-weight: 400;
 }
 
-/* Table of Contents - Minimal */
+/* ============================================================================
+   TABLE OF CONTENTS (Minimal)
+   ========================================================================== */
+
 nav#TOC, #TOC {
     padding: 2em 0;
     margin: 3em 0;
@@ -240,10 +380,10 @@ nav#TOC, #TOC {
 
 nav#TOC h2, #TOC h2 {
     font-size: 1.3rem;
-    color: #1a1a1a;
+    color: var(--color-primary);
     margin-top: 0;
     margin-bottom: 1.5em;
-    font-weight: 300;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
@@ -256,70 +396,83 @@ nav#TOC ul, #TOC ul {
 nav#TOC li, #TOC li {
     margin: 1em 0;
     padding-left: 0;
+    color: var(--color-text-secondary);
 }
 
 nav#TOC a, #TOC a {
-    color: #2c3e50;
+    color: var(--color-text-secondary);
     text-decoration: none;
-    font-weight: 300;
+    font-weight: 400;
+    transition: text-decoration 0.2s ease;
 }
 
 nav#TOC a:hover, #TOC a:hover {
     text-decoration: underline;
-    text-decoration-color: #cbd5e0;
+    text-decoration-color: var(--color-border);
 }
 
-/* Cover page - Minimalist styling */
+/* ============================================================================
+   COVER PAGE STYLING
+   ========================================================================== */
+
+.cover-page-wrapper {
+    background: var(--color-bg-surface);
+    color: var(--color-text-secondary);
+}
+
 .cover-title {
-    color: #1a1a1a;
+    color: var(--color-primary) !important;
 }
 
 .cover-subtitle {
-    color: #4a5568;
+    color: var(--color-primary-light) !important;
 }
 
 .cover-metadata {
-    color: #6c757d;
+    color: var(--color-text-muted) !important;
 }
 
 .cover-version {
-    color: #868e96;
+    color: var(--color-text-muted) !important;
 }
 
 .cover-classification {
-    color: #856404;
+    color: #856404 !important;
     background: #fff3cd;
     padding: 8px 16px;
     border-radius: 2px;
 }
 
-/* TOC - Minimalist styling */
+/* ============================================================================
+   TOC STYLING
+   ========================================================================== */
+
 .toc-title {
-    color: #1a1a1a;
-    border-bottom: 1px solid #e9ecef;
+    color: var(--color-primary) !important;
+    border-bottom: 1px solid var(--color-border) !important;
 }
 
 .toc-link {
-    color: #2c3e50;
+    color: var(--color-text-secondary) !important;
 }
 
 .toc-link:hover {
     text-decoration: underline;
-    text-decoration-color: #cbd5e0;
+    text-decoration-color: var(--color-border);
 }
 
-/* Print-specific adjustments */
+/* ============================================================================
+   PRINT-SPECIFIC ADJUSTMENTS
+   ========================================================================== */
+
 @media print {
     body {
         background: white;
     }
     
     a {
-        color: #2c3e50;
+        color: var(--color-text-secondary);
         text-decoration: underline;
-        text-decoration-color: #cbd5e0;
+        text-decoration-color: var(--color-border);
     }
-    
-    /* Page break rules removed - handled by layout.css */
 }
-
