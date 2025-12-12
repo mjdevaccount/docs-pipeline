@@ -4,13 +4,12 @@ PDF Renderer Strategy Module
 Provides pluggable PDF rendering backends following the Strategy pattern.
 
 Available Renderers:
-    - WeasyPrintRenderer: Fast CSS Paged Media rendering
-    - PlaywrightRenderer: Perfect SVG + JavaScript support
+    - PlaywrightRenderer: Perfect SVG + JavaScript support, FAANG-grade rendering
 
 Usage:
     from renderers import RendererFactory, RenderConfig, RendererType
     
-    # Auto-select available renderer
+    # Get Playwright renderer
     renderer = RendererFactory.get_available_renderer(verbose=True)
     
     # Configure rendering
@@ -29,11 +28,6 @@ from .config import RenderConfig, RendererType, PageFormat
 from .factory import RendererFactory
 
 # Import implementations (may fail if dependencies missing)
-try:
-    from .weasyprint_renderer import WeasyPrintRenderer
-except ImportError:
-    WeasyPrintRenderer = None
-
 try:
     from .playwright_wrapper import PlaywrightRenderer
 except ImportError:
@@ -59,7 +53,6 @@ __all__ = [
     'RendererFactory',
     
     # Implementations
-    'WeasyPrintRenderer',
     'PlaywrightRenderer',
     
     # Legacy
@@ -82,7 +75,7 @@ def render_pdf(
     Args:
         html_file: Path to HTML input
         output_file: Path to PDF output
-        renderer_type: Renderer to use (auto-select if None)
+        renderer_type: Renderer to use (Playwright if None)
         **kwargs: Additional RenderConfig options
     
     Returns:
@@ -94,7 +87,6 @@ def render_pdf(
         success = render_pdf(
             'document.html',
             'document.pdf',
-            renderer_type=RendererType.PLAYWRIGHT,
             generate_cover=True,
             title='My Document'
         )
@@ -106,7 +98,7 @@ def render_pdf(
     else:
         renderer = RendererFactory.get_available_renderer()
         if not renderer:
-            raise ImportError("No PDF renderers available")
+            raise ImportError("Playwright renderer not available")
     
     config = RenderConfig(
         html_file=Path(html_file),
@@ -115,4 +107,3 @@ def render_pdf(
     )
     
     return renderer.render(config)
-
