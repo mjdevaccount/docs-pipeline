@@ -272,7 +272,7 @@ python -m tools.prompts.cli \
     polished.md \
     -c tools/prompts/pipelines/architecture-proposal.yaml
 
-python tools/pdf/md2pdf.py \
+python tools/pdf/convert_final.py \
     polished.md \
     --profile project-docs \
     --generate-cover \

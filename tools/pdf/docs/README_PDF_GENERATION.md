@@ -9,34 +9,34 @@
 .\venv-pdf\Scripts\activate
 
 # Check dependencies
-python md2pdf.py --check
+python convert_final.py --check
 
 # Convert a document
-python md2pdf.py docs/report.md
+python convert_final.py docs/report.md
 ```
 
 ## Common Commands
 
 ```bash
 # Single file (auto output)
-python md2pdf.py docs/report.md
+python convert_final.py docs/report.md
 
 # Single file (custom output)
-python md2pdf.py docs/report.md output/report.pdf
+python convert_final.py docs/report.md output/report.pdf
 
 # Batch conversion
-python md2pdf.py --batch docs/*.md
+python convert_final.py --batch docs/*.md
 
 # Using config file
-python md2pdf.py --config pdf-config.json
+python convert_final.py --config pdf-config.json
 
 # With custom logo
-python md2pdf.py --logo assets/logo.png docs/report.md
+python convert_final.py --logo assets/logo.png docs/report.md
 ```
 
 ## Files
 
-- **`md2pdf.py`** - CLI wrapper (use this!)
+- **`convert_final.py`** - CLI wrapper (use this!)
 - **`convert_final.py`** - Core conversion engine
 - **`requirements-pdf.txt`** - Python dependencies
 - **`PDF_GENERATION_SETUP.md`** - Complete setup guide
@@ -79,7 +79,7 @@ See **`PDF_GENERATION_SETUP.md`** for complete installation instructions.
 ## Help
 
 ```bash
-python md2pdf.py --help
+python convert_final.py --help
 ```
 
 For detailed documentation, see **`PDF_GENERATION_SETUP.md`**.

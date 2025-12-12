@@ -6,15 +6,15 @@ setlocal
 
 REM Get the directory where this batch file is located
 set "SCRIPT_DIR=%~dp0"
-set "PROJECT_ROOT=%SCRIPT_DIR%.."
+set "PDF_DIR=%SCRIPT_DIR%.."
 
 REM Activate virtual environment if it exists
-if exist "%PROJECT_ROOT%\venv-pdf\Scripts\activate.bat" (
-    call "%PROJECT_ROOT%\venv-pdf\Scripts\activate.bat"
+if exist "%PDF_DIR%\venv-pdf\Scripts\activate.bat" (
+    call "%PDF_DIR%\venv-pdf\Scripts\activate.bat"
 )
 
-REM Call the Python script with all arguments
-python "%SCRIPT_DIR%md2pdf.py" %*
+REM Call convert_final.py with all arguments
+python "%PDF_DIR%\convert_final.py" %*
 
 endlocal
 

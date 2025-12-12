@@ -41,7 +41,7 @@ The metadata customization feature is **well-implemented** in the core conversio
 - ✅ `classification`
 - ✅ `type`
 
-### 2. CLI Interface (`md2pdf.py`) - **VERIFIED ✅**
+### 2. CLI Interface (`convert_final.py`) - **VERIFIED ✅**
 
 **Status: ✅ ALL ARGUMENTS PRESENT**
 
@@ -112,7 +112,7 @@ async def generate_pdf_from_html(
 **File:** `tools/docs_pipeline/runner.py`
 
 **Problem:**
-The pipeline runner (`_run_md2pdf` function, lines 78-100) calls `md2pdf.py` as a subprocess but **doesn't extract or pass metadata** from YAML config:
+The pipeline runner (`_run_md2pdf` function, lines 78-100) calls `convert_final.py` as a subprocess but **doesn't extract or pass metadata** from YAML config:
 
 ```python
 def _run_md2pdf(
@@ -121,7 +121,7 @@ def _run_md2pdf(
     fmt: str | None,
     profile: str | None,
 ) -> bool:
-    script = Path(__file__).parent.parent / "pdf" / "md2pdf.py"
+    script = Path(__file__).parent.parent / "pdf" / "convert_final.py"
     cmd = ["python", str(script), str(md_file)]
     if output is not None:
         cmd.append(str(output))
@@ -140,7 +140,7 @@ def _run_md2pdf(
 **Fix Required:**
 1. Update `DocumentConfig` to include `metadata` field
 2. Parse metadata from YAML in `_load_pipeline_config()`
-3. Pass metadata as CLI arguments to `md2pdf.py`
+3. Pass metadata as CLI arguments to `convert_final.py`
 
 ### 2. **HIGH PRIORITY: Logo Path Environment Variable**
 
@@ -187,7 +187,7 @@ if logo_path is None:
 | Component | Status | Notes |
 |-----------|--------|-------|
 | Backend (`convert_final.py`) | ✅ 100% | Perfect implementation |
-| CLI (`md2pdf.py`) | ✅ 100% | All args present, working |
+| CLI (`convert_final.py`) | ✅ 100% | All args present, working |
 | Playwright (`pdf_playwright.py`) | ✅ 100% | Updated with new fields |
 | Web Demo | ✅ 100% | Form fields present, working |
 | YAML Pipeline Runner | ❌ 0% | **Doesn't pass metadata** |
@@ -203,7 +203,7 @@ if logo_path is None:
 
 1. **CLI Arguments:**
    ```bash
-   python tools/pdf/md2pdf.py --help | grep -E "(author|organization|version)"
+   python tools/pdf/convert_final.py --help | grep -E "(author|organization|version)"
    # ✅ All arguments present
    ```
 
@@ -235,7 +235,7 @@ if logo_path is None:
 2. **Environment Variables:**
    ```bash
    export USER_NAME="Test User"
-   python tools/pdf/md2pdf.py test.md
+   python tools/pdf/convert_final.py test.md
    # Should work, but needs verification
    ```
 

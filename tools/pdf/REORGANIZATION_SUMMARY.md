@@ -14,7 +14,7 @@
 tools/pdf/
 ├── convert_final.py                  # 1,654 lines - main converter
 ├── convert_refactored.py            # Reference implementation
-├── md2pdf.py                         # CLI wrapper
+├── convert_final.py                         # CLI wrapper
 ├── md2pdf.bat                        # Batch file
 ├── md_to_html_simple.py             # Example
 ├── md_to_html_with_diagrams.py     # Example
@@ -57,7 +57,7 @@ tools/pdf/
 │
 ├── 📁 cli/                          # Command-line interface
 │   ├── __init__.py
-│   ├── main.py                      # (was md2pdf.py)
+│   ├── main.py                      # (was convert_final.py)
 │   └── md2pdf.bat
 │
 ├── 📁 config/                       # Configuration management
@@ -135,7 +135,7 @@ tools/pdf/
 
 | From | To | Purpose |
 |------|----|----|
-| `md2pdf.py` | `cli/main.py` | CLI entry point |
+| `convert_final.py` | `cli/main.py` | CLI entry point |
 | `md2pdf.bat` | `cli/md2pdf.bat` | Windows helper |
 | `profiles.py` | `config/profiles.py` | Profile management |
 | `pdf-config.example.json` | `config/examples/` | Config example |

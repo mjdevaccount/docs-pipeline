@@ -109,7 +109,7 @@ docker-compose up
 pip install -r requirements.txt
 pip install -r tools/pdf/requirements-pdf.txt
 
-python tools/pdf/md2pdf.py input.md output.pdf --profile tech-whitepaper
+python tools/pdf/convert_final.py input.md output.pdf --profile tech-whitepaper
 ```
 
 ## 🎯 Use Cases

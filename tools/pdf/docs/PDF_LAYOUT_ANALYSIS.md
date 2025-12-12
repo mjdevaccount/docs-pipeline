@@ -217,7 +217,7 @@ This document identifies ALL files and code sections related to PDF generation, 
 
 ---
 
-### 4. `pdf-tools/md2pdf.py` (787 lines)
+### 4. `pdf-tools/convert_final.py` (787 lines)
 **CLI wrapper and entry point**
 
 #### **Metadata Handling**
@@ -291,7 +291,7 @@ This document identifies ALL files and code sections related to PDF generation, 
 1. **`convert_final.py` lines 500-630**: YAML frontmatter extraction
 2. **`pdf_playwright.py` lines 951-998**: PDF metadata embedding (PyPDF2)
 3. **`pdf_playwright.py` lines 1038-1041**: Function parameters for metadata
-4. **`md2pdf.py` lines 646-653**: Metadata display in CLI
+4. **`convert_final.py` lines 646-653**: Metadata display in CLI
 
 #### **Supported Fields:**
 - ✅ `title`, `author`, `organization`, `date`, `version`, `type`, `classification`
@@ -405,7 +405,7 @@ This document identifies ALL files and code sections related to PDF generation, 
    - Lines 699-856: WeasyPrint page setup
 
 ### **Secondary Files:**
-4. **`pdf-tools/md2pdf.py`**: CLI argument handling
+4. **`pdf-tools/convert_final.py`**: CLI argument handling
 5. **`pdf-tools/pdf-mermaid-theme.json`**: Diagram theming (affects layout)
 
 ---

@@ -109,7 +109,7 @@ Generate individual PDFs with specific profiles:
 
 ```bash
 # Tech Whitepaper profile with cover page and TOC
-python tools/pdf/md2pdf.py docs/examples/technical-white-paper.md \
+python tools/pdf/convert_final.py docs/examples/technical-white-paper.md \
   whitepaper-tech.pdf \
   --profile tech-whitepaper \
   --renderer playwright \
@@ -117,7 +117,7 @@ python tools/pdf/md2pdf.py docs/examples/technical-white-paper.md \
   --generate-toc
 
 # Dark Pro profile with cover page and TOC
-python tools/pdf/md2pdf.py docs/examples/product-requirements-doc.md \
+python tools/pdf/convert_final.py docs/examples/product-requirements-doc.md \
   prd-dark.pdf \
   --profile dark-pro \
   --renderer playwright \
@@ -125,7 +125,7 @@ python tools/pdf/md2pdf.py docs/examples/product-requirements-doc.md \
   --generate-toc
 
 # Add --verbose flag to see CSS loading order and debug info
-python tools/pdf/md2pdf.py docs/examples/advanced-markdown-showcase.md \
+python tools/pdf/convert_final.py docs/examples/advanced-markdown-showcase.md \
   showcase-enterprise.pdf \
   --profile enterprise-blue \
   --renderer playwright \

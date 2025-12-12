@@ -12,10 +12,10 @@ cd pdf-tools
 pip install -r requirements-pdf.txt
 
 # 3. Check system dependencies
-python md2pdf.py --check
+python convert_final.py --check
 
 # 4. Convert a document (paths relative to project root)
-python md2pdf.py ../docs/report.md
+python convert_final.py ../docs/report.md
 ```
 
 ## System Dependencies
@@ -110,11 +110,11 @@ md2pdf.bat docs\report.md output\report.pdf
 **Python Direct:**
 ```bash
 # From project root
-python pdf-tools/md2pdf.py docs/report.md
+python pdf-tools/convert_final.py docs/report.md
 
 # From pdf-tools directory (paths relative to project root)
 cd pdf-tools
-python md2pdf.py ../docs/report.md
+python convert_final.py ../docs/report.md
 ```
 
 #### Batch Conversion
@@ -128,11 +128,11 @@ md2pdf.bat --batch docs\*.md
 **Python Direct:**
 ```bash
 # From project root
-python pdf-tools/md2pdf.py --batch docs/*.md
+python pdf-tools/convert_final.py --batch docs/*.md
 
 # From pdf-tools directory
 cd pdf-tools
-python md2pdf.py --batch ../docs/*.md
+python convert_final.py --batch ../docs/*.md
 ```
 
 #### Configuration File
@@ -148,7 +148,7 @@ Create `pdf-config.json` (paths relative to project root):
 
 Then:
 ```bash
-python md2pdf.py --config pdf-config.json
+python convert_final.py --config pdf-config.json
 ```
 
 ### Markdown Syntax
@@ -209,7 +209,7 @@ md2pdf.bat --logo assets\logo.png docs\report.md
 
 ```bash
 # Python direct
-python pdf-tools/md2pdf.py --logo assets/logo.png docs/report.md
+python pdf-tools/convert_final.py --logo assets/logo.png docs/report.md
 ```
 
 ### Programmatic Usage
@@ -278,7 +278,7 @@ markdown_to_pdf('docs/report.md', 'output/report.pdf')
 ```
 .
 ├── pdf-tools/                # PDF generation tools directory
-│   ├── md2pdf.py             # CLI wrapper script
+│   ├── convert_final.py             # CLI wrapper script
 │   ├── convert_final.py      # Core conversion logic
 │   ├── requirements-pdf.txt  # Python dependencies
 │   ├── PDF_GENERATION_SETUP.md  # This file
@@ -352,7 +352,7 @@ for md_file in docs_dir.glob('*.md'):
 ## Support
 
 For issues or questions:
-1. Check dependencies: `python md2pdf.py --check`
+1. Check dependencies: `python convert_final.py --check`
 2. Review console output for specific errors
 3. Verify all system dependencies are installed
 4. Check file paths and permissions

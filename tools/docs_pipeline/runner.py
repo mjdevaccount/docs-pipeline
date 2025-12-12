@@ -80,7 +80,7 @@ def _load_pipeline_config(path: Path) -> PipelineConfig:
     return PipelineConfig(workspaces=workspaces)
 
 
-def _run_md2pdf(
+def _run_convert(
     md_file: Path,
     output: Path | None,
     fmt: str | None,
@@ -88,9 +88,9 @@ def _run_md2pdf(
     metadata: Dict[str, Any] | None = None,
 ) -> bool:
     """
-    Invoke the existing md2pdf.py CLI for a single document.
+    Invoke convert_final.py CLI for a single document.
 
-    This keeps the docs pipeline thin and lets md2pdf own all
+    This keeps the docs pipeline thin and lets convert_final own all
     conversion concerns (frontmatter, diagrams, CSS, etc.).
     
     Args:
@@ -100,7 +100,7 @@ def _run_md2pdf(
         profile: Document profile name
         metadata: Metadata dict to pass as CLI arguments (overrides frontmatter)
     """
-    script = Path(__file__).parent.parent / "pdf" / "md2pdf.py"
+    script = Path(__file__).parent.parent / "pdf" / "convert_final.py"
     cmd = ["python", str(script), str(md_file)]
     if output is not None:
         cmd.append(str(output))
@@ -120,7 +120,7 @@ def _run_md2pdf(
         if metadata.get("date"):
             cmd.extend(["--date", str(metadata["date"])])
         if metadata.get("version"):
-            cmd.extend(["--version", str(metadata["version"])])
+            cmd.extend(["--doc-version", str(metadata["version"])])
         if metadata.get("classification"):
             cmd.extend(["--classification", str(metadata["classification"])])
         if metadata.get("type"):
@@ -239,7 +239,7 @@ def run_pipeline(config_path: Path, dry_run: bool = False, parallel: bool = Fals
                             merged_metadata.update(doc.metadata)
                         
                         future = executor.submit(
-                            _run_md2pdf,
+                            _run_convert,
                             md_file,
                             output,
                             doc.format,
@@ -278,7 +278,7 @@ def run_pipeline(config_path: Path, dry_run: bool = False, parallel: bool = Fals
                             print(f"      [DRY RUN] Metadata: {merged_metadata}")
                         ok = True
                     else:
-                        ok = _run_md2pdf(
+                        ok = _run_convert(
                             md_file=md_file,
                             output=output,
                             fmt=doc.format,

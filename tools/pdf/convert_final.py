@@ -440,8 +440,217 @@ def batch_convert(
 
 
 # =============================================================================
+# CLI HELPERS
+# =============================================================================
+
+def check_dependencies() -> bool:
+    """Check if all required dependencies are available."""
+    import shutil
+    
+    errors = []
+    warnings = []
+    
+    # Check Pandoc
+    pandoc = shutil.which('pandoc')
+    if not pandoc:
+        # Check common Windows locations
+        windows_paths = [
+            r'C:\Program Files\Pandoc\pandoc.exe',
+            r'C:\Program Files (x86)\Pandoc\pandoc.exe',
+        ]
+        for path in windows_paths:
+            if Path(path).exists():
+                pandoc = path
+                break
+    
+    if not pandoc:
+        errors.append("Pandoc not found. Install from https://pandoc.org/installing.html")
+    else:
+        print(f"[OK] Pandoc found: {pandoc}")
+    
+    # Check Mermaid-CLI
+    mmdc = shutil.which('mmdc') or shutil.which('mmdc.cmd')
+    if not mmdc:
+        warnings.append("Mermaid-CLI not found. Diagrams will not render.")
+        warnings.append("  Install: npm install -g @mermaid-js/mermaid-cli")
+    else:
+        print(f"[OK] Mermaid-CLI found: {mmdc}")
+    
+    # Check Python packages
+    try:
+        import weasyprint
+        print(f"[OK] WeasyPrint {weasyprint.__version__}")
+    except ImportError:
+        errors.append("WeasyPrint not installed. Run: pip install weasyprint")
+    
+    try:
+        import yaml
+        print(f"[OK] PyYAML installed")
+    except ImportError:
+        errors.append("PyYAML not installed. Run: pip install pyyaml")
+    
+    try:
+        from playwright.sync_api import sync_playwright
+        print(f"[OK] Playwright installed")
+    except ImportError:
+        warnings.append("Playwright not installed. Playwright renderer unavailable.")
+    
+    if errors:
+        print(f"\n[ERROR] Missing required dependencies:")
+        for error in errors:
+            print(f"  - {error}")
+        return False
+    
+    if warnings:
+        print(f"\n[WARN] Optional dependencies missing:")
+        for warning in warnings:
+            print(f"  - {warning}")
+    
+    return True
+
+
+def validate_markdown(md_file: str, verbose: bool = False) -> tuple:
+    """
+    Validate Markdown file and YAML frontmatter.
+    
+    Returns:
+        Tuple of (is_valid, list_of_issues)
+    """
+    errors = []
+    warnings = []
+    
+    try:
+        md_path = Path(md_file)
+        if not md_path.exists():
+            return False, [f"File not found: {md_file}"]
+        
+        md_content = md_path.read_text(encoding='utf-8')
+        
+        # Validate YAML frontmatter
+        if md_content.startswith('---'):
+            try:
+                metadata, _ = extract_metadata(md_content)
+                
+                if not metadata.get('title'):
+                    warnings.append("No 'title' field in frontmatter")
+                
+                # Check for recommended fields
+                for field in ['author', 'date', 'version']:
+                    if field not in metadata:
+                        warnings.append(f"Missing recommended field: '{field}'")
+                        
+            except Exception as e:
+                errors.append(f"Invalid YAML frontmatter: {e}")
+        else:
+            warnings.append("No YAML frontmatter found (optional but recommended)")
+        
+        # Basic Markdown validation
+        if not md_content.strip():
+            errors.append("Markdown file is empty")
+        
+        # Check for mismatched code blocks
+        code_blocks = md_content.count('```')
+        if code_blocks % 2 != 0:
+            warnings.append("Possible mismatched code block delimiters")
+        
+        return len(errors) == 0, errors + warnings
+        
+    except Exception as e:
+        return False, [f"Validation error: {e}"]
+
+
+def load_config(config_file: str) -> dict:
+    """Load configuration from JSON file."""
+    import json
+    with open(config_file, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+
+def resolve_output_path(output_file: str, output_dir: str = None) -> str:
+    """Resolve output path, applying output_dir if specified."""
+    output_path = Path(output_file)
+    
+    if output_path.is_absolute():
+        target = output_path
+    elif output_dir:
+        target = Path(output_dir) / output_path.name
+    else:
+        # Default to output/ in project root
+        project_root = Path(__file__).parent.parent.parent
+        target = project_root / "output" / output_path.name
+    
+    target.parent.mkdir(parents=True, exist_ok=True)
+    return str(target)
+
+
+def parallel_batch_convert(
+    file_tasks: list,
+    threads: int,
+    verbose: bool = False
+) -> dict:
+    """
+    Parallel batch conversion using ThreadPoolExecutor.
+    
+    Args:
+        file_tasks: List of (input_file, output_file, format, kwargs) tuples
+        threads: Number of parallel threads
+        verbose: Verbose output
+    
+    Returns:
+        Dictionary mapping input files to success status
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    
+    results = {}
+    
+    # Try to use tqdm for progress bar
+    try:
+        from tqdm import tqdm
+        use_tqdm = True
+    except ImportError:
+        use_tqdm = False
+    
+    def convert_task(task):
+        input_file, output_file, output_format, kwargs = task
+        try:
+            format_map = {
+                'pdf': markdown_to_pdf,
+                'docx': markdown_to_docx,
+                'html': markdown_to_html
+            }
+            converter = format_map[output_format]
+            success = converter(input_file, output_file, **kwargs)
+            return input_file, output_file, success, None
+        except Exception as e:
+            return input_file, output_file, False, str(e)
+    
+    print(f"\n[INFO] Processing {len(file_tasks)} files with {threads} threads...")
+    
+    with ThreadPoolExecutor(max_workers=threads) as executor:
+        futures = {executor.submit(convert_task, task): task for task in file_tasks}
+        
+        if use_tqdm:
+            iterator = tqdm(as_completed(futures), total=len(futures), desc="Converting")
+        else:
+            iterator = as_completed(futures)
+        
+        for future in iterator:
+            input_file, output_file, success, error = future.result()
+            results[input_file] = success
+            if success:
+                if not use_tqdm:
+                    print(f"[OK] Generated: {output_file}")
+            else:
+                print(f"\n[ERROR] Failed: {input_file} -> {error}")
+    
+    return results
+
+
+# =============================================================================
 # CLI ENTRY POINT
 # =============================================================================
+
+__version__ = "2.0.0"
 
 def main():
     """
@@ -450,14 +659,11 @@ def main():
     Usage:
         python convert_final.py input.md [output.pdf]
         python convert_final.py --batch file1.md file2.md --format pdf
+        python convert_final.py --config batch-config.json
         python -m tools.pdf.convert_final input.md output.pdf
-        
-    Note: When running as a module (python -m tools.pdf.convert_final), you may see:
-        RuntimeWarning: 'tools.pdf.convert_final' found in sys.modules...
-    This is harmless and can be suppressed with:
-        PYTHONWARNINGS=ignore::RuntimeWarning python -m tools.pdf.convert_final ...
     """
     import argparse
+    import logging
     
     parser = argparse.ArgumentParser(
         description='Convert Markdown to PDF/DOCX/HTML using pipeline architecture',
@@ -467,14 +673,34 @@ Examples:
   # Convert single file to PDF
   python convert_final.py document.md document.pdf
   
-  # Use Playwright renderer with cover page
-  python convert_final.py document.md --renderer playwright --cover
+  # Use Playwright renderer with cover page and TOC
+  python convert_final.py document.md --renderer playwright --cover --toc
   
-  # Batch convert
-  python convert_final.py --batch doc1.md doc2.md --format pdf
+  # Batch convert with parallel processing
+  python convert_final.py --batch doc1.md doc2.md --threads 4 --format pdf
+  
+  # Use JSON config for complex batch jobs
+  python convert_final.py --config batch-config.json
   
   # Convert to DOCX with glossary
   python convert_final.py doc.md doc.docx --format docx --glossary glossary.yaml
+  
+  # Validate Markdown before conversion
+  python convert_final.py document.md --lint --verbose
+  
+  # Override metadata from command line
+  python convert_final.py doc.md --title "My Report" --author "Jane Doe"
+
+Config File Format (JSON):
+  {
+    "files": [
+      {"input": "doc1.md", "output": "doc1.pdf", "profile": "tech-whitepaper"},
+      {"input": "doc2.md", "format": "docx"}
+    ],
+    "profile": "default",
+    "renderer": "playwright",
+    "threads": 4
+  }
         """
     )
     
@@ -483,9 +709,13 @@ Examples:
     parser.add_argument('output', nargs='?', help='Output file (auto-detected if omitted)')
     
     # Batch mode
-    parser.add_argument('--batch', nargs='+', help='Batch convert multiple files')
+    parser.add_argument('--batch', nargs='+', metavar='FILE', help='Batch convert multiple files')
+    parser.add_argument('--config', help='JSON config file for batch conversion')
     parser.add_argument('--format', default='pdf', choices=['pdf', 'docx', 'html'],
                        help='Output format (default: pdf)')
+    parser.add_argument('--output-dir', help='Output directory for all generated files')
+    parser.add_argument('--threads', type=int, default=1, 
+                       help='Parallel threads for batch processing (default: 1)')
     
     # PDF options
     parser.add_argument('--renderer', default='weasyprint', choices=['weasyprint', 'playwright'],
@@ -502,81 +732,262 @@ Examples:
     parser.add_argument('--profile', help='Style profile name')
     parser.add_argument('--highlight', default='pygments',
                        help='Code highlighting style (default: pygments)')
+    parser.add_argument('--reference-docx', help='Reference DOCX template (for DOCX output)')
     
     # Processing options
     parser.add_argument('--glossary', help='Glossary YAML file')
     parser.add_argument('--theme', help='Mermaid theme config JSON')
+    parser.add_argument('--crossref-config', help='Pandoc crossref config YAML')
     parser.add_argument('--no-cache', action='store_true', help='Disable diagram caching')
     
-    # Other options
+    # Metadata overrides
+    parser.add_argument('--title', help='Document title (overrides frontmatter)')
+    parser.add_argument('--author', help='Author name (overrides frontmatter)')
+    parser.add_argument('--organization', '--org', help='Organization name')
+    parser.add_argument('--date', help='Document date')
+    parser.add_argument('--doc-version', help='Document version')
+    parser.add_argument('--classification', help='Classification level')
+    parser.add_argument('--doc-type', help='Document type')
+    
+    # Validation and utilities
+    parser.add_argument('--check', action='store_true', help='Check dependencies and exit')
+    parser.add_argument('--lint', action='store_true', help='Validate Markdown before conversion')
+    parser.add_argument('--log', help='Log file path for CI/automation')
     parser.add_argument('--verbose', '-v', action='store_true', help='Verbose output')
+    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     
     args = parser.parse_args()
     
-    # Batch mode
-    if args.batch:
+    # Setup logging if requested
+    if args.log:
+        logging.basicConfig(
+            level=logging.DEBUG if args.verbose else logging.INFO,
+            format='%(asctime)s - %(levelname)s - %(message)s',
+            handlers=[logging.StreamHandler(), logging.FileHandler(args.log)]
+        )
+    
+    # Check dependencies
+    if args.check:
+        sys.exit(0 if check_dependencies() else 1)
+    
+    # Build custom metadata from CLI args
+    custom_metadata = {}
+    if args.title:
+        custom_metadata['title'] = args.title
+    if args.author:
+        custom_metadata['author'] = args.author
+    if args.organization:
+        custom_metadata['organization'] = args.organization
+    if args.date:
+        custom_metadata['date'] = args.date
+    if args.doc_version:
+        custom_metadata['version'] = args.doc_version
+    if args.classification:
+        custom_metadata['classification'] = args.classification
+    if args.doc_type:
+        custom_metadata['type'] = args.doc_type
+    
+    # Build common kwargs
+    def build_kwargs(item_overrides=None):
         kwargs = {
-            'renderer': args.renderer,
-            'generate_cover': args.cover,
-            'generate_toc': args.toc,
-            'watermark': args.watermark,
-            'css_file': args.css,
-            'logo_path': args.logo,
-            'profile': args.profile,
+            'verbose': args.verbose,
+            'use_cache': not args.no_cache,
             'highlight_style': args.highlight,
             'glossary_file': args.glossary,
             'theme_config': args.theme,
-            'use_cache': not args.no_cache,
-            'verbose': args.verbose
+            'css_file': args.css,
+            'logo_path': args.logo,
+            'profile': args.profile,
+            'crossref_config': args.crossref_config,
+            'custom_metadata': custom_metadata if custom_metadata else None
         }
+        if args.format == 'pdf':
+            kwargs.update({
+                'renderer': args.renderer,
+                'generate_cover': args.cover,
+                'generate_toc': args.toc,
+                'watermark': args.watermark
+            })
+        if args.format == 'docx' and args.reference_docx:
+            kwargs['reference_docx'] = args.reference_docx
         
-        results = batch_convert(args.batch, output_format=args.format, **kwargs)
+        # Apply item-level overrides
+        if item_overrides:
+            kwargs.update(item_overrides)
+        
+        return kwargs
+    
+    # Config file mode
+    if args.config:
+        config = load_config(args.config)
+        files = config.get('files', [])
+        threads = args.threads or config.get('threads', 1)
+        output_dir = args.output_dir or config.get('output_dir')
+        
+        # Build file tasks
+        file_tasks = []
+        for item in files:
+            if isinstance(item, dict):
+                input_file = item['input']
+                output_format = item.get('format', args.format)
+                output_file = item.get('output', str(Path(input_file).with_suffix(f'.{output_format}')))
+            else:
+                input_file = item
+                output_format = args.format
+                output_file = str(Path(input_file).with_suffix(f'.{output_format}'))
+            
+            # Resolve output path
+            output_file = resolve_output_path(output_file, output_dir)
+            
+            # Validate if requested
+            if args.lint:
+                is_valid, issues = validate_markdown(input_file, args.verbose)
+                if not is_valid:
+                    print(f"[ERROR] Validation failed for {input_file}:")
+                    for issue in issues:
+                        print(f"  - {issue}")
+                    continue
+            
+            # Build kwargs with item overrides
+            item_kwargs = build_kwargs(item if isinstance(item, dict) else None)
+            file_tasks.append((input_file, output_file, output_format, item_kwargs))
+        
+        # Process with threading if requested
+        if threads > 1 and len(file_tasks) > 1:
+            results = parallel_batch_convert(file_tasks, threads, args.verbose)
+        else:
+            results = {}
+            for input_file, output_file, output_format, kwargs in file_tasks:
+                try:
+                    format_map = {'pdf': markdown_to_pdf, 'docx': markdown_to_docx, 'html': markdown_to_html}
+                    success = format_map[output_format](input_file, output_file, **kwargs)
+                    results[input_file] = success
+                    if success:
+                        print(f"[OK] Generated: {output_file}")
+                except Exception as e:
+                    results[input_file] = False
+                    print(f"[ERROR] Failed: {input_file} -> {e}")
+        
+        failed = sum(1 for v in results.values() if not v)
+        if failed:
+            print(f"\n[ERROR] {failed} conversion(s) failed.")
+        sys.exit(0 if all(results.values()) else 1)
+    
+    # Batch mode
+    if args.batch:
+        file_tasks = []
+        for input_file in args.batch:
+            if not Path(input_file).exists():
+                print(f"[ERROR] Not found: {input_file}")
+                continue
+            
+            # Validate if requested
+            if args.lint:
+                is_valid, issues = validate_markdown(input_file, args.verbose)
+                if not is_valid:
+                    print(f"[ERROR] Validation failed for {input_file}:")
+                    for issue in issues:
+                        print(f"  - {issue}")
+                    continue
+                elif issues and args.verbose:
+                    for issue in issues:
+                        print(f"[WARN] {input_file}: {issue}")
+            
+            output_file = str(Path(input_file).with_suffix(f'.{args.format}'))
+            output_file = resolve_output_path(output_file, args.output_dir)
+            
+            kwargs = build_kwargs()
+            file_tasks.append((input_file, output_file, args.format, kwargs))
+        
+        if not file_tasks:
+            print("[ERROR] No valid files to process.")
+            sys.exit(1)
+        
+        # Process with threading if requested
+        if args.threads > 1 and len(file_tasks) > 1:
+            results = parallel_batch_convert(file_tasks, args.threads, args.verbose)
+        else:
+            results = {}
+            for input_file, output_file, output_format, kwargs in file_tasks:
+                try:
+                    format_map = {'pdf': markdown_to_pdf, 'docx': markdown_to_docx, 'html': markdown_to_html}
+                    success = format_map[output_format](input_file, output_file, **kwargs)
+                    results[input_file] = success
+                    if success:
+                        print(f"[OK] Generated: {output_file}")
+                except Exception as e:
+                    results[input_file] = False
+                    print(f"[ERROR] Failed: {input_file} -> {e}")
+        
+        failed = sum(1 for v in results.values() if not v)
+        if failed:
+            print(f"\n[ERROR] {failed} conversion(s) failed.")
         sys.exit(0 if all(results.values()) else 1)
     
     # Single file mode
     if not args.input:
         parser.print_help()
         print("\n[INFO] No input file specified.")
-        print("[INFO] Batch mode: use --batch flag with multiple files")
+        print("[INFO] Use --batch for multiple files, --config for JSON config")
         sys.exit(0)
     
-    # Determine output file
+    # Validate single file
     input_path = Path(args.input)
     if not input_path.exists():
         print(f"[ERROR] Input file not found: {args.input}")
         sys.exit(1)
     
+    # Lint if requested
+    if args.lint:
+        is_valid, issues = validate_markdown(args.input, args.verbose)
+        if not is_valid:
+            print(f"[ERROR] Validation failed:")
+            for issue in issues:
+                print(f"  - {issue}")
+            sys.exit(1)
+        elif issues and args.verbose:
+            for issue in issues:
+                print(f"[WARN] {issue}")
+    
+    # Determine output file
     if args.output:
         output_file = args.output
     else:
         output_file = str(input_path.with_suffix(f'.{args.format}'))
     
-    # Build kwargs
-    kwargs = {
-        'verbose': args.verbose,
-        'use_cache': not args.no_cache,
-        'highlight_style': args.highlight,
-        'glossary_file': args.glossary,
-        'theme_config': args.theme,
-        'css_file': args.css,
-        'logo_path': args.logo,
-        'profile': args.profile
-    }
+    output_file = resolve_output_path(output_file, args.output_dir)
     
-    if args.format == 'pdf':
-        kwargs.update({
-            'renderer': args.renderer,
-            'generate_cover': args.cover,
-            'generate_toc': args.toc,
-            'watermark': args.watermark
-        })
-        success = markdown_to_pdf(args.input, output_file, **kwargs)
-    elif args.format == 'docx':
-        success = markdown_to_docx(args.input, output_file, **kwargs)
-    else:  # html
-        success = markdown_to_html(args.input, output_file, **kwargs)
+    # Show conversion info
+    print(f"\nConverting {args.input} to {output_file}...")
+    print(f"  Renderer: {args.renderer}")
+    if args.cover:
+        print(f"  Cover page: enabled")
+    if args.toc:
+        print(f"  Table of contents: enabled")
+    if args.profile:
+        print(f"  Profile: {args.profile}")
     
-    sys.exit(0 if success else 1)
+    # Build kwargs and convert
+    kwargs = build_kwargs()
+    
+    try:
+        if args.format == 'pdf':
+            success = markdown_to_pdf(args.input, output_file, **kwargs)
+        elif args.format == 'docx':
+            success = markdown_to_docx(args.input, output_file, **kwargs)
+        else:  # html
+            success = markdown_to_html(args.input, output_file, **kwargs)
+        
+        if success:
+            print(f"[OK] Created: {output_file}")
+        sys.exit(0 if success else 1)
+        
+    except Exception as e:
+        print(f"[ERROR] Conversion failed: {e}")
+        if args.verbose:
+            import traceback
+            traceback.print_exc()
+        sys.exit(1)
 
 
 if __name__ == "__main__":

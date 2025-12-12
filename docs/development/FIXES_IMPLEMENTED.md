@@ -35,7 +35,7 @@ All critical and high-priority fixes from the evaluation have been successfully 
 ✅ YAML configs with `metadata:` sections now work correctly
 ✅ Workspace-level defaults are parsed and applied
 ✅ Document-level metadata overrides workspace defaults
-✅ Metadata is passed to `md2pdf.py` via CLI arguments
+✅ Metadata is passed to `convert_final.py` via CLI arguments
 
 ### Example YAML (now fully supported):
 ```yaml
@@ -75,7 +75,7 @@ workspaces:
 ### Usage:
 ```bash
 export DOC_LOGO_PATH="$HOME/Documents/my-logo.png"
-python md2pdf.py document.md
+python convert_final.py document.md
 ```
 
 ---
@@ -124,7 +124,7 @@ python md2pdf.py document.md
 | Component | Before | After | Status |
 |-----------|--------|-------|--------|
 | Backend (`convert_final.py`) | ✅ 100% | ✅ 100% | ✅ |
-| CLI (`md2pdf.py`) | ✅ 100% | ✅ 100% | ✅ |
+| CLI (`convert_final.py`) | ✅ 100% | ✅ 100% | ✅ |
 | Playwright (`pdf_playwright.py`) | ✅ 100% | ✅ 100% | ✅ |
 | Web Demo | ✅ 100% | ✅ 100% | ✅ |
 | **YAML Pipeline Runner** | ❌ 0% | ✅ **100%** | ✅ **FIXED** |
@@ -162,7 +162,7 @@ python tools/docs_pipeline/cli.py --config test.yaml
 ### 2. Test Logo Environment Variable:
 ```bash
 export DOC_LOGO_PATH="$HOME/Documents/logo.png"
-python tools/pdf/md2pdf.py test.md test.pdf
+python tools/pdf/convert_final.py test.md test.pdf
 ```
 
 ### 3. Test Metadata Validation:

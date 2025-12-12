@@ -66,7 +66,7 @@ Professional documentation made easy.
 
 ```bash
 cd pdf
-python md2pdf.py ../my-first-doc.md --output ../my-first-doc.pdf
+python convert_final.py ../my-first-doc.md --output ../my-first-doc.pdf
 ```
 
 ### 3. View Output

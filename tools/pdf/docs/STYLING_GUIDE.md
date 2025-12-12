@@ -40,7 +40,7 @@ style Val fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
 
 **Usage:**
 ```bash
-python pdf-tools/md2pdf.py input.md output.pdf \
+python pdf-tools/convert_final.py input.md output.pdf \
   --css pdf-tools/custom.css.playwright \
   --renderer playwright \
   --generate-cover --generate-toc
@@ -230,7 +230,7 @@ svg {
 
 **Usage:**
 ```bash
-python pdf-tools/md2pdf.py input.md output.pdf \
+python pdf-tools/convert_final.py input.md output.pdf \
   --renderer playwright \
   --generate-cover
 ```
@@ -249,7 +249,7 @@ python pdf-tools/md2pdf.py input.md output.pdf \
 
 **Usage:**
 ```bash
-python pdf-tools/md2pdf.py input.md output.pdf \
+python pdf-tools/convert_final.py input.md output.pdf \
   --renderer playwright \
   --generate-toc
 ```
@@ -392,7 +392,7 @@ graph TB
 
 ### Basic PDF Generation
 ```bash
-python pdf-tools/md2pdf.py docs/report.md docs/report.pdf \
+python pdf-tools/convert_final.py docs/report.md docs/report.pdf \
   --renderer playwright \
   --css pdf-tools/custom.css.playwright \
   --generate-cover \
@@ -402,7 +402,7 @@ python pdf-tools/md2pdf.py docs/report.md docs/report.pdf \
 ### Custom CSS Variant
 ```bash
 # Create custom-brand.css with modified CSS variables
-python pdf-tools/md2pdf.py docs/report.md docs/report.pdf \
+python pdf-tools/convert_final.py docs/report.md docs/report.pdf \
   --renderer playwright \
   --css pdf-tools/custom-brand.css \
   --generate-cover \
@@ -411,7 +411,7 @@ python pdf-tools/md2pdf.py docs/report.md docs/report.pdf \
 
 ### Without Custom CSS (Uses Pagination CSS Only)
 ```bash
-python pdf-tools/md2pdf.py docs/report.md docs/report.pdf \
+python pdf-tools/convert_final.py docs/report.md docs/report.pdf \
   --renderer playwright \
   --generate-cover \
   --generate-toc

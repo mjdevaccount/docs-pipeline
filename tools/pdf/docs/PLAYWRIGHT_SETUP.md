@@ -37,10 +37,10 @@ Expected output:
 
 ```bash
 # Use Playwright renderer (perfect SVG)
-python pdf-tools/md2pdf.py input.md output.pdf --renderer playwright
+python pdf-tools/convert_final.py input.md output.pdf --renderer playwright
 
 # Use WeasyPrint renderer (fast, but limited SVG)
-python pdf-tools/md2pdf.py input.md output.pdf --renderer weasyprint
+python pdf-tools/convert_final.py input.md output.pdf --renderer weasyprint
 ```
 
 ### Default Behavior

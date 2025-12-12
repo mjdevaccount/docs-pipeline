@@ -46,7 +46,7 @@
 
 **Usage:**
 ```bash
-python md2pdf.py doc.md --crossref-config pdf-tools/crossref-config-example.yaml
+python convert_final.py doc.md --crossref-config pdf-tools/crossref-config-example.yaml
 ```
 
 **Markdown Syntax:**
@@ -75,7 +75,7 @@ See Figure @fig:system-diagram for details.
 
 **Usage:**
 ```bash
-python md2pdf.py doc.md --glossary pdf-tools/glossary-example.yaml
+python convert_final.py doc.md --glossary pdf-tools/glossary-example.yaml
 ```
 
 **Glossary YAML Format:**
@@ -135,7 +135,7 @@ $$
 
 **Usage:**
 ```bash
-python md2pdf.py doc.md --highlight-style pygments
+python convert_final.py doc.md --highlight-style pygments
 ```
 
 **Available Styles:**
@@ -165,7 +165,7 @@ python md2pdf.py doc.md --highlight-style pygments
 
 **Usage:**
 ```bash
-python md2pdf.py doc.md --format html -o doc.html
+python convert_final.py doc.md --format html -o doc.html
 ```
 
 **Features:**
@@ -254,19 +254,19 @@ All major features are now **fully implemented**:
 
 ```bash
 # Basic conversion with math and code highlighting
-python md2pdf.py doc.md
+python convert_final.py doc.md
 
 # With cross-references
-python md2pdf.py doc.md --crossref-config crossref.yaml
+python convert_final.py doc.md --crossref-config crossref.yaml
 
 # With glossary expansion
-python md2pdf.py doc.md --glossary glossary.yaml
+python convert_final.py doc.md --glossary glossary.yaml
 
 # HTML output with custom highlighting
-python md2pdf.py doc.md --format html --highlight-style pygments
+python convert_final.py doc.md --format html --highlight-style pygments
 
 # All features combined
-python md2pdf.py doc.md \
+python convert_final.py doc.md \
   --format pdf \
   --highlight-style github \
   --crossref-config crossref.yaml \

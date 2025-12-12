@@ -104,7 +104,7 @@
 ## 🔄 Updated Files
 
 - `convert_final.py` - Added all new features
-- `md2pdf.py` - Updated CLI for new features
+- `convert_final.py` - Updated CLI for new features
 - `README.md` - Comprehensive documentation updates
 - `pdf-config.json.example` - Updated with new options
 
@@ -128,22 +128,22 @@ Some features require additional tools (gracefully handled if missing):
 
 ```bash
 # Math support (automatic)
-python md2pdf.py docs/report.md
+python convert_final.py docs/report.md
 
 # Code highlighting
-python md2pdf.py docs/report.md --highlight-style tango
+python convert_final.py docs/report.md --highlight-style tango
 
 # Cross-references
-python md2pdf.py docs/report.md --crossref-config crossref.yaml
+python convert_final.py docs/report.md --crossref-config crossref.yaml
 
 # Glossary expansion
-python md2pdf.py docs/report.md --glossary glossary.yaml
+python convert_final.py docs/report.md --glossary glossary.yaml
 
 # HTML output
-python md2pdf.py docs/report.md --format html
+python convert_final.py docs/report.md --format html
 
 # All features together
-python md2pdf.py docs/report.md \
+python convert_final.py docs/report.md \
   --format pdf \
   --highlight-style github \
   --crossref-config crossref.yaml \

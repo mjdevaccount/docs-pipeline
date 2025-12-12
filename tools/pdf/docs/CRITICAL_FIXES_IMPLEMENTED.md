@@ -153,7 +153,7 @@ npm install -g svgo
 echo '$E = mc^2$ and $$\int_0^1 x^2 dx = \frac{1}{3}$$' > test-math.md
 
 # Generate PDF
-python pdf-tools/md2pdf.py test-math.md test-math.pdf \
+python pdf-tools/convert_final.py test-math.md test-math.pdf \
   --renderer playwright \
   --css pdf-tools/custom.css.playwright \
   --generate-cover \
@@ -164,7 +164,7 @@ python pdf-tools/md2pdf.py test-math.md test-math.pdf \
 
 ### Test Web Fonts:
 ```bash
-python pdf/md2pdf.py docs/architecture-proposal.md output.pdf \
+python pdf/convert_final.py docs/architecture-proposal.md output.pdf \
   --renderer playwright \
   --css pdf-tools/custom.css.playwright \
   --generate-cover \
@@ -177,7 +177,7 @@ python pdf/md2pdf.py docs/architecture-proposal.md output.pdf \
 ### Test PDF Bookmarks:
 ```bash
 # Generate PDF
-python pdf/md2pdf.py docs/architecture-proposal.md output.pdf \
+python pdf/convert_final.py docs/architecture-proposal.md output.pdf \
   --renderer playwright \
   --generate-cover \
   --generate-toc \
@@ -193,7 +193,7 @@ python pdf/md2pdf.py docs/architecture-proposal.md output.pdf \
 ```bash
 # Check SVG file sizes before/after
 # Look for "Optimized" messages in verbose output
-python pdf-tools/md2pdf.py docs/your-file.md output.pdf --verbose
+python pdf-tools/convert_final.py docs/your-file.md output.pdf --verbose
 ```
 
 **Expected:** Smaller SVG files, faster rendering

@@ -248,7 +248,7 @@ python -m tools.pdf.convert_final \
 ```
 
 > 💡 **Canonical Command:** All examples use `python -m tools.pdf.convert_final` for consistency.  
-> For backward compatibility, `python tools/pdf/md2pdf.py` also works.
+> You can also use `python tools/pdf/convert_final.py` directly.
 
 ---
 
@@ -436,8 +436,7 @@ docs-pipeline/
 │
 ├── 📦 tools/
 │   ├── pdf/                    # Core PDF Generation Engine
-│   │   ├── md2pdf.py           # CLI wrapper (backward compat)
-│   │   ├── convert_final.py    # Main entry point
+│   │   ├── convert_final.py    # Main CLI entry point
 │   │   ├── cli/                # Command-line interface
 │   │   │   ├── main.py         # Full CLI implementation
 │   │   │   └── md2pdf.bat      # Windows batch file

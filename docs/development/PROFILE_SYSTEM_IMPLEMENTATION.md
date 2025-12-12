@@ -47,7 +47,7 @@ Enhanced `markdown_to_pdf()` to accept `profile` parameter:
 - Explicit CSS argument overrides profile
 - Graceful fallback if profile not found
 
-### 4. **CLI Integration** (`tools/pdf/md2pdf.py`)
+### 4. **CLI Integration** (`tools/pdf/convert_final.py`)
 
 Updated CLI to support profile selection:
 - `--profile` argument for single-file mode
@@ -94,16 +94,16 @@ Comprehensive documentation created:
 
 ```bash
 # Tech Whitepaper (default engineering style)
-python tools/pdf/md2pdf.py input.md --profile tech-whitepaper
+python tools/pdf/convert_final.py input.md --profile tech-whitepaper
 
 # Dark Pro (modern presentation style)
-python tools/pdf/md2pdf.py input.md --profile dark-pro --renderer playwright
+python tools/pdf/convert_final.py input.md --profile dark-pro --renderer playwright
 
 # Minimalist (clean architecture docs)
-python tools/pdf/md2pdf.py input.md --profile minimalist
+python tools/pdf/convert_final.py input.md --profile minimalist
 
 # Enterprise Blue (corporate business docs)
-python tools/pdf/md2pdf.py input.md --profile enterprise-blue
+python tools/pdf/convert_final.py input.md --profile enterprise-blue
 ```
 
 ### Pipeline
@@ -196,7 +196,7 @@ Same content can now be presented in **4 completely different ways**:
 ### Modified:
 - `tools/pdf/profiles.py` (added 4 new profiles)
 - `tools/pdf/convert_final.py` (profile parameter support)
-- `tools/pdf/md2pdf.py` (CLI profile support)
+- `tools/pdf/convert_final.py` (CLI profile support)
 - `web_demo.py` (profile selection in upload handler)
 - `templates/index.html` (profile dropdown UI)
 - `README.md` (profile system highlights)
