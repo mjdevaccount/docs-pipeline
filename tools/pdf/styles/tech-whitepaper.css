@@ -1,15 +1,17 @@
 /**
  * Tech Whitepaper Profile - December 2025 Modernized
  * Clean, professional engineering documentation style
- * Modern typography, semantic colors, dark mode support
+ * Modern typography, semantic colors, dark mode support, syntax highlighting
  * 
  * IMPROVEMENTS:
  * - Modern fonts: Inter (body) + JetBrains Mono (code)
  * - Semantic CSS variables for easier maintenance
  * - Automatic dark mode support
  * - GitHub-inspired table styling
+ * - Syntax highlighting for code blocks
+ * - Semantic callout boxes (note, tip, warning, danger, info)
  * - Better accessibility and contrast
- * - Full-width layout using negative margins (stays within page)
+ * - Full-width layout using proper sizing
  */
 
 /* ============================================================================
@@ -52,6 +54,36 @@
     --color-blockquote-border: #2563eb;     /* Blue-600 */
     --color-blockquote-bg: #eff6ff;         /* Blue-50 */
     --color-blockquote-text: #1e40af;       /* Blue-800 */
+    
+    /* Syntax highlighting colors */
+    --syntax-keyword: #d946ef;              /* Purple - keywords, types */
+    --syntax-string: #16a34a;               /* Green - strings, values */
+    --syntax-comment: #8b5cf6;              /* Violet - comments */
+    --syntax-number: #ea580c;               /* Orange - numbers */
+    --syntax-function: #0891b2;             /* Cyan - functions */
+    --syntax-tag: #dc2626;                  /* Red - tags, markup */
+    --syntax-attr: #7c3aed;                 /* Purple - attributes */
+    
+    /* Callout colors */
+    --callout-note-bg: #eff6ff;             /* Blue background */
+    --callout-note-border: #0284c7;         /* Blue border */
+    --callout-note-text: #075985;           /* Blue text */
+    
+    --callout-tip-bg: #f0fdf4;              /* Green background */
+    --callout-tip-border: #16a34a;          /* Green border */
+    --callout-tip-text: #166534;            /* Green text */
+    
+    --callout-warning-bg: #fffbeb;          /* Amber background */
+    --callout-warning-border: #d97706;      /* Amber border */
+    --callout-warning-text: #92400e;        /* Amber text */
+    
+    --callout-danger-bg: #fef2f2;           /* Red background */
+    --callout-danger-border: #dc2626;       /* Red border */
+    --callout-danger-text: #991b1b;         /* Red text */
+    
+    --callout-info-bg: #ecfdf5;             /* Teal background */
+    --callout-info-border: #0891b2;         /* Teal border */
+    --callout-info-text: #134e4a;           /* Teal text */
     
     /* Typography scales */
     --text-xs: 0.75rem;
@@ -102,12 +134,15 @@
         --color-blockquote-border: #60a5fa;     /* Blue-400 */
         --color-blockquote-bg: #0c2d48;         /* Blue-950 */
         --color-blockquote-text: #93c5fd;       /* Blue-300 */
-    }
-    
-    /* Dark mode body adjustments */
-    body {
-        background: #111827;                    /* Gray-900 */
-        color: var(--color-text-primary);
+        
+        /* Dark mode syntax colors */
+        --syntax-keyword: #f472b6;              /* Pink */
+        --syntax-string: #86efac;               /* Light green */
+        --syntax-comment: #c4b5fd;              /* Light purple */
+        --syntax-number: #fed7aa;               /* Light orange */
+        --syntax-function: #67e8f9;             /* Cyan */
+        --syntax-tag: #fca5a5;                  /* Light red */
+        --syntax-attr: #d8b4fe;                 /* Light purple */
     }
 }
 
@@ -171,7 +206,6 @@ h1, h2, h3, h4, h5, h6 {
     max-width: none;
     line-height: 1.3;
     letter-spacing: -0.01em;  /* Tighter spacing for modern look */
-    /* page-break rules removed - handled by layout.css */
 }
 
 h1 {
@@ -219,7 +253,7 @@ p {
     padding: 0;
     width: 100%;
     max-width: none;
-    text-align: justify;
+    text-align: left;  /* Accessibility fix: no justify */
     orphans: 3;
     widows: 3;
 }
@@ -267,16 +301,8 @@ pre {
     overflow-x: auto;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    /* Full-width using negative margin approach */
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    /* But constrain to not go past page edges */
-    max-width: 100%;
-    /* page-break rules removed - handled by layout.css */
+    width: 100%;
+    max-width: none;
 }
 
 pre code {
@@ -289,6 +315,15 @@ pre code {
     /* Enable ligatures in code blocks */
     font-variant-ligatures: common-ligatures contextual;
 }
+
+/* Syntax highlighting for inline code and keywords */
+code.keyword { color: var(--syntax-keyword); font-weight: 600; }
+code.string { color: var(--syntax-string); }
+code.comment { color: var(--syntax-comment); font-style: italic; }
+code.number { color: var(--syntax-number); }
+code.function { color: var(--syntax-function); font-weight: 500; }
+code.tag { color: var(--syntax-tag); }
+code.attr { color: var(--syntax-attr); }
 
 /* ============================================================================
    LISTS
@@ -316,14 +351,14 @@ ul ul, ol ol, ul ol, ol ul {
 
 /* Modern list markers - improved spacing and appearance */
 ul {
-    list-style-type: '•';  /* Modern bullet point (better than triangle) */
+    list-style-type: '•';  /* Modern bullet point */
 }
 
 /* Marker styling - better spacing and alignment */
 li::marker {
     color: var(--color-primary);
     font-weight: 500;
-    margin-right: 0.75em;  /* Increased gap from 0.5em for better clarity */
+    margin-right: 0.75em;  /* Increased gap for better clarity */
 }
 
 /* ============================================================================
@@ -331,7 +366,7 @@ li::marker {
    ========================================================================== */
 
 table {
-    /* Stay within page bounds - use regular width, no full-width expansion */
+    /* Proper width - stays within page bounds, no shifting */
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -343,7 +378,6 @@ table {
     margin-left: 0;
     margin-right: 0;
     box-sizing: border-box;
-    /* page-break rules removed - handled by layout.css */
 }
 
 thead {
@@ -353,7 +387,7 @@ thead {
 
 th {
     padding: 0.875rem 1rem;
-    text-align: left;
+    text-align: left;  /* Accessibility */
     color: var(--color-text-primary);
     border-bottom: 2px solid var(--color-border);
     font-size: 0.875rem;
@@ -400,7 +434,6 @@ blockquote {
     margin: 1.5em 0;
     margin-left: 0;
     margin-right: 0;
-    /* Stay within page bounds - use regular width */
     width: 100%;
     max-width: none;
     font-style: italic;
@@ -423,6 +456,113 @@ blockquote > :last-child {
 }
 
 /* ============================================================================
+   CALLOUT BOXES (Semantic admonitions)
+   ========================================================================== */
+
+/* Base callout styling */
+.callout, .note, .tip, .warning, .danger, .info,
+div.note, div.tip, div.warning, div.danger, div.info {
+    border-left: 4px solid;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    page-break-inside: avoid;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+}
+
+/* Note callout - Blue (info) */
+.note, div.note {
+    border-left-color: var(--callout-note-border);
+    background: var(--callout-note-bg);
+    color: var(--callout-note-text);
+}
+
+.note h4, .note h5, div.note h4, div.note h5 {
+    margin-top: 0;
+    color: var(--callout-note-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Tip callout - Green (success) */
+.tip, div.tip {
+    border-left-color: var(--callout-tip-border);
+    background: var(--callout-tip-bg);
+    color: var(--callout-tip-text);
+}
+
+.tip h4, .tip h5, div.tip h4, div.tip h5 {
+    margin-top: 0;
+    color: var(--callout-tip-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Warning callout - Amber (warning) */
+.warning, div.warning {
+    border-left-color: var(--callout-warning-border);
+    background: var(--callout-warning-bg);
+    color: var(--callout-warning-text);
+}
+
+.warning h4, .warning h5, div.warning h4, div.warning h5 {
+    margin-top: 0;
+    color: var(--callout-warning-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Danger callout - Red (error) */
+.danger, div.danger {
+    border-left-color: var(--callout-danger-border);
+    background: var(--callout-danger-bg);
+    color: var(--callout-danger-text);
+}
+
+.danger h4, .danger h5, div.danger h4, div.danger h5 {
+    margin-top: 0;
+    color: var(--callout-danger-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Info callout - Teal (info) */
+.info, div.info {
+    border-left-color: var(--callout-info-border);
+    background: var(--callout-info-bg);
+    color: var(--callout-info-text);
+}
+
+.info h4, .info h5, div.info h4, div.info h5 {
+    margin-top: 0;
+    color: var(--callout-info-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.callout p, .note p, .tip p, .warning p, .danger p, .info p,
+div.callout p, div.note p, div.tip p, div.warning p, div.danger p, div.info p {
+    margin: 0.5rem 0;
+}
+
+.callout > :first-child, .note > :first-child, .tip > :first-child, .warning > :first-child, .danger > :first-child, .info > :first-child,
+div.callout > :first-child, div.note > :first-child, div.tip > :first-child, div.warning > :first-child, div.danger > :first-child, div.info > :first-child {
+    margin-top: 0;
+}
+
+.callout > :last-child, .note > :last-child, .tip > :last-child, .warning > :last-child, .danger > :last-child, .info > :last-child,
+div.callout > :last-child, div.note > :last-child, div.tip > :last-child, div.warning > :last-child, div.danger > :last-child, div.info > :last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================================
    HORIZONTAL RULES
    ========================================================================== */
 
@@ -441,13 +581,11 @@ img, svg {
     height: auto;
     display: block;
     margin: 1.5em auto;
-    /* page-break rules removed - handled by layout.css */
 }
 
 figure {
     margin: 1.5em 0;
     text-align: center;
-    /* page-break rules removed - handled by layout.css */
 }
 
 figcaption {
@@ -528,47 +666,6 @@ nav#TOC a:hover, #TOC a:hover {
 }
 
 /* ============================================================================
-   CALLOUT BOXES (Admonitions) - For future use
-   ========================================================================== */
-
-/* Support for Pandoc div syntax */
-div.note, div.info, div.tip {
-    border-radius: 0.5rem;
-    padding: 1rem 1.25rem;
-    border-left: 4px solid var(--color-primary);
-    background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(37, 99, 235, 0.05) 100%);
-    color: var(--color-primary-dark);
-    margin: 1.5rem 0;
-    page-break-inside: avoid;
-}
-
-div.warning {
-    border-left-color: var(--color-warning);
-    background: linear-gradient(135deg, #fef3c7 0%, rgba(217, 119, 6, 0.05) 100%);
-    color: #854d0e;
-}
-
-div.success {
-    border-left-color: var(--color-success);
-    background: linear-gradient(135deg, #d1fae5 0%, rgba(5, 150, 105, 0.05) 100%);
-    color: #065f46;
-}
-
-div.error {
-    border-left-color: var(--color-error);
-    background: linear-gradient(135deg, #fee2e2 0%, rgba(220, 38, 38, 0.05) 100%);
-    color: #7f1d1d;
-}
-
-div.note h4, div.info h4, div.tip h4, div.warning h4, div.success h4, div.error h4 {
-    margin-top: 0;
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 600;
-}
-
-/* ============================================================================
    PRINT-SPECIFIC ADJUSTMENTS
    ========================================================================== */
 
@@ -587,6 +684,4 @@ div.note h4, div.info h4, div.tip h4, div.warning h4, div.success h4, div.error 
     pre, blockquote, table thead {
         background: white;
     }
-    
-    /* Page break rules handled by layout.css */
 }
