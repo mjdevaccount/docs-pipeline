@@ -18,9 +18,19 @@ CLI Usage:
     # Batch with parallel processing
     python -m tools.pdf.cli.main --batch doc1.md doc2.md --threads 4
     
+    # With glossary highlighting
+    python -m tools.pdf.cli.main input.md --glossary glossary.yaml
+    
 Library Usage:
     from tools.pdf.core import markdown_to_pdf
     markdown_to_pdf('input.md', 'output.pdf', profile='tech-whitepaper')
+
+Glossary Features:
+    # Use glossary to highlight terms
+    python -m tools.pdf.cli.main doc.md --glossary glossary.yaml
+    
+    # Generate glossary index
+    python -m tools.pdf.cli.glossary_commands index glossary.yaml --output glossary.md
 
 Docker Usage:
     docker-compose run --rm docs-pipeline-web \\
@@ -52,9 +62,10 @@ from core import (
     validate_markdown,
 )
 from core.utils import resolve_output_path
+from core.glossary_processor import GlossaryProcessor
 from diagram_rendering import DiagramOrchestrator
 
-__version__ = "3.0.0"  # Major version bump - CLI is now primary entry point
+__version__ = "3.1.0"  # Bumped for glossary integration
 
 
 # Global reference to diagram orchestrator for metrics reporting
@@ -72,6 +83,48 @@ def report_cache_metrics(verbose: bool = False):
     global _diagram_orchestrator
     if verbose and _diagram_orchestrator:
         print(_diagram_orchestrator.get_cache_metrics_report())
+
+
+def report_glossary_metrics(glossary_processor: Optional[GlossaryProcessor], verbose: bool = False):
+    """Report glossary metrics if available."""
+    if verbose and glossary_processor and glossary_processor.stats:
+        print()
+        print(glossary_processor.stats.report())
+
+
+def apply_glossary(content: str, glossary_file: Optional[Path], verbose: bool = False) -> str:
+    """
+    Apply glossary highlighting to markdown content.
+    
+    Args:
+        content: Markdown content
+        glossary_file: Path to glossary YAML/JSON file
+        verbose: Verbose output
+    
+    Returns:
+        Markdown content with highlighted glossary terms
+    """
+    if not glossary_file:
+        return content
+    
+    try:
+        glossary_file = Path(glossary_file)
+        if not glossary_file.exists():
+            print(f"[WARN] Glossary file not found: {glossary_file}")
+            return content
+        
+        processor = GlossaryProcessor(glossary_file)
+        highlighted = processor.highlight_terms(content)
+        
+        if verbose:
+            print(f"[INFO] Applied glossary: {glossary_file}")
+            print(processor.report())
+        
+        return highlighted
+    
+    except Exception as e:
+        print(f"[WARN] Failed to apply glossary: {e}")
+        return content
 
 
 def load_config(config_file: str) -> dict:
@@ -197,28 +250,35 @@ def build_kwargs(args, item_overrides: Optional[Dict] = None) -> Dict[str, Any]:
 def main():
     """CLI entry point."""
     parser = argparse.ArgumentParser(
-        description='Convert Markdown to PDF/DOCX/HTML',
+        description='Convert Markdown to PDF/DOCX/HTML with advanced features',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   # Convert single file to PDF
   python -m tools.pdf.cli.main document.md document.pdf
   
-  # Show cache metrics
+  # Show cache metrics and glossary statistics
   python -m tools.pdf.cli.main document.md output.pdf --verbose
   # Output includes:
   #   [INFO] Cache Performance Report
   #     Hit Ratio: 75.0% (3/4)
   #     Time Saved: 2340ms
   #     Size Reduction: 42.1%
+  #   [INFO] Glossary Processing Report
+  #     Total Terms: 250
+  #     Terms Found: 45
+  #     Total Occurrences: 156
   
-  # Use Playwright renderer with cover page and TOC
-  python -m tools.pdf.cli.main document.md --renderer playwright --cover --toc
+  # Use glossary to highlight terms
+  python -m tools.pdf.cli.main document.md --glossary glossary.yaml
+  
+  # Use Playwright renderer with cover page, TOC, and glossary
+  python -m tools.pdf.cli.main document.md --renderer playwright --cover --toc --glossary glossary.yaml
   
   # Batch convert with parallel processing
-  python -m tools.pdf.cli.main --batch doc1.md doc2.md --threads 4
+  python -m tools.pdf.cli.main --batch doc1.md doc2.md --threads 4 --glossary glossary.yaml
   
-  # Use JSON config for complex batch jobs
+  # Use JSON config for complex batch jobs with glossary
   python -m tools.pdf.cli.main --config batch-config.json
   
   # Validate Markdown before conversion
@@ -226,6 +286,18 @@ Examples:
   
   # Override metadata from command line
   python -m tools.pdf.cli.main doc.md --title "My Report" --author "Jane Doe"
+
+Glossary Features:
+  Use --glossary flag to highlight terminology in documents:
+  - Automatic term highlighting
+  - Cross-reference generation
+  - Support for synonyms and variations
+  - Category organization
+  
+  See glossary_commands.py for managing glossaries:
+  - python -m tools.pdf.cli.glossary_commands validate glossary.yaml
+  - python -m tools.pdf.cli.glossary_commands index glossary.yaml --output glossary.md
+  - python -m tools.pdf.cli.glossary_commands search glossary.yaml API
 
 Cache Metrics:
   Use --verbose flag to see cache performance:
@@ -237,8 +309,9 @@ Config File Format (JSON):
   {
     "files": [
       {"input": "doc1.md", "output": "doc1.pdf", "profile": "tech-whitepaper"},
-      {"input": "doc2.md", "format": "docx"}
+      {"input": "doc2.md", "format": "docx", "glossary": "glossary.yaml"}
     ],
+    "glossary": "glossary.yaml",
     "profile": "default",
     "renderer": "playwright",
     "threads": 4
@@ -277,7 +350,7 @@ Config File Format (JSON):
     parser.add_argument('--reference-docx', help='Reference DOCX template (for DOCX output)')
     
     # Processing options
-    parser.add_argument('--glossary', help='Glossary YAML file')
+    parser.add_argument('--glossary', help='Glossary YAML/JSON file for term highlighting')
     parser.add_argument('--theme', help='Mermaid theme config JSON')
     parser.add_argument('--crossref-config', help='Pandoc crossref config YAML')
     parser.add_argument('--no-cache', action='store_true', help='Disable diagram caching')
@@ -295,7 +368,7 @@ Config File Format (JSON):
     parser.add_argument('--check', action='store_true', help='Check dependencies and exit')
     parser.add_argument('--lint', action='store_true', help='Validate Markdown before conversion')
     parser.add_argument('--log', help='Log file path for CI/automation')
-    parser.add_argument('--verbose', '-v', action='store_true', help='Verbose output with cache metrics')
+    parser.add_argument('--verbose', '-v', action='store_true', help='Verbose output with metrics')
     parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     
     args = parser.parse_args()
@@ -318,6 +391,7 @@ Config File Format (JSON):
         files = config.get('files', [])
         threads = args.threads or config.get('threads', 1)
         output_dir = args.output_dir or config.get('output_dir')
+        glossary_file = args.glossary or config.get('glossary')
         
         # Build file tasks
         file_tasks = []
@@ -343,6 +417,12 @@ Config File Format (JSON):
                         continue
                 
                 kwargs = build_kwargs(args, item if isinstance(item, dict) else None)
+                # Override glossary if specified in config item
+                if 'glossary' in item:
+                    kwargs['glossary_file'] = item['glossary']
+                elif glossary_file:
+                    kwargs['glossary_file'] = glossary_file
+                
                 file_tasks.append((input_file, output_file, output_format, kwargs))
                 
             except Exception as e:
@@ -359,7 +439,7 @@ Config File Format (JSON):
                     results[input_file] = success
                     if success:
                         print(f"[OK] Generated: {output_file}")
-                        # Report cache metrics if verbose
+                        # Report metrics if verbose
                         report_cache_metrics(args.verbose)
                 except Exception as e:
                     results[input_file] = False
@@ -407,7 +487,7 @@ Config File Format (JSON):
                     results[input_file] = success
                     if success:
                         print(f"[OK] Generated: {output_file}")
-                        # Report cache metrics if verbose
+                        # Report metrics if verbose
                         report_cache_metrics(args.verbose)
                 except Exception as e:
                     results[input_file] = False
@@ -423,6 +503,7 @@ Config File Format (JSON):
         parser.print_help()
         print("\n[INFO] No input file specified.")
         print("[INFO] Use --batch for multiple files, --config for JSON config")
+        print("[INFO] Use --glossary to highlight terminology")
         sys.exit(0)
     
     input_path = Path(args.input)
@@ -459,6 +540,8 @@ Config File Format (JSON):
         print(f"  Table of contents: enabled")
     if args.profile:
         print(f"  Profile: {args.profile}")
+    if args.glossary:
+        print(f"  Glossary: {args.glossary}")
     
     # Build kwargs and convert
     kwargs = build_kwargs(args)
@@ -473,7 +556,7 @@ Config File Format (JSON):
         
         if success:
             print(f"[OK] Created: {output_file}")
-            # Report cache metrics if verbose
+            # Report metrics if verbose
             report_cache_metrics(args.verbose)
         sys.exit(0 if success else 1)
         
