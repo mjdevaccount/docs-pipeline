@@ -20,8 +20,20 @@ body {
     background: #0f172a !important;
     margin: 0;
     padding: 0;
+    width: 100%;
+    max-width: none;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
+}
+
+/* Reset any Pandoc wrapper divs that might constrain width */
+body > div,
+body > section,
+.section {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: none;
 }
 
 /* Ensure dark background extends to full page in PDF */
@@ -41,6 +53,11 @@ h1, h2, h3, h4, h5, h6 {
     color: #f8fafc;
     margin-top: 1.6em;
     margin-bottom: 0.6em;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+    width: 100%;
+    max-width: none;
     line-height: 1.25;
     letter-spacing: 0.02em;
     /* page-break rules removed - handled by layout.css */
@@ -77,6 +94,11 @@ h4 {
 /* Paragraphs */
 p {
     margin: 0.6em 0 1em 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+    width: 100%;
+    max-width: none;
     color: #d1d5db;
     text-align: left;
     orphans: 3;
@@ -130,7 +152,12 @@ pre code {
 /* Lists */
 ul, ol {
     margin: 0.9em 0;
+    margin-left: 0;
+    margin-right: 0;
     padding-left: 2em;
+    padding-right: 0;
+    width: 100%;
+    max-width: none;
 }
 
 li {
@@ -143,7 +170,10 @@ li {
 table {
     border-collapse: collapse;
     width: 100%;
+    max-width: 100%;
     margin: 1.5em 0;
+    margin-left: 0;
+    margin-right: 0;
     font-size: 0.95em;
     background: #1e293b;
     border-radius: 8px;
@@ -181,10 +211,15 @@ blockquote {
     background: #1e293b;
     padding: 1.1em 1.6em;
     margin: 1.3em 0;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    max-width: none;
     font-style: italic;
     color: #cbd5e1;
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
 }
 
 blockquote p {

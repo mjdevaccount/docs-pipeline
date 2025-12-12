@@ -23,7 +23,19 @@ body {
     background: #ffffff;
     margin: 0;
     padding: 0;
+    width: 100%;
+    max-width: none;
     -webkit-font-smoothing: antialiased;
+}
+
+/* Reset any Pandoc wrapper divs that might constrain width */
+body > div,
+body > section,
+.section {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: none;
 }
 
 /* Headings - Corporate blue */
@@ -32,6 +44,11 @@ h1, h2, h3, h4, h5, h6 {
     color: #003d7a;
     margin-top: 1.4em;
     margin-bottom: 0.5em;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+    width: 100%;
+    max-width: none;
     line-height: 1.35;
     /* page-break rules removed - handled by layout.css */
 }
@@ -67,6 +84,11 @@ h4 {
 /* Paragraphs */
 p {
     margin: 0.5em 0 1em 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+    width: 100%;
+    max-width: none;
     color: #4a4a4a;
     text-align: left;
     orphans: 3;
@@ -119,7 +141,12 @@ pre code {
 /* Lists */
 ul, ol {
     margin: 0.8em 0;
+    margin-left: 0;
+    margin-right: 0;
     padding-left: 2em;
+    padding-right: 0;
+    width: 100%;
+    max-width: none;
 }
 
 li {
@@ -131,7 +158,10 @@ li {
 table {
     border-collapse: collapse;
     width: 100%;
+    max-width: 100%;
     margin: 1.5em 0;
+    margin-left: 0;
+    margin-right: 0;
     font-size: 0.95em;
     border: 1px solid #d1dce5;
     /* page-break rules removed - handled by layout.css */
@@ -166,9 +196,14 @@ blockquote {
     background: #f0f7ff;
     padding: 1em 1.5em;
     margin: 1.2em 0;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    max-width: none;
     color: #003d7a;
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
 }
 
 blockquote p {

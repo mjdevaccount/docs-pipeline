@@ -20,7 +20,19 @@ body {
     background: #ffffff;
     margin: 0;
     padding: 0;
+    width: 100%;
+    max-width: none;
     -webkit-font-smoothing: antialiased;
+}
+
+/* Reset any Pandoc wrapper divs that might constrain width */
+body > div,
+body > section,
+.section {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: none;
 }
 
 /* Headings - Thin, minimal styling */
@@ -29,6 +41,11 @@ h1, h2, h3, h4, h5, h6 {
     color: #1a1a1a;
     margin-top: 2.5em;
     margin-bottom: 0.8em;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+    width: 100%;
+    max-width: none;
     line-height: 1.4;
     letter-spacing: 0.03em;
     /* page-break rules removed - handled by layout.css */
@@ -64,6 +81,11 @@ h4 {
 /* Paragraphs - Maximum breathing room */
 p {
     margin: 0 0 1.5em 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+    width: 100%;
+    max-width: none;
     text-align: left;
     orphans: 3;
     widows: 3;
@@ -111,7 +133,12 @@ pre code {
 /* Lists - Minimal bullets */
 ul, ol {
     margin: 1.2em 0;
+    margin-left: 0;
+    margin-right: 0;
     padding-left: 1.5em;
+    padding-right: 0;
+    width: 100%;
+    max-width: none;
 }
 
 li {
@@ -127,7 +154,10 @@ ul {
 table {
     border-collapse: collapse;
     width: 100%;
+    max-width: 100%;
     margin: 2.5em 0;
+    margin-left: 0;
+    margin-right: 0;
     font-size: 0.95em;
     /* page-break rules removed - handled by layout.css */
 }
@@ -158,8 +188,13 @@ blockquote {
     border-left: 2px solid #e9ecef;
     padding: 0.5em 0 0.5em 2em;
     margin: 2em 0;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    max-width: none;
     font-style: italic;
     color: #6c757d;
+    box-sizing: border-box;
 }
 
 blockquote p {
