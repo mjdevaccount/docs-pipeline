@@ -1,10 +1,63 @@
 /**
- * Enterprise Blue Profile
- * Corporate-friendly, conservative styling
- * Blue and gray color scheme, structured layout
+ * Enterprise Blue Profile - December 2025 Modernized
+ * Corporate-friendly, professional styling
+ * Modern blue and gray color scheme, structured layout
+ * 
+ * IMPROVEMENTS:
+ * - Modern fonts: Inter (body) + JetBrains Mono (code)
+ * - Semantic CSS variables for easier maintenance
+ * - GitHub-inspired table styling
+ * - Better accessibility and contrast
+ * - Professional shadows and spacing
  */
 
-/* Page setup */
+/* ============================================================================
+   IMPORTS & VARIABLES
+   ========================================================================== */
+
+/* Import modern fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* Semantic color system - Corporate blue palette */
+:root {
+    /* Primary colors - Corporate blue */
+    --color-primary: #0066cc;               /* Corporate Blue */
+    --color-primary-light: #4d94ff;         /* Lighter Blue */
+    --color-primary-dark: #003d7a;          /* Darker Blue */
+    --color-primary-muted: #0052a3;         /* Muted Blue */
+    
+    /* Text colors - Corporate standards */
+    --color-text-primary: #1f2937;          /* Dark Gray */
+    --color-text-secondary: #4a5568;        /* Medium Gray */
+    --color-text-muted: #6b7280;            /* Light Gray */
+    
+    /* Background & borders */
+    --color-bg-subtle: #f0f4f8;             /* Very Light Blue */
+    --color-bg-surface: #ffffff;            /* White */
+    --color-border: #d1dce5;                /* Blue-gray border */
+    --color-border-subtle: #e1e8ed;         /* Subtle border */
+    
+    /* Status colors */
+    --color-success: #059669;               /* Green */
+    --color-warning: #d97706;               /* Amber */
+    --color-error: #dc2626;                 /* Red */
+    --color-info: #0284c7;                  /* Blue */
+    
+    /* Component colors */
+    --color-code-bg: #e6f2ff;               /* Light Blue */
+    --color-code-text: #003366;             /* Dark Blue */
+    --color-pre-bg: #f5f8fa;                /* Very Light Blue */
+    --color-pre-text: #1f2937;              /* Dark Gray */
+    --color-blockquote-border: #0066cc;     /* Corporate Blue */
+    --color-blockquote-bg: #f0f7ff;         /* Very Light Blue */
+    --color-blockquote-text: #003d7a;       /* Dark Blue */
+}
+
+/* ============================================================================
+   PAGE SETUP - Margins: 2.5cm top/bottom, 2.2cm left/right
+   ========================================================================== */
+
 @page {
     size: A4;
     margin: 2.5cm 2.2cm 2.5cm 2.2cm;
@@ -14,18 +67,25 @@
     margin-top: 1.5cm;
 }
 
-/* Base typography - Corporate standard */
+/* ============================================================================
+   BASE TYPOGRAPHY
+   ========================================================================== */
+
 body {
-    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    /* Modern fonts with fallbacks */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 11pt;
     line-height: 1.65;
-    color: #333333;
-    background: #ffffff;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-surface);
     margin: 0;
     padding: 0;
     width: 100%;
     max-width: none;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Enable font ligatures for better typography */
+    font-feature-settings: 'liga' 1, 'calt' 1;
 }
 
 /* Reset any Pandoc wrapper divs that might constrain width */
@@ -38,10 +98,13 @@ body > section,
     max-width: none;
 }
 
-/* Headings - Corporate blue */
+/* ============================================================================
+   HEADINGS
+   ========================================================================== */
+
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
-    color: #003d7a;
+    color: var(--color-primary-dark);
     margin-top: 1.4em;
     margin-bottom: 0.5em;
     margin-left: 0;
@@ -50,38 +113,51 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     max-width: none;
     line-height: 1.35;
-    /* page-break rules removed - handled by layout.css */
+    letter-spacing: -0.01em;
 }
 
 h1 {
     font-size: 2rem;
-    border-bottom: 3px solid #0066cc;
+    border-bottom: 3px solid var(--color-primary);
     padding-bottom: 0.4em;
     margin-top: 0.5em;
     page-break-before: auto;
-    background: linear-gradient(to right, #f0f4f8 0%, transparent 100%);
+    background: linear-gradient(to right, var(--color-bg-subtle) 0%, transparent 100%);
     padding: 0.5em 0 0.5em 0.5em;
     margin-left: -0.5em;
 }
 
 h2 {
     font-size: 1.5rem;
-    color: #0066cc;
+    color: var(--color-primary);
     border-bottom: 2px solid #b3d9ff;
     padding-bottom: 0.3em;
 }
 
 h3 {
     font-size: 1.25rem;
-    color: #0073e6;
+    color: var(--color-primary-muted);
 }
 
 h4 {
     font-size: 1.1rem;
-    color: #4d94ff;
+    color: var(--color-primary-light);
 }
 
-/* Paragraphs */
+h5 {
+    font-size: 1rem;
+    color: var(--color-primary-dark);
+}
+
+h6 {
+    font-size: 0.95rem;
+    color: var(--color-primary-dark);
+}
+
+/* ============================================================================
+   PARAGRAPHS & INLINE TEXT
+   ========================================================================== */
+
 p {
     margin: 0.5em 0 1em 0;
     margin-left: 0;
@@ -89,7 +165,7 @@ p {
     padding: 0;
     width: 100%;
     max-width: none;
-    color: #4a4a4a;
+    color: var(--color-text-secondary);
     text-align: left;
     orphans: 3;
     widows: 3;
@@ -97,168 +173,242 @@ p {
 
 /* Links - Corporate blue */
 a {
-    color: #0066cc;
+    color: var(--color-primary);
     text-decoration: none;
     font-weight: 500;
+    transition: color 0.2s ease;
 }
 
 a:hover {
-    color: #003d7a;
+    color: var(--color-primary-dark);
     text-decoration: underline;
 }
 
-/* Code - Light blue background */
+/* ============================================================================
+   CODE & PREFORMATTED TEXT
+   ========================================================================== */
+
 code {
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 0.9em;
-    background: #e6f2ff;
-    color: #003366;
+    /* Modern monospace font */
+    font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
+    font-size: 0.88em;
+    background: var(--color-code-bg);
+    color: var(--color-code-text);
     padding: 0.2em 0.4em;
     border-radius: 3px;
-    border: 1px solid #b3d9ff;
+    border: 1px solid var(--color-border);
+    /* Enable tabular figures for better code alignment */
+    font-variant-numeric: tabular-nums;
 }
 
 pre {
-    background: #f5f8fa;
-    border: 1px solid #d1dce5;
-    border-left: 4px solid #0066cc;
-    padding: 1em 1.2em;
-    margin: 1.2em 0;
-    border-radius: 4px;
+    background: var(--color-pre-bg);
+    border-left: 4px solid var(--color-primary);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-primary);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin: 1.5em 0;
+    margin-left: 0;
+    margin-right: 0;
     overflow-x: auto;
-    /* page-break rules removed - handled by layout.css */
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.08);
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
 }
 
 pre code {
     background: transparent;
-    color: #2d3748;
+    color: var(--color-pre-text);
     padding: 0;
     border: none;
-    font-size: 0.9em;
+    font-size: 0.875rem;
     line-height: 1.6;
+    /* Enable ligatures in code blocks */
+    font-variant-ligatures: common-ligatures contextual;
 }
 
-/* Lists */
+/* ============================================================================
+   LISTS
+   ========================================================================== */
+
 ul, ol {
-    margin: 0.8em 0;
+    margin: 1rem 0;
     margin-left: 0;
     margin-right: 0;
-    padding-left: 2em;
-    padding-right: 0;
+    padding-left: 1.75rem;
     width: 100%;
     max-width: none;
 }
 
 li {
-    margin: 0.4em 0;
+    margin: 0.5rem 0;
     line-height: 1.65;
+    color: var(--color-text-secondary);
 }
 
-/* Tables - Professional blue and gray */
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+/* Modern list markers */
+ul {
+    list-style-type: '•';
+}
+
+li::marker {
+    color: var(--color-primary);
+    font-weight: 500;
+    margin-right: 0.75em;
+}
+
+/* ============================================================================
+   TABLES (GitHub-inspired styling)
+   ========================================================================== */
+
 table {
-    border-collapse: collapse;
     width: 100%;
-    max-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.925rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    overflow: hidden;
     margin: 1.5em 0;
     margin-left: 0;
     margin-right: 0;
-    font-size: 0.95em;
-    border: 1px solid #d1dce5;
-    /* page-break rules removed - handled by layout.css */
+    box-sizing: border-box;
 }
 
-th, td {
-    border: 1px solid #d1dce5;
-    padding: 0.8em 1em;
-    text-align: left;
+thead {
+    background: linear-gradient(to bottom, var(--color-primary-dark) 0%, var(--color-primary-muted) 100%);
+    font-weight: 600;
 }
 
 th {
-    background: linear-gradient(to bottom, #003d7a 0%, #0052a3 100%);
+    padding: 0.875rem 1rem;
+    text-align: left;
     color: #ffffff;
-    font-weight: 600;
+    border-bottom: 2px solid var(--color-primary-dark);
+    font-size: 0.875rem;
     text-transform: uppercase;
-    font-size: 0.9em;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.025em;
+    font-weight: 600;
 }
 
-tr:nth-child(even) {
-    background: #f8fafb;
+td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
 }
 
-tr:hover {
-    background: #e6f2ff;
+/* Remove bottom border from last row */
+tbody tr:last-child td {
+    border-bottom: none;
 }
 
-/* Blockquotes - Corporate info box */
+/* Hover effect for rows */
+tbody tr:hover {
+    background: var(--color-bg-subtle);
+}
+
+/* Subtle striping */
+tbody tr:nth-child(odd) {
+    background: rgba(0, 102, 204, 0.02);
+}
+
+/* ============================================================================
+   BLOCKQUOTES
+   ========================================================================== */
+
 blockquote {
-    border-left: 4px solid #0066cc;
-    background: #f0f7ff;
-    padding: 1em 1.5em;
-    margin: 1.2em 0;
+    border-left: 4px solid var(--color-blockquote-border);
+    background: var(--color-blockquote-bg);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5em 0;
     margin-left: 0;
     margin-right: 0;
     width: 100%;
     max-width: none;
-    color: #003d7a;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    font-style: italic;
+    color: var(--color-blockquote-text);
+    border-radius: 0 0.25rem 0.25rem 0;
     box-sizing: border-box;
+    line-height: 1.6;
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.05);
 }
 
 blockquote p {
-    margin: 0.4em 0;
+    margin: 0.5rem 0;
 }
 
-/* Horizontal rules */
+blockquote > :first-child {
+    margin-top: 0;
+}
+
+blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================================
+   HORIZONTAL RULES
+   ========================================================================== */
+
 hr {
     border: none;
-    border-top: 2px solid #d1dce5;
+    border-top: 2px solid var(--color-border);
     margin: 2em 0;
 }
 
-/* Images and diagrams - Framed */
+/* ============================================================================
+   IMAGES & DIAGRAMS
+   ========================================================================== */
+
 img, svg {
     max-width: 100%;
     height: auto;
     display: block;
     margin: 1.5em auto;
-    border: 1px solid #e1e8ed;
+    border: 1px solid var(--color-border);
     padding: 0.5em;
-    background: #ffffff;
+    background: var(--color-bg-surface);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    /* page-break rules removed - handled by layout.css */
 }
 
 figure {
     margin: 1.5em 0;
     text-align: center;
-    /* page-break rules removed - handled by layout.css */
 }
 
 figcaption {
     font-size: 0.9em;
-    color: #6c757d;
+    color: var(--color-text-muted);
     margin-top: 0.5em;
     font-style: italic;
 }
 
-/* Table of Contents - Corporate styled */
+/* ============================================================================
+   TABLE OF CONTENTS
+   ========================================================================== */
+
 nav#TOC, #TOC {
-    background: linear-gradient(to bottom, #f0f7ff 0%, #ffffff 100%);
+    background: linear-gradient(to bottom, var(--color-bg-subtle) 0%, var(--color-bg-surface) 100%);
     padding: 1.5em 2em;
-    border: 2px solid #0066cc;
-    border-radius: 6px;
+    border: 2px solid var(--color-primary);
+    border-radius: 0.5rem;
     margin: 2em 0;
     page-break-after: always;
-    box-shadow: 0 2px 8px rgba(0, 61, 122, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.1);
 }
 
 nav#TOC h2, #TOC h2 {
     font-size: 1.5rem;
-    color: #003d7a;
+    color: var(--color-primary-dark);
     margin-top: 0;
-    border-bottom: 2px solid #0066cc;
+    border-bottom: 2px solid var(--color-primary);
     padding-bottom: 0.5em;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -272,104 +422,86 @@ nav#TOC ul, #TOC ul {
 nav#TOC li, #TOC li {
     margin: 0.6em 0;
     padding-left: 1.5em;
-    position: relative;
-}
-
-nav#TOC li::before, #TOC li::before {
-    content: "▸";
-    position: absolute;
-    left: 0;
-    color: #0066cc;
-    font-weight: bold;
 }
 
 nav#TOC a, #TOC a {
-    color: #003d7a;
+    color: var(--color-primary-dark);
     text-decoration: none;
     font-weight: 500;
+    transition: color 0.2s ease;
 }
 
 nav#TOC a:hover, #TOC a:hover {
-    color: #0066cc;
+    color: var(--color-primary);
     text-decoration: underline;
 }
 
-/* Special elements - Info boxes, warnings, etc. */
-.info-box, .note, .warning {
-    padding: 1em 1.5em;
-    margin: 1.5em 0;
-    border-radius: 4px;
-    border-left: 4px solid;
-    /* page-break rules removed - handled by layout.css */
+/* ============================================================================
+   COVER PAGE STYLING
+   ========================================================================== */
+
+.cover-page-wrapper {
+    background: var(--color-bg-surface);
+    color: var(--color-text-secondary);
 }
 
-.info-box, .note {
-    background: #e6f2ff;
-    border-color: #0066cc;
-    color: #003d7a;
-}
-
-.warning {
-    background: #fff3e6;
-    border-color: #ff9933;
-    color: #804000;
-}
-
-/* Cover page - Enterprise blue styling */
 .cover-title {
-    color: #003d7a;
+    color: var(--color-primary-dark) !important;
 }
 
 .cover-subtitle {
-    color: #4d94ff;
+    color: var(--color-primary-light) !important;
 }
 
 .cover-metadata {
-    color: #6c757d;
+    color: var(--color-text-muted) !important;
 }
 
 .cover-version {
-    color: #8c9ba5;
+    color: var(--color-text-muted) !important;
 }
 
 .cover-classification {
-    color: #721c24;
+    color: #721c24 !important;
     background: #f8d7da;
     padding: 8px 16px;
     border-radius: 4px;
     border: 1px solid #f5c6cb;
 }
 
-/* TOC - Enterprise blue styling */
+/* ============================================================================
+   TOC STYLING
+   ========================================================================== */
+
 .toc-title {
-    color: #003d7a;
-    border-bottom: 2px solid #0066cc;
+    color: var(--color-primary-dark) !important;
+    border-bottom: 2px solid var(--color-primary) !important;
 }
 
 .toc-link {
-    color: #003d7a;
+    color: var(--color-primary-dark) !important;
 }
 
 .toc-link:hover {
-    color: #0066cc;
+    color: var(--color-primary) !important;
 }
 
-/* Print-specific adjustments */
+/* ============================================================================
+   PRINT-SPECIFIC ADJUSTMENTS
+   ========================================================================== */
+
 @media print {
     body {
         background: white;
     }
     
     a {
-        color: #0066cc;
+        color: var(--color-primary);
+        text-decoration: none;
     }
     
-    /* Page break rules removed - handled by layout.css */
-    
-    /* Print colors */
     th {
-        background: #003d7a;
+        background: var(--color-primary-dark);
         color: white;
     }
 }
-
