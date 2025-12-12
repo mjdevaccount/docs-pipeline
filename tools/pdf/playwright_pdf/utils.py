@@ -35,7 +35,15 @@ def filter_placeholder(value: Optional[str], default: str = '') -> str:
 
 def extract_margins_from_css(css_file: Path) -> Optional[Dict[str, str]]:
     """
-    Extract @page margin values from a CSS file.
+    Extract @page margin values from a CSS file, excluding pseudo-selectors.
+    
+    Rules:
+    1. @page (default) - apply to all pages
+    2. @page:first - apply to first page only (IGNORED - Playwright applies margins to all pages)
+    3. @page:left/:right - apply to left/right pages (IGNORED)
+    
+    For PDF generation, we use @page (not @page:first) because Playwright
+    applies margins to ALL pages, not just the first.
     
     Returns dict like {'top': '2cm', 'right': '1.8cm', 'bottom': '2cm', 'left': '1.8cm'}
     or None if not found.
@@ -46,8 +54,10 @@ def extract_margins_from_css(css_file: Path) -> Optional[Dict[str, str]]:
     try:
         css_content = css_file.read_text(encoding='utf-8')
         
-        # Find @page rule
-        page_match = re.search(r'@page\s*\{([^}]+)\}', css_content)
+        # Find @page rule (NOT @page:first, NOT @page:left, etc.)
+        # Use negative lookahead to exclude pseudo-selectors
+        # Pattern: @page followed by NOT colon, NOT slash, then opening brace
+        page_match = re.search(r'@page(?!:)(?!\/)\s*\{([^}]+)\}', css_content)
         if not page_match:
             return None
         
@@ -77,7 +87,10 @@ def extract_margins_from_css(css_file: Path) -> Optional[Dict[str, str]]:
         
         return None
         
-    except Exception:
+    except Exception as e:
+        # Log error for debugging but don't fail silently
+        import sys
+        print(f"[WARN] CSS margin extraction failed: {e}", file=sys.stderr)
         return None
 
 

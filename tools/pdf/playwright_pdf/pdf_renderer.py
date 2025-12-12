@@ -66,6 +66,10 @@ async def render_pdf(
     
     # Playwright requires margins when using display_header_footer
     # Headers/footers render in the margin space
+    if verbose:
+        print(f"{OK} Passing margins to page.pdf(): {margin_config}")
+        print(f"{OK} Page format: {format_option}")
+    
     options = {
         'format': format_option,
         'print_background': True,

@@ -162,9 +162,18 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
             # These margins are needed for full-bleed elements like cover page
             margin_config = None
             if config.css_file:
+                if config.verbose:
+                    print(f"{INFO} Extracting margins from CSS: {config.css_file}")
                 margin_config = extract_margins_from_css(config.css_file)
                 if margin_config and config.verbose:
                     print(f"{INFO} Using margins from CSS: {margin_config}")
+                    # Check for symmetry
+                    if margin_config.get('left') == margin_config.get('right'):
+                        print(f"{INFO} Margins are symmetric: left={margin_config.get('left')}, right={margin_config.get('right')}")
+                    else:
+                        print(f"{WARN} Margins are asymmetric: left={margin_config.get('left')}, right={margin_config.get('right')}")
+                elif config.verbose:
+                    print(f"{WARN} Failed to extract margins from CSS, using defaults")
             
             if margin_config is None:
                 margin_config = DEFAULT_MARGINS.copy()

@@ -2,7 +2,7 @@
 
 **Purpose:** Complete technical reference for debugging and understanding the PDF generation pipeline. This document traces every step, decision point, and configuration option.
 
-**Last Updated:** 2025-01-XX (after margin/centering fixes)
+**Last Updated:** 2025-01-XX (after margin extraction and cover page width fixes)
 
 ---
 
@@ -52,16 +52,28 @@ The PDF generation system uses a **two-stage architecture**:
 
 ### Entry Point
 
-**Function:** `tools/pdf/pipeline/__init__.py::process_document()`
+**Canonical Command (Recommended):**
+```bash
+python -m tools.pdf.convert_final input.md output.pdf \
+    --profile tech-whitepaper \
+    --generate-cover \
+    --generate-toc \
+    --renderer playwright \
+    --verbose
+```
+
+**Function:** `tools/pdf/convert_final.py::markdown_to_pdf()`
 
 **Called from:**
-- CLI: `tools/pdf/cli/main.py`
-- Python API: Direct import
+- CLI: `python -m tools.pdf.convert_final` (canonical)
+- CLI: `tools/pdf/cli/main.py` (alternative)
+- Python API: Direct import `from tools.pdf.convert_final import markdown_to_pdf`
 - Web demo: `web_demo.py`
 
 **Flow:**
 ```python
-process_document(input_file, output_file, OutputFormat.PDF, **kwargs)
+markdown_to_pdf(md_file, output_pdf, renderer='playwright', **kwargs)
+  → process_document(input_file, output_file, OutputFormat.PDF, **kwargs)
   → create_pdf_pipeline()
   → PipelineContext(input_file, output_file, work_dir, config=kwargs)
   → pipeline.execute(context)
@@ -462,13 +474,15 @@ Once the HTML is ready, Playwright takes over with its own 7-phase pipeline:
 
 **What it does:**
 - Parses CSS file to find `@page { margin: ... }` rule
+- **Excludes pseudo-selectors** like `@page:first`, `@page:left`, `@page:right`
 - Extracts margin values (top, right, bottom, left)
 - Stores in `margin_config` dict
+- **Logs symmetry check** (warns if left ≠ right)
 
 **Function:** `tools/pdf/playwright_pdf/utils.py::extract_margins_from_css()`
 
 **Parsing logic:**
-- Finds `@page` rule with regex
+- Finds `@page` rule with regex: `@page(?!:)(?!\/)\s*\{` (excludes pseudo-selectors)
 - Finds `margin:` property
 - Parses CSS margin shorthand:
   - 1 value → all sides same
@@ -478,15 +492,20 @@ Once the HTML is ready, Playwright takes over with its own 7-phase pipeline:
 
 **Decision points:**
 - If CSS file provided → extract margins
+- **Ignores `@page:first` rules** (Playwright applies margins to all pages, not just first)
 - If extraction fails → use `DEFAULT_MARGINS` = `{'top': '2cm', 'right': '1.8cm', 'bottom': '2cm', 'left': '1.8cm'}`
+- **Symmetry check:** Warns if left margin ≠ right margin (may indicate intentional asymmetry)
 
 **Output:**
-- `margin_config` = dict with margin values (e.g., `{'top': '2.5cm', 'right': '2cm', ...}`)
+- `margin_config` = dict with margin values (e.g., `{'top': '2.5cm', 'right': '2cm', 'bottom': '2cm', 'left': '2cm'}`)
+- Verbose logging: `[INFO] Using margins from CSS: {...}`
+- Symmetry check: `[INFO] Margins are symmetric: left=2cm, right=2cm` or `[WARN] Margins are asymmetric: ...`
 
 **Potential issues:**
 - CSS parsing fails → uses defaults (may cause margin mismatch)
-- Multiple `@page` rules → uses first one found
+- **Multiple `@page` rules → uses base `@page` rule (not `@page:first`)**
 - Invalid margin syntax → parsing fails
+- **Bug fix (2025-01-XX):** Previously would match `@page:first` and get wrong margins; now correctly excludes pseudo-selectors
 
 ---
 
@@ -503,20 +522,31 @@ Once the HTML is ready, Playwright takes over with its own 7-phase pipeline:
 **Cover page structure:**
 ```html
 <div class="cover-page-wrapper" style="
-    width: calc(100% + left_margin + right_margin);
+    width: 100%;
+    height: calc(100vh + {margin_top});
+    min-height: 11in;
     margin-top: -{margin_top};
     margin-left: -{margin_left};
     margin-right: -{margin_right};
+    margin-bottom: 0;
     padding: 2.5in 0 1.5in 0;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     text-align: center;
+    box-sizing: border-box;
     page-break-after: always;
+    break-after: page;
 ">
     <!-- Logo, classification, title, subtitle, author, date, version -->
 </div>
 ```
+
+**Full-bleed calculation:**
+- **Width:** `width: 100%` (matches page content area, NOT `calc(100% + margins)`)
+- **Negative margins:** Pulls cover page back into margin space
+- **No width calculation needed:** Just extend margins inward
 
 **Decision points:**
 - Only runs if `config.generate_cover == True`
@@ -537,10 +567,12 @@ Once the HTML is ready, Playwright takes over with its own 7-phase pipeline:
 - Negative margins don't match CSS margins → cover page misaligned
 - Centering fails → content appears left-aligned
 
-**Recent fix (2025-01-XX):**
-- Changed from hardcoded `-1.8cm` margins to dynamic margins from CSS
-- Added explicit `width: 100%` on all children for reliable centering
-- Changed padding from `2.5in 1in 1.5in 1in` to `2.5in 0 1.5in 0` with children having `padding: 0 1in`
+**Recent fixes (2025-01-XX):**
+1. **Margin extraction:** Now correctly excludes `@page:first` pseudo-selectors (was matching wrong rule)
+2. **Cover page width:** Changed from `width: calc(100% + left_margin + right_margin)` to `width: 100%` (prevents oversizing)
+3. **Dynamic margins:** Changed from hardcoded `-1.8cm` margins to dynamic margins from CSS extraction
+4. **Centering:** Added explicit `width: 100%` on all children for reliable centering
+5. **Padding:** Changed from `2.5in 1in 1.5in 1in` to `2.5in 0 1.5in 0` with children having `padding: 0 1in`
 
 ---
 
@@ -832,12 +864,17 @@ Once the HTML is ready, Playwright takes over with its own 7-phase pipeline:
 - Margins: From `margin_config` (extracted in Phase 6)
 - Header/footer: Always enabled (can't disable for first page only)
 
+**Debug logging (if verbose):**
+- `[OK] Passing margins to page.pdf(): {...}` - Shows exact margins being passed
+- `[OK] Page format: A4` - Shows page format
+- `[OK] Generating PDF...` - Confirms PDF generation started
+
 **Potential issues:**
 - Header/footer appears on cover page (Playwright limitation)
 - Margin mismatch → content misaligned
 - PDF generation fails → returns False
 
-**CRITICAL:** The margins passed to `page.pdf()` MUST match the `@page` margins in CSS, otherwise content will be misaligned.
+**CRITICAL:** The margins passed to `page.pdf()` MUST match the `@page` margins in CSS, otherwise content will be misaligned. Use verbose mode to verify margin extraction and pass-through match.
 
 ---
 
@@ -988,12 +1025,17 @@ tools/pdf/
 1. **CSS margin mismatch:** `@page` margins in CSS don't match margins passed to `page.pdf()`
    - **Fix:** Ensure `extract_margins_from_css()` correctly parses CSS
    - **Check:** `margin_config` in verbose output should match CSS file
+   - **Recent fix (2025-01-XX):** Now correctly excludes `@page:first` rules that were causing wrong margin extraction
 
 2. **Hardcoded margins:** Cover page or other elements use hardcoded negative margins
    - **Fix:** Use dynamic margins from `margin_config`
-   - **Recent fix:** Cover page now uses `margin_config` instead of hardcoded `-1.8cm`
+   - **Recent fix (2025-01-XX):** Cover page now uses `margin_config` instead of hardcoded `-1.8cm`
 
-3. **Body width constraint:** Body element has `max-width` or fixed width
+3. **Cover page width calculation:** Using `calc(100% + margins)` oversizes cover page
+   - **Fix:** Use `width: 100%` with negative margins (recent fix applied)
+   - **Check:** Cover page HTML should have `width: 100%`, not `calc(100% + ...)`
+
+4. **Body width constraint:** Body element has `max-width` or fixed width
    - **Check:** CSS file for `body { max-width: ... }` or `width: ... }`
    - **Fix:** Remove width constraints or adjust
 
@@ -1012,11 +1054,15 @@ tools/pdf/
 - Title, author, etc. not centered
 
 **Root causes:**
-1. **Flexbox alignment:** `align-items: center` doesn't work if children have fixed width
+1. **Cover page width:** Using `calc(100% + margins)` oversizes and causes left shift
+   - **Fix:** Use `width: 100%` (matches page content width)
+   - **Recent fix (2025-01-XX):** Changed from `calc(100% + left + right)` to `width: 100%`
+
+2. **Flexbox alignment:** `align-items: center` doesn't work if children have fixed width
    - **Fix:** Use `width: 100%` on children + `text-align: center`
    - **Recent fix:** Added explicit width and text-align to all cover elements
 
-2. **Negative margins:** Negative margins not matching CSS margins
+3. **Negative margins:** Negative margins not matching CSS margins
    - **Fix:** Use dynamic margins from `margin_config`
    - **Recent fix:** Cover page now uses `margin_config` for negative margins
 
@@ -1134,28 +1180,36 @@ tools/pdf/
 
 When debugging PDF generation issues:
 
-1. **Enable verbose mode:** `verbose=True` in config
-2. **Check pipeline steps:** Look for step failures in output
-3. **Verify file paths:** Ensure all files exist and paths are correct
-4. **Check margins:** Verify margin extraction and PDF margins match
-5. **Check CSS loading:** Verify CSS files are loaded in correct order
-6. **Check measurements:** Verify page dimensions and available height
-7. **Check scaling:** Verify diagrams are detected and scaled if needed
-8. **Check browser:** Verify Playwright/Chromium is working
-9. **Check dependencies:** Verify all external tools are installed
-10. **Check temp files:** Inspect generated HTML and intermediate files
+1. **Use canonical command:** `python -m tools.pdf.convert_final input.md output.pdf --verbose --renderer playwright`
+2. **Enable verbose mode:** `--verbose` flag shows all steps, margin extraction, and pass-through
+3. **Check pipeline steps:** Look for step failures in output
+4. **Verify file paths:** Ensure all files exist and paths are correct
+5. **Check margins:** 
+   - Look for `[INFO] Using margins from CSS: {...}` 
+   - Look for `[INFO] Margins are symmetric: ...` or `[WARN] Margins are asymmetric: ...`
+   - Look for `[OK] Passing margins to page.pdf(): {...}`
+   - Verify all three match
+6. **Check CSS loading:** Verify CSS files are loaded in correct order
+7. **Check measurements:** Verify page dimensions and available height
+8. **Check scaling:** Verify diagrams are detected and scaled if needed
+9. **Check browser:** Verify Playwright/Chromium is working
+10. **Check dependencies:** Verify all external tools are installed
+11. **Check temp files:** Inspect generated HTML and intermediate files
 
 ---
 
 ## Key Takeaways
 
-1. **Two-stage pipeline:** Markdown → HTML (Pandoc) → PDF (Playwright)
-2. **Margin matching critical:** CSS `@page` margins must match `page.pdf()` margins
-3. **Cover page uses dynamic margins:** No more hardcoded `-1.8cm` values
-4. **Scaling happens automatically:** Large diagrams are scaled to fit
-5. **Profile system:** CSS loaded from profile name or explicit `css_file`
-6. **Header/footer limitation:** Can't disable on first page (Playwright limitation)
-7. **Verbose mode essential:** Always enable for debugging
+1. **Canonical command:** Use `python -m tools.pdf.convert_final` for consistency
+2. **Two-stage pipeline:** Markdown → HTML (Pandoc) → PDF (Playwright)
+3. **Margin matching critical:** CSS `@page` margins must match `page.pdf()` margins
+4. **Margin extraction fix:** Now correctly excludes `@page:first` pseudo-selectors
+5. **Cover page width fix:** Uses `width: 100%` (not `calc(100% + margins)`) to prevent oversizing
+6. **Cover page uses dynamic margins:** No more hardcoded `-1.8cm` values
+7. **Scaling happens automatically:** Large diagrams are scaled to fit
+8. **Profile system:** CSS loaded from profile name or explicit `css_file`
+9. **Header/footer limitation:** Can't disable on first page (Playwright limitation)
+10. **Verbose mode essential:** Always enable for debugging - shows margin extraction, symmetry checks, and pass-through
 
 ---
 
