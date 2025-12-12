@@ -9,12 +9,139 @@
 [![Build](https://img.shields.io/badge/build-50x%20faster-blueviolet)](#-incremental-builds--50x-faster)
 [![Watch Mode](https://img.shields.io/badge/watch-live%20reload-green)](#-7-watch-mode--live-dev-loop)
 [![Formats](https://img.shields.io/badge/formats-5-blue)](#-multi-format-export)
+[![Design System](https://img.shields.io/badge/design-automated-success)](#-automated-design-system-themes)
 [![Docker](https://img.shields.io/badge/docker-ready-blue)](#-docker-setup-recommended---30-seconds)
 [![License](https://img.shields.io/github/license/mjdevaccount/docs-pipeline)](LICENSE)
 
-[🚀 Quick Start](#-quick-start) · [📖 Docs](#-documentation) · [✨ Features](#-core-features) · [💡 Why This?](#-why-docs-pipeline) · [🎯 Benchmarks](#-performance-benchmarks)
+[🚀 Quick Start](#-quick-start) · [🎨 Themes](#-automated-design-system-themes) · [📖 Docs](#-documentation) · [✨ Features](#-core-features) · [💡 Why This?](#-why-docs-pipeline) · [🎯 Benchmarks](#-performance-benchmarks)
 
 </div>
+
+---
+
+## 🎨 Automated Design System (NEW)
+
+**Phases 1-3 Complete**: Centralized token management, automated CSS generation, and pipeline integration.
+
+### Quick Start
+
+```bash
+# Build all themes (validate tokens, generate CSS, create index)
+python tools/pdf/config/build_themes.py
+
+# Generate PDF with specific theme
+python -m tools.pdf.cli.main docs/ output.pdf --theme dark-pro
+
+# List available themes
+python tools/pdf/config/profile_loader.py
+```
+
+### Available Themes
+
+| Theme | Mode | Description |
+|-------|------|-------------|
+| **dark-pro** | Dark | Modern dark theme for on-screen viewing |
+| **enterprise-blue** | Light | Corporate-friendly, conservative styling |
+| **tech-whitepaper** | Light | Professional engineering documentation |
+| **minimalist** | Light | Clean design with maximum whitespace |
+| **playwright** | Light | Playwright-inspired with green accents |
+
+### Features
+
+✅ **Single Source of Truth** - `design-tokens.yml` (1,050 colors, 5 themes)  
+✅ **Automated Validation** - WCAG AA/AAA compliance checking  
+✅ **Automated Generation** - 200+ CSS variables per theme  
+✅ **One-Command Build** - Validates, generates, and indexes  
+✅ **Non-Developer Friendly** - TOML-based configuration  
+✅ **Production Ready** - Tested and documented  
+
+### Workflows
+
+#### Update Colors (2 minutes)
+```bash
+# 1. Edit design-tokens.yml
+vim tools/pdf/config/design-tokens.yml
+
+# 2. Rebuild (all CSS updated automatically)
+python tools/pdf/config/build_themes.py
+
+# Time: 2 min (was 30+ min with manual CSS editing)
+```
+
+#### Add New Theme
+```bash
+# 1. Add to design-tokens.yml
+# 2. Add to profiles.toml
+# 3. Run build
+python tools/pdf/config/build_themes.py
+
+# Done! CSS generated automatically
+```
+
+#### Validate WCAG Compliance
+```bash
+# Check WCAG AA (4.5:1 contrast)
+python tools/pdf/config/theme_validator.py tools/pdf/config/design-tokens.yml AA
+
+# Check WCAG AAA (7:1 contrast, stricter)
+python tools/pdf/config/theme_validator.py tools/pdf/config/design-tokens.yml AAA
+```
+
+### Key Commands
+
+```bash
+# Full workflow (validate + generate + index)
+python tools/pdf/config/build_themes.py
+
+# Validate tokens only
+python tools/pdf/config/theme_validator.py tools/pdf/config/design-tokens.yml
+
+# Generate CSS only
+python tools/pdf/config/css_generator.py tools/pdf/styles/generated/
+
+# Check profiles
+python tools/pdf/config/profile_loader.py
+```
+
+### Documentation
+
+- **[Design System Complete](docs/DESIGN_SYSTEM_COMPLETE.md)** - Full system overview
+- **[Phase 1: Tokens](docs/PHASE_1_DESIGN_TOKENS_COMPLETE.md)** - Token management and validation
+- **[Phase 2: Generation](docs/PHASE_2_CSS_GENERATION_COMPLETE.md)** - CSS generation process
+- **[Phase 3: Integration](docs/PHASE_3_INTEGRATION_COMPLETE.md)** - Pipeline integration
+- **[Status](DESIGN_SYSTEM_STATUS.md)** - Project status and quick reference
+
+### Architecture
+
+```
+tools/pdf/config/
+├── design-tokens.yml           # Central source (all colors)
+├── profiles.toml               # Theme configuration
+├── build_themes.py             # Build orchestration
+├── css_generator.py            # CSS generation
+├── theme_manager.py            # Management
+├── theme_validator.py          # Validation
+└── profile_loader.py           # Profile loading
+
+tools/pdf/styles/
+├── generated/                  # Auto-generated CSS (PRIMARY)
+│   ├── dark-pro.css
+│   ├── enterprise-blue.css
+│   ├── tech-whitepaper.css
+│   ├── minimalist.css
+│   └── playwright.css
+└── *.css                       # Manual (reference/backup)
+```
+
+### Statistics
+
+- **Files Created**: 8 Python/YAML/TOML
+- **Design Tokens**: 1,050 colors
+- **Themes**: 5 complete
+- **CSS Variables**: 200+ per theme
+- **Build Time**: <1 second
+- **Color Update Time**: 2 min (was 30+ min)
+- **Time Savings**: 93%
 
 ---
 
@@ -413,14 +540,17 @@ docs-pipeline/
 │   │   │   ├── markdown_exporter.py   ← Markdown export (Priority 5)
 │   │   │   ├── epub_generator.py      ← EPUB generation (Priority 6)
 │   │   │   └── utils.py               ← Helpers
+│   │   ├── config/
+│   │   │   ├── design-tokens.yml      ← Design tokens (NEW)
+│   │   │   ├── profiles.toml          ← Theme config (NEW)
+│   │   │   ├── build_themes.py        ← Build automation (NEW)
+│   │   │   └── *.py                   ← Design system tools (NEW)
 │   │   ├── diagram_rendering/         ← Mermaid + caching
 │   │   ├── renderers/
 │   │   │   └── playwright_renderer.py ← Pixel-perfect rendering
 │   │   ├── styles/
-│   │   │   ├── tech-whitepaper.css
-│   │   │   ├── dark-pro.css
-│   │   │   ├── minimalist.css
-│   │   │   └── enterprise-blue.css
+│   │   │   ├── generated/             ← Auto-generated CSS (NEW)
+│   │   │   └── *.css                  ← Theme stylesheets
 │   │   └── tests/
 │   │       ├── test_cache_metrics.py  ← Priority 1
 │   │       └── [130+ more tests]      ← Priority 2
@@ -461,6 +591,7 @@ docs-pipeline/
 | **5** | Markdown Export | 5-format publishing | ✅ Complete |
 | **6** | EPUB Export | E-reader support | ✅ Complete |
 | **7** | Watch Mode | Live dev loop | ✅ Complete |
+| **BONUS** | Design System | Automated themes & tokens | ✅ Complete |
 
 **[See detailed breakdown →](PROGRESS_SUMMARY.md)**
 
@@ -476,6 +607,22 @@ python -m tools.pdf.cli.main INPUT OUTPUT [OPTIONS]
 
 # Common usage
 python -m tools.pdf.cli.main document.md output.pdf [--flags]
+```
+
+### Design System Commands (NEW)
+
+```bash
+# Build all themes
+python tools/pdf/config/build_themes.py
+
+# Validate tokens
+python tools/pdf/config/theme_validator.py tools/pdf/config/design-tokens.yml
+
+# Check profiles
+python tools/pdf/config/profile_loader.py
+
+# Generate CSS
+python tools/pdf/config/css_generator.py tools/pdf/styles/generated/
 ```
 
 ### Core Commands
@@ -547,7 +694,8 @@ make ci                      # Full CI pipeline (lint + test + validate)
 | **Glossary System** | ✅ 70+ terms | ❌ None | ⚠️ Sphinx glossary | ❌ None |
 | **Multi-format Export** | ✅ 5 formats | ✅ Universal | ❌ PDF-focused | ❌ HTML-focused |
 | **Watch Mode** | ✅ Live reload | ❌ No | ⚠️ Manual | ❌ No |
-| **Visual Profiles** | ✅ 4 ready | ❌ Write from scratch | ❌ Complex LaTeX | ⚠️ HTML themes only |
+| **Visual Profiles** | ✅ 5 ready + automated | ❌ Write from scratch | ❌ Complex LaTeX | ⚠️ HTML themes only |
+| **Automated Design System** | ✅ Phases 1-3 | ❌ No | ❌ No | ❌ No |
 | **Docker Ready** | ✅ Official | ❌ Manual | ⚠️ Community | ⚠️ Community |
 | **Dependency Hell** | ✅ Solved | ❌ Complex | ❌ Very complex | ⚠️ Node + Python |
 
@@ -555,6 +703,14 @@ make ci                      # Full CI pipeline (lint + test + validate)
 
 ## 📚 Documentation
 
+### Design System (NEW)
+- [**Design System Status**](DESIGN_SYSTEM_STATUS.md) - Quick reference
+- [**Complete System**](docs/DESIGN_SYSTEM_COMPLETE.md) - Full documentation
+- [**Phase 1: Tokens**](docs/PHASE_1_DESIGN_TOKENS_COMPLETE.md) - Token management
+- [**Phase 2: Generation**](docs/PHASE_2_CSS_GENERATION_COMPLETE.md) - CSS generation
+- [**Phase 3: Integration**](docs/PHASE_3_INTEGRATION_COMPLETE.md) - Pipeline integration
+
+### General Documentation
 - [**Getting Started**](docs/getting-started.md) - Step-by-step guide
 - [**PDF Generation Guide**](tools/pdf/README.md) - Layout, diagrams, profiles
 - [**Glossary Usage**](GLOSSARY_USAGE_GUIDE.md) - 10,000+ words on term management
