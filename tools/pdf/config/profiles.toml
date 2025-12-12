@@ -1,0 +1,161 @@
+# Design Theme Profiles Configuration
+# 
+# This file defines all available themes for the PDF converter.
+# Each theme uses CSS generated from design-tokens.yml
+#
+# Generated: 2025-12-12
+# Version: 1.0
+
+[theme.dark-pro]
+name = "Dark Pro"
+description = "Modern dark theme for on-screen viewing. High contrast, clean design, semantic colors."
+mode = "dark"
+author = "docs-pipeline"
+version = "1.0"
+
+# CSS file generated from design-tokens.yml
+css_file = "generated/dark-pro.css"
+
+# Display settings
+header_height = "1.5cm"
+footer_height = "1.2cm"
+margin_top = "2cm"
+margin_bottom = "2cm"
+margin_left = "1.8cm"
+margin_right = "1.8cm"
+
+# Typography
+base_font_size = "14px"
+line_height = "1.5"
+
+# Colors (informational - actual colors in CSS)
+primary_color = "#60a5fa"
+text_primary = "#f3f4f6"
+background = "#0f172a"
+
+# Mermaid diagram settings
+mermaid_theme = "dark"
+mermaid_font_family = "Inter, sans-serif"
+
+[theme.enterprise-blue]
+name = "Enterprise Blue"
+description = "Corporate-friendly, conservative styling. Blue and gray color scheme."
+mode = "light"
+author = "docs-pipeline"
+version = "1.0"
+
+css_file = "generated/enterprise-blue.css"
+
+header_height = "1.5cm"
+footer_height = "1.2cm"
+margin_top = "2cm"
+margin_bottom = "2cm"
+margin_left = "1.8cm"
+margin_right = "1.8cm"
+
+base_font_size = "14px"
+line_height = "1.5"
+
+primary_color = "#2563eb"
+text_primary = "#1e293b"
+background = "#ffffff"
+
+mermaid_theme = "default"
+mermaid_font_family = "Inter, sans-serif"
+
+[theme.tech-whitepaper]
+name = "Tech Whitepaper"
+description = "Professional engineering documentation. Clean, blue accents, generous margins."
+mode = "light"
+author = "docs-pipeline"
+version = "1.0"
+
+css_file = "generated/tech-whitepaper.css"
+
+header_height = "1.5cm"
+footer_height = "1.2cm"
+margin_top = "2.5cm"
+margin_bottom = "2.5cm"
+margin_left = "2cm"
+margin_right = "2cm"
+
+base_font_size = "14px"
+line_height = "1.6"
+
+primary_color = "#0369a1"
+text_primary = "#0f172a"
+background = "#ffffff"
+
+mermaid_theme = "default"
+mermaid_font_family = "Inter, sans-serif"
+
+[theme.minimalist]
+name = "Minimalist"
+description = "Clean, spacious design with maximum whitespace. Thin typography, subtle colors."
+mode = "light"
+author = "docs-pipeline"
+version = "1.0"
+
+css_file = "generated/minimalist.css"
+
+header_height = "1.2cm"
+footer_height = "1cm"
+margin_top = "2.2cm"
+margin_bottom = "2.2cm"
+margin_left = "2.2cm"
+margin_right = "2.2cm"
+
+base_font_size = "13px"
+line_height = "1.7"
+
+primary_color = "#6366f1"
+text_primary = "#1f2937"
+background = "#ffffff"
+
+mermaid_theme = "default"
+mermaid_font_family = "Inter, sans-serif"
+
+[theme.playwright]
+name = "Playwright"
+description = "Playwright-inspired theme with green accents and modern design."
+mode = "light"
+author = "docs-pipeline"
+version = "1.0"
+
+css_file = "generated/playwright.css"
+
+header_height = "1.5cm"
+footer_height = "1.2cm"
+margin_top = "2cm"
+margin_bottom = "2cm"
+margin_left = "1.8cm"
+margin_right = "1.8cm"
+
+base_font_size = "14px"
+line_height = "1.5"
+
+primary_color = "#2dd4bf"
+text_primary = "#0f172a"
+background = "#ffffff"
+
+mermaid_theme = "default"
+mermaid_font_family = "Inter, sans-serif"
+
+# Global settings for all themes
+[settings]
+# Token file to use for validation
+token_file = "design-tokens.yml"
+
+# CSS output directory (where generated files go)
+css_output_dir = "generated/"
+
+# Validation settings
+wcag_compliance = "AA"
+auto_regenerate = true
+
+# Default theme
+default_theme = "dark-pro"
+
+# Theme metadata
+version = "1.0"
+last_updated = "2025-12-12"
