@@ -1,14 +1,15 @@
 /**
  * Dark Pro Profile - December 2025 Modernized
  * Modern dark theme for on-screen viewing
- * High contrast, clean design, semantic colors
+ * High contrast, clean design, semantic colors, syntax highlighting
  * 
  * IMPROVEMENTS:
  * - Modern fonts: Inter (body) + JetBrains Mono (code)
  * - Semantic CSS variables for easier maintenance
  * - GitHub-inspired table styling
+ * - Syntax highlighting for code blocks
+ * - Semantic callout boxes (note, tip, warning, danger, info)
  * - Better accessibility and contrast
- * - Professional shadows and spacing
  */
 
 /* ============================================================================
@@ -53,6 +54,36 @@
     --color-blockquote-border: #60a5fa;     /* Blue-400 */
     --color-blockquote-bg: #1e3a4c;         /* Dark blue-tinted */
     --color-blockquote-text: #93c5fd;       /* Blue-300 */
+    
+    /* Syntax highlighting colors - Dark mode */
+    --syntax-keyword: #f472b6;              /* Pink */
+    --syntax-string: #86efac;               /* Light green */
+    --syntax-comment: #c4b5fd;              /* Light purple */
+    --syntax-number: #fed7aa;               /* Light orange */
+    --syntax-function: #67e8f9;             /* Cyan */
+    --syntax-tag: #fca5a5;                  /* Light red */
+    --syntax-attr: #d8b4fe;                 /* Light purple */
+    
+    /* Callout colors - Dark mode */
+    --callout-note-bg: #164e63;             /* Dark cyan */
+    --callout-note-border: #06b6d4;         /* Cyan */
+    --callout-note-text: #cffafe;           /* Light cyan */
+    
+    --callout-tip-bg: #143f32;              /* Dark green */
+    --callout-tip-border: #10b981;          /* Green */
+    --callout-tip-text: #d1fae5;            /* Light green */
+    
+    --callout-warning-bg: #57340d;          /* Dark amber */
+    --callout-warning-border: #f59e0b;      /* Amber */
+    --callout-warning-text: #fef3c7;        /* Light amber */
+    
+    --callout-danger-bg: #7f1d1d;           /* Dark red */
+    --callout-danger-border: #ef4444;       /* Red */
+    --callout-danger-text: #fee2e2;         /* Light red */
+    
+    --callout-info-bg: #134e4a;             /* Dark teal */
+    --callout-info-border: #14b8a6;         /* Teal */
+    --callout-info-text: #ccfbf1;           /* Light teal */
 }
 
 /* ============================================================================
@@ -170,7 +201,7 @@ p {
     width: 100%;
     max-width: none;
     color: var(--color-text-secondary);
-    text-align: left;
+    text-align: left;  /* Accessibility */
     orphans: 3;
     widows: 3;
 }
@@ -232,6 +263,15 @@ pre code {
     /* Enable ligatures in code blocks */
     font-variant-ligatures: common-ligatures contextual;
 }
+
+/* Syntax highlighting */
+code.keyword { color: var(--syntax-keyword); font-weight: 600; }
+code.string { color: var(--syntax-string); }
+code.comment { color: var(--syntax-comment); font-style: italic; }
+code.number { color: var(--syntax-number); }
+code.function { color: var(--syntax-function); font-weight: 500; }
+code.tag { color: var(--syntax-tag); }
+code.attr { color: var(--syntax-attr); }
 
 /* ============================================================================
    LISTS
@@ -355,6 +395,112 @@ blockquote > :first-child {
 }
 
 blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================================
+   CALLOUT BOXES (Semantic admonitions - Dark mode)
+   ========================================================================== */
+
+.callout, .note, .tip, .warning, .danger, .info,
+div.note, div.tip, div.warning, div.danger, div.info {
+    border-left: 4px solid;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    page-break-inside: avoid;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+}
+
+/* Note - Cyan */
+.note, div.note {
+    border-left-color: var(--callout-note-border);
+    background: var(--callout-note-bg);
+    color: var(--callout-note-text);
+}
+
+.note h4, .note h5, div.note h4, div.note h5 {
+    margin-top: 0;
+    color: var(--callout-note-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Tip - Green */
+.tip, div.tip {
+    border-left-color: var(--callout-tip-border);
+    background: var(--callout-tip-bg);
+    color: var(--callout-tip-text);
+}
+
+.tip h4, .tip h5, div.tip h4, div.tip h5 {
+    margin-top: 0;
+    color: var(--callout-tip-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Warning - Amber */
+.warning, div.warning {
+    border-left-color: var(--callout-warning-border);
+    background: var(--callout-warning-bg);
+    color: var(--callout-warning-text);
+}
+
+.warning h4, .warning h5, div.warning h4, div.warning h5 {
+    margin-top: 0;
+    color: var(--callout-warning-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Danger - Red */
+.danger, div.danger {
+    border-left-color: var(--callout-danger-border);
+    background: var(--callout-danger-bg);
+    color: var(--callout-danger-text);
+}
+
+.danger h4, .danger h5, div.danger h4, div.danger h5 {
+    margin-top: 0;
+    color: var(--callout-danger-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Info - Teal */
+.info, div.info {
+    border-left-color: var(--callout-info-border);
+    background: var(--callout-info-bg);
+    color: var(--callout-info-text);
+}
+
+.info h4, .info h5, div.info h4, div.info h5 {
+    margin-top: 0;
+    color: var(--callout-info-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.callout p, .note p, .tip p, .warning p, .danger p, .info p,
+div.callout p, div.note p, div.tip p, div.warning p, div.danger p, div.info p {
+    margin: 0.5rem 0;
+}
+
+.callout > :first-child, .note > :first-child, .tip > :first-child, .warning > :first-child, .danger > :first-child, .info > :first-child,
+div.callout > :first-child, div.note > :first-child, div.tip > :first-child, div.warning > :first-child, div.danger > :first-child, div.info > :first-child {
+    margin-top: 0;
+}
+
+.callout > :last-child, .note > :last-child, .tip > :last-child, .warning > :last-child, .danger > :last-child, .info > :last-child,
+div.callout > :last-child, div.note > :last-child, div.tip > :last-child, div.warning > :last-child, div.danger > :last-child, div.info > :last-child {
     margin-bottom: 0;
 }
 
