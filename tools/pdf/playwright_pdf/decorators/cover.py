@@ -109,13 +109,14 @@ async def inject_cover_page(page: Page, config: CoverConfig, verbose: bool = Fal
         # 
         # Full-bleed cover page INSIDE <body>:
         # - Page includes margins (handled by @page rule)
-        # - Cover should be width: 100% to match page content area
-        # - Cover uses negative margins to PULL back into margin space
-        # - No width: calc() needed - just expand margins inward
+        # - Cover MUST span full page width for proper centering
+        # - Width: calc(100% + margins) makes it span full page width
+        # - Negative margins pull it into margin space
+        # - Flexbox centers children across FULL page width (not just body width)
         cover_html = f"""
             <div class="cover-page-wrapper" style="
                 position: relative;
-                width: 100%;
+                width: calc(100% + {margin_left} + {margin_right});
                 height: calc(100vh + {margin_top});
                 min-height: 11in;
                 margin-top: -{margin_top};

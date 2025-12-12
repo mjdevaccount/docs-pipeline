@@ -522,7 +522,7 @@ Once the HTML is ready, Playwright takes over with its own 7-phase pipeline:
 **Cover page structure:**
 ```html
 <div class="cover-page-wrapper" style="
-    width: 100%;
+    width: calc(100% + {margin_left} + {margin_right});
     height: calc(100vh + {margin_top});
     min-height: 11in;
     margin-top: -{margin_top};
@@ -544,9 +544,12 @@ Once the HTML is ready, Playwright takes over with its own 7-phase pipeline:
 ```
 
 **Full-bleed calculation:**
-- **Width:** `width: 100%` (matches page content area, NOT `calc(100% + margins)`)
+- **Width:** `calc(100% + {margin_left} + {margin_right})` - **CRITICAL** for proper centering
+  - `100%` = body content width (excludes margins)
+  - Adding margins makes it span FULL page width
+  - Flexbox centers children across FULL page width (not just body width)
 - **Negative margins:** Pulls cover page back into margin space
-- **No width calculation needed:** Just extend margins inward
+- **Why calc() is needed:** Without it, flexbox centers within body width only, causing left-alignment
 
 **Decision points:**
 - Only runs if `config.generate_cover == True`
@@ -569,10 +572,14 @@ Once the HTML is ready, Playwright takes over with its own 7-phase pipeline:
 
 **Recent fixes (2025-01-XX):**
 1. **Margin extraction:** Now correctly excludes `@page:first` pseudo-selectors (was matching wrong rule)
-2. **Cover page width:** Changed from `width: calc(100% + left_margin + right_margin)` to `width: 100%` (prevents oversizing)
+2. **Cover page width:** **CRITICAL** - Must use `calc(100% + margins)` to span full page width
+   - Without calc(), flexbox centers within body width only → left-aligned text
+   - With calc(), flexbox centers across full page width → properly centered
 3. **Dynamic margins:** Changed from hardcoded `-1.8cm` margins to dynamic margins from CSS extraction
 4. **Centering:** Added explicit `width: 100%` on all children for reliable centering
 5. **Padding:** Changed from `2.5in 1in 1.5in 1in` to `2.5in 0 1.5in 0` with children having `padding: 0 1in`
+
+**Note:** The width calculation was initially "fixed" incorrectly. The real bugs were margin extraction and hardcoded margins. The `calc(100% + margins)` approach is correct and necessary for proper centering.
 
 ---
 
@@ -1031,9 +1038,10 @@ tools/pdf/
    - **Fix:** Use dynamic margins from `margin_config`
    - **Recent fix (2025-01-XX):** Cover page now uses `margin_config` instead of hardcoded `-1.8cm`
 
-3. **Cover page width calculation:** Using `calc(100% + margins)` oversizes cover page
-   - **Fix:** Use `width: 100%` with negative margins (recent fix applied)
-   - **Check:** Cover page HTML should have `width: 100%`, not `calc(100% + ...)`
+3. **Cover page width calculation:** Using `width: 100%` causes left-alignment
+   - **Fix:** Use `calc(100% + margins)` to span full page width for proper centering
+   - **Why:** `100%` = body width only; flexbox centers within that, not full page
+   - **Check:** Cover page HTML should have `width: calc(100% + {margin_left} + {margin_right})`
 
 4. **Body width constraint:** Body element has `max-width` or fixed width
    - **Check:** CSS file for `body { max-width: ... }` or `width: ... }`
@@ -1054,9 +1062,12 @@ tools/pdf/
 - Title, author, etc. not centered
 
 **Root causes:**
-1. **Cover page width:** Using `calc(100% + margins)` oversizes and causes left shift
-   - **Fix:** Use `width: 100%` (matches page content width)
-   - **Recent fix (2025-01-XX):** Changed from `calc(100% + left + right)` to `width: 100%`
+1. **Cover page width:** Using `width: 100%` causes left-alignment (centers within body width only)
+   - **Fix:** Use `calc(100% + margins)` to span full page width
+   - **Why:** Flexbox `align-items: center` centers children within the element's width
+   - If width = body width (100%), children center within body → appears left-aligned on page
+   - If width = full page (calc(100% + margins)), children center across full page → properly centered
+   - **Recent fix (2025-01-XX):** Reverted to `calc(100% + margins)` after initial incorrect fix
 
 2. **Flexbox alignment:** `align-items: center` doesn't work if children have fixed width
    - **Fix:** Use `width: 100%` on children + `text-align: center`
@@ -1204,7 +1215,7 @@ When debugging PDF generation issues:
 2. **Two-stage pipeline:** Markdown → HTML (Pandoc) → PDF (Playwright)
 3. **Margin matching critical:** CSS `@page` margins must match `page.pdf()` margins
 4. **Margin extraction fix:** Now correctly excludes `@page:first` pseudo-selectors
-5. **Cover page width fix:** Uses `width: 100%` (not `calc(100% + margins)`) to prevent oversizing
+5. **Cover page width fix:** Uses `calc(100% + margins)` to span full page width for proper centering
 6. **Cover page uses dynamic margins:** No more hardcoded `-1.8cm` values
 7. **Scaling happens automatically:** Large diagrams are scaled to fit
 8. **Profile system:** CSS loaded from profile name or explicit `css_file`
