@@ -1,0 +1,53 @@
+# Cursor Rules for docs-pipeline
+
+This project uses modular rules in `.cursor/rules/` directory. See those files for detailed patterns.
+
+## Quick Reference
+
+- **Architecture**: See `.cursor/rules/architecture.mdc` for system design, Docker stack, data flow
+- **CLI Workflows**: See `.cursor/rules/cli-workflows.mdc` for commands, flags, exit codes
+- **Docker Operations**: See `.cursor/rules/docker-ops.mdc` for container best practices
+- **Code Generation**: See `.cursor/rules/codegen-patterns.mdc` for Python standards, Pydantic, Jinja2
+- **Testing**: See `.cursor/rules/testing-standards.mdc` for test structure, fixtures, coverage
+
+## Core Principles
+
+- **Zero-Interaction**: All configuration via YAML + CLI flags, no prompts
+- **Deterministic**: Same input → identical output, idempotent
+- **Containerized**: Docker isolation, reproducible builds
+- **Graceful Degradation**: Skip broken modules, log, continue
+- **Observable**: Structured JSON logging for debugging
+
+## Python Standards
+
+- **Type Hints**: Mandatory on all functions
+- **Docstrings**: Google style with Args, Returns, Raises
+- **Error Handling**: Graceful degradation, structured logging
+- **Pydantic Models**: Use for all data structures with validation
+- **Async**: Use for I/O-bound operations
+
+## Docker Best Practices
+
+- Multi-stage builds for optimization
+- Non-root user for security
+- Layer caching strategy (least → most volatile)
+- Volume mounting: source (ro), output (rw), config (ro)
+- Health checks for production
+
+## Testing Standards
+
+- 80%+ coverage target
+- Unit tests in `tests/unit/`
+- Integration tests in `tests/integration/`
+- Use pytest fixtures for reusable test data
+- Pre-commit hooks for code quality
+
+## CLI Entry Point
+
+Primary command: `python -m docs_pipeline.cli generate --source-path <path> --output-path <path>`
+
+Exit codes: 0 (success), 1 (runtime error), 2 (config error), 130 (interrupted)
+
+For detailed patterns and examples, refer to the specific rule files in `.cursor/rules/`.
+
+
