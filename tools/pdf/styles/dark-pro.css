@@ -10,6 +10,7 @@
  * - Syntax highlighting for code blocks
  * - Semantic callout boxes (note, tip, warning, danger, info)
  * - Better accessibility and contrast
+ * - FIXED: SVG/chart text contrast issues with explicit color styling
  */
 
 /* ============================================================================
@@ -543,6 +544,98 @@ figcaption {
 }
 
 /* ============================================================================
+   SVG / CHART STYLING (CRITICAL FIX FOR DARK THEME)
+   ========================================================================== */
+
+/* Explicit SVG styling for dark theme diagrams and charts */
+svg {
+    /* Ensure colors are preserved in PDF */
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+}
+
+/* Target all text elements within SVGs (Mermaid diagrams, charts) */
+svg text {
+    /* Force light text color for dark backgrounds */
+    fill: var(--color-text-primary) !important;
+    color: var(--color-text-primary) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+}
+
+/* Style titles and labels in charts */
+svg text.label,
+svg text.nodeLabel,
+svg text.title,
+svg text.sectionTitle,
+svg text.mainTitle,
+svg tspan {
+    fill: var(--color-text-primary) !important;
+    color: var(--color-text-primary) !important;
+}
+
+/* Mermaid diagram specific fixes */
+.mermaid text,
+.mermaid tspan,
+.mermaid foreignObject text {
+    fill: var(--color-text-primary) !important;
+    color: var(--color-text-primary) !important;
+}
+
+/* Ensure text inside diagram nodes is readable */
+.mermaid .nodeLabel,
+.mermaid .label,
+.mermaid .edgeLabel,
+.mermaid .flowchart-label {
+    fill: var(--color-text-primary) !important;
+}
+
+/* Diagram shapes - ensure proper contrast */
+svg rect[class*="diagram"],
+svg circle[class*="diagram"],
+svg ellipse[class*="diagram"],
+svg path[class*="diagram"] {
+    stroke: var(--color-primary) !important;
+    stroke-width: 2px !important;
+}
+
+/* Chart axis labels and legends */
+svg .axis-label,
+svg .legend-label,
+svg .chart-label,
+svg .data-label,
+svg [text-anchor] {
+    fill: var(--color-text-primary) !important;
+}
+
+/* PlantUML and other diagram tools */
+svg [id*="note"],
+svg [id*="label"],
+svg [id*="text"] {
+    fill: var(--color-text-primary) !important;
+}
+
+/* Fallback for any uncolored SVG text that appears washed out */
+svg text:not([fill]),
+svg tspan:not([fill]) {
+    fill: var(--color-text-primary) !important;
+}
+
+/* Explicitly white or light gray text in SVGs - override to our primary text color */
+svg text[fill="white"],
+svg text[fill="#fff"],
+svg text[fill="#ffffff"],
+svg text[fill="#f0f0f0"],
+svg text[fill="#e0e0e0"],
+svg tspan[fill="white"],
+svg tspan[fill="#fff"],
+svg tspan[fill="#ffffff"] {
+    fill: var(--color-text-primary) !important;
+}
+
+/* ============================================================================
    TABLE OF CONTENTS
    ========================================================================== */
 
@@ -659,5 +752,16 @@ nav#TOC a:hover, #TOC a:hover {
     
     pre, blockquote {
         background: var(--color-bg-surface);
+    }
+    
+    /* Ensure SVG colors are preserved during print */
+    svg {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    svg text,
+    svg tspan {
+        fill: var(--color-text-primary) !important;
     }
 }
