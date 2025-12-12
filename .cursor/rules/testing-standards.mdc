@@ -1,0 +1,445 @@
+# Testing Standards & Quality Assurance
+
+## Test Structure
+
+```
+
+tests/
+
+├── unit/
+
+│   ├── test_parser.py
+
+│   ├── test_extractor.py
+
+│   ├── test_generators.py
+
+│   ├── test_models.py
+
+│   └── conftest.py  # Shared fixtures
+
+├── integration/
+
+│   ├── test_pipeline_flow.py
+
+│   ├── test_end_to_end.py
+
+│   └── conftest.py
+
+└── fixtures/
+
+    ├── sample_repos/
+
+    │   ├── simple_python/
+
+    │   ├── multi_module/
+
+    │   └── broken_syntax/
+
+    └── expected_outputs/
+
+        ├── simple_python.json
+
+        └── api_docs.md
+
+```
+
+## Unit Testing
+
+### Parser Tests
+
+```python
+
+import pytest
+
+from docs_pipeline.core.parser import parse_module
+
+from docs_pipeline.models import ModuleMetadata
+
+class TestParser:
+
+    def test_parse_simple_module(self, simple_module_path):
+
+        """Parse basic Python module."""
+
+        result = parse_module(simple_module_path)
+
+        assert isinstance(result, ModuleMetadata)
+
+        assert result.name == "simple"
+
+        assert len(result.functions) >= 1
+
+    def test_parse_with_docstrings(self, documented_module_path):
+
+        """Extract docstrings correctly."""
+
+        result = parse_module(documented_module_path)
+
+        func = result.functions[0]
+
+        assert func.docstring is not None
+
+        assert "Args:" in func.docstring
+
+    def test_parse_syntax_error(self, broken_module_path):
+
+        """Handle syntax errors gracefully."""
+
+        with pytest.raises(SyntaxError):
+
+            parse_module(broken_module_path)
+
+    @pytest.mark.parametrize("decorator", ["@property", "@classmethod", "@staticmethod"])
+
+    def test_parse_decorated_functions(self, decorator, module_with_decorator):
+
+        """Parse decorated functions correctly."""
+
+        result = parse_module(module_with_decorator)
+
+        func = result.functions[0]
+
+        assert decorator in func.decorators
+
+```
+
+### Extractor Tests
+
+```python
+
+class TestExtractor:
+
+    def test_extract_type_hints(self, typed_module):
+
+        """Extract type hints from function signatures."""
+
+        result = parse_module(typed_module)
+
+        func = result.functions[0]
+
+        assert func.return_type == "str"
+
+        assert func.parameters[0].type_hint == "int"
+
+    def test_extract_private_functions(self, module_with_private):
+
+        """Correctly identify private functions."""
+
+        result = parse_module(module_with_private)
+
+        private = [f for f in result.functions if f.is_private]
+
+        public = [f for f in result.functions if not f.is_private]
+
+        assert len(private) > 0
+
+        assert all(f.name.startswith('_') for f in private)
+
+```
+
+## Integration Testing
+
+### End-to-End Pipeline
+
+```python
+
+class TestPipeline:
+
+    @pytest.mark.asyncio
+
+    async def test_full_pipeline(self, sample_repo, tmp_output_dir):
+
+        """Test complete pipeline from parse to output."""
+
+        from docs_pipeline.pipeline.orchestrator import Orchestrator
+
+        from docs_pipeline.models import Config
+
+        config = Config(
+
+            source_path=sample_repo,
+
+            output_path=tmp_output_dir,
+
+        )
+
+        orchestrator = Orchestrator(config)
+
+        metrics = await orchestrator.run()
+
+        # Verify all stages completed
+
+        assert metrics.parse_duration_ms > 0
+
+        assert metrics.extract_duration_ms > 0
+
+        assert metrics.render_duration_ms > 0
+
+        # Verify output files created
+
+        assert (tmp_output_dir / "README.md").exists()
+
+        assert (tmp_output_dir / "api.md").exists()
+
+        assert (tmp_output_dir / "architecture.md").exists()
+
+    def test_pipeline_with_broken_module(self, repo_with_syntax_error, tmp_output_dir):
+
+        """Pipeline continues despite broken modules."""
+
+        from docs_pipeline.pipeline.orchestrator import Orchestrator
+
+        from docs_pipeline.models import Config
+
+        config = Config(
+
+            source_path=repo_with_syntax_error,
+
+            output_path=tmp_output_dir,
+
+        )
+
+        orchestrator = Orchestrator(config)
+
+        metrics = orchestrator.run()
+
+        # Should complete despite error
+
+        assert metrics is not None
+
+        assert metrics.errors > 0
+
+        # But still generate docs for working modules
+
+        assert (tmp_output_dir / "README.md").exists()
+
+```
+
+## Fixtures
+
+### Reusable Fixtures
+
+```python
+
+# tests/conftest.py
+
+import pytest
+
+from pathlib import Path
+
+import tempfile
+
+@pytest.fixture
+
+def simple_module_path(tmp_path):
+
+    """Create a simple Python module for testing."""
+
+    module = tmp_path / "simple.py"
+
+    module.write_text("""
+
+def hello(name: str) -> str:
+
+    '''Return greeting.
+
+    Args:
+
+        name: Person's name
+
+    Returns:
+
+        Greeting string
+
+    '''
+
+    return f"Hello, {name}!"
+
+""")
+
+    return str(module)
+
+@pytest.fixture
+
+def sample_repo(tmp_path):
+
+    """Create a sample repository structure."""
+
+    repo = tmp_path / "sample_repo"
+
+    repo.mkdir()
+
+    # Create src directory
+
+    src = repo / "src"
+
+    src.mkdir()
+
+    # Create modules
+
+    (src / "__init__.py").write_text("")
+
+    (src / "main.py").write_text("""
+
+def process_data(data: dict) -> dict:
+
+    '''Process input data.'''
+
+    return {**data, 'processed': True}
+
+""")
+
+    # Create tests directory
+
+    tests = repo / "tests"
+
+    tests.mkdir()
+
+    (tests / "test_main.py").write_text("""
+
+import pytest
+
+from src.main import process_data
+
+def test_process_data():
+
+    result = process_data({'key': 'value'})
+
+    assert result['processed']
+
+""")
+
+    return str(repo)
+
+@pytest.fixture
+
+def tmp_output_dir():
+
+    """Create temporary output directory."""
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+
+        yield Path(tmp_dir)
+
+```
+
+## Code Quality Tools
+
+### Pre-commit Hooks
+
+```yaml
+
+# .pre-commit-config.yaml
+
+repos:
+
+  - repo: https://github.com/psf/black
+
+    rev: 23.12.0
+
+    hooks:
+
+      - id: black
+
+        language_version: python3.11
+
+  - repo: https://github.com/PyCQA/isort
+
+    rev: 5.13.2
+
+    hooks:
+
+      - id: isort
+
+        args: ["--profile=black"]
+
+  - repo: https://github.com/PyCQA/flake8
+
+    rev: 6.1.0
+
+    hooks:
+
+      - id: flake8
+
+        args: ["--max-line-length=100", "--ignore=E501,W503"]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+
+    rev: v1.7.1
+
+    hooks:
+
+      - id: mypy
+
+        additional_dependencies: ["pydantic", "types-PyYAML"]
+
+  - repo: https://github.com/PyCQA/bandit
+
+    rev: 1.7.5
+
+    hooks:
+
+      - id: bandit
+
+        args: ["-c", "pyproject.toml"]
+
+        additional_dependencies: ["bandit[toml]"]
+
+```
+
+### Pytest Configuration
+
+```ini
+
+# pyproject.toml
+
+[tool.pytest.ini_options]
+
+testpaths = ["tests"]
+
+python_files = ["test_*.py"]
+
+addopts = """
+
+--strict-markers
+
+--tb=short
+
+--cov=docs_pipeline
+
+--cov-report=html
+
+--cov-report=term-missing:skip-covered
+
+--cov-fail-under=80
+
+"""
+
+markers = [
+
+    "asyncio: marks tests as async",
+
+    "integration: marks tests as integration (slow)",
+
+    "docker: marks tests requiring Docker",
+
+]
+
+```
+
+## Coverage Standards
+
+### Target: 80%+
+
+```bash
+
+# Run with coverage report
+
+pytest --cov=docs_pipeline --cov-report=html tests/
+
+# Check coverage
+
+coverage report --fail-under=80
+
+```

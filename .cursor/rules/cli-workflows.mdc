@@ -1,0 +1,276 @@
+# CLI Workflows & Commands
+
+## Primary Workflows
+
+### Full Pipeline (Zero-Interaction)
+
+```bash
+
+python -m docs_pipeline.cli generate \
+
+--source-path ./path/to/repo \
+
+--output-path ./output/docs \
+
+--config ./config/pipeline.yaml \
+
+--log-level INFO
+
+```
+
+**Behavior**: Runs all stages sequentially, exits 0 on success or 1 on error.
+
+### Individual Stages (Development)
+
+```bash
+
+# Parse only
+
+python -m docs_pipeline.cli parse --source-path ./src
+
+# Extract metadata to JSON
+
+python -m docs_pipeline.cli extract --source-path ./src --output-format json
+
+# Generate specific doc type
+
+python -m docs_pipeline.cli generate-docs \
+
+--source-path ./src \
+
+--template api \
+
+--output-path ./output
+
+# Validate existing output
+
+python -m docs_pipeline.cli validate --output-path ./output/docs
+
+```
+
+### Watch Mode (Development)
+
+```bash
+
+python -m docs_pipeline.cli generate \
+
+--source-path ./src \
+
+--output-path ./output/docs \
+
+--watch \
+
+--on-change=full-rebuild
+
+```
+
+Watches source directory, triggers rebuilds on file changes.
+
+### Docker Execution (Production)
+
+```bash
+
+docker build -t docs-pipeline:latest .
+
+docker run --rm \
+
+-v "$(pwd)/source:/workspace/source:ro" \
+
+-v "$(pwd)/output:/workspace/output:rw" \
+
+-v "$(pwd)/config:/workspace/config:ro" \
+
+docs-pipeline:latest \
+
+generate \
+
+--source-path /workspace/source \
+
+--output-path /workspace/output \
+
+--config /workspace/config/pipeline.yaml
+
+```
+
+## Flag Reference
+
+### Required
+
+- `--source-path ` — Source repository root
+
+- `--output-path ` — Output documentation directory
+
+### Optional
+
+- `--config ` — YAML configuration file (default: `./config/pipeline.yaml`)
+
+- `--log-level [DEBUG|INFO|WARN|ERROR]` — Logging verbosity (default: INFO)
+
+- `--skip-validation` — Skip validation stage (fast mode)
+
+- `--dry-run` — Simulate pipeline without writing
+
+- `--watch` — Watch source for changes (dev mode)
+
+- `--on-change [full-rebuild|incremental]` — Rebuild strategy
+
+- `--parallel ` — Parallel workers for multi-repo processing
+
+- `--include-private` — Document private/internal APIs
+
+- `--git-history-depth ` — Commits to analyze for changelog (default: 100)
+
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| 0 | Success, docs generated |
+| 1 | Runtime error (parse, extract, or render failed) |
+| 2 | Configuration error (invalid YAML, missing paths) |
+| 130 | Interrupted by signal (Ctrl+C) |
+
+## Common Patterns
+
+### CI/CD Integration (GitHub Actions)
+
+```yaml
+
+- name: Generate Docs
+
+run: |
+
+docker build -t docs-pipeline:${{ github.sha }} .
+
+docker run --rm \
+
+-v "${{ github.workspace }}/source:/workspace/source:ro" \
+
+-v "${{ github.workspace }}/output:/workspace/output:rw" \
+
+docs-pipeline:${{ github.sha }} \
+
+generate --source-path /workspace/source \
+
+--output-path /workspace/output
+
+- name: Validate Docs
+
+run: |
+
+docker run --rm \
+
+-v "${{ github.workspace }}/output:/workspace/output:ro" \
+
+docs-pipeline:${{ github.sha }} \
+
+validate --output-path /workspace/output
+
+```
+
+### Local Development (Rapid Iteration)
+
+```bash
+
+# Watch mode with fast feedback
+
+python -m docs_pipeline.cli generate \
+
+--source-path ./src \
+
+--output-path ./output/docs \
+
+--watch \
+
+--log-level DEBUG
+
+# Incremental rebuild (faster for large repos)
+
+python -m docs_pipeline.cli generate \
+
+--source-path ./src \
+
+--output-path ./output/docs \
+
+--on-change=incremental
+
+```
+
+### Dry-Run Validation
+
+```bash
+
+# Validate configuration without writing
+
+python -m docs_pipeline.cli generate \
+
+--source-path ./src \
+
+--output-path ./output/docs \
+
+--config ./config/pipeline.yaml \
+
+--dry-run
+
+# Check exit code for errors
+
+echo $?
+
+```
+
+## Error Handling
+
+All commands log structured JSON to stderr:
+
+```json
+
+{
+
+"timestamp": "2025-12-12T16:20:00Z",
+
+"level": "ERROR",
+
+"module": "docs_pipeline.core.parser",
+
+"message": "Failed to parse module",
+
+"details": {
+
+"file": "src/invalid.py",
+
+"line": 42,
+
+"error": "SyntaxError: invalid syntax"
+
+}
+
+}
+
+```
+
+Commands complete with:
+
+- Exit code 1
+
+- State dump in `./.docs-pipeline-state` for recovery
+
+- Error summary on stdout
+
+## Health Check
+
+```bash
+
+python -m docs_pipeline.cli health-check
+
+```
+
+Verifies:
+
+- Dependencies installed
+
+- Docker daemon accessible
+
+- Configuration files readable
+
+- Output directory writable
+
+Exits 0 if healthy, 1 otherwise.

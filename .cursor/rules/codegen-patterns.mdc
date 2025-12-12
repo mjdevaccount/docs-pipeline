@@ -1,0 +1,293 @@
+# Code Generation & Implementation Patterns
+
+## Python Standards
+
+### Type Hints (Mandatory)
+
+Every function must have complete type hints:
+
+```python
+
+def parse_module(path: str, language: str = "python") -> ModuleMetadata:
+
+    """Parse source module and extract metadata.
+
+    Args:
+
+        path: Absolute path to source file
+
+        language: Programming language (default: python)
+
+    Returns:
+
+        ModuleMetadata with parsed structure
+
+    Raises:
+
+        FileNotFoundError: If path doesn't exist
+
+        SyntaxError: If source is malformed
+
+    """
+
+    ...
+
+# Async for I/O-bound operations
+
+async def extract_git_history(repo_path: str, depth: int = 100) -> list[Commit]:
+
+    """Fetch git history for changelog generation."""
+
+    ...
+
+```
+
+### Docstring Format (Google Style)
+
+```python
+
+def generate_markdown(model: CodebaseModel, template_name: str) -> str:
+
+    """Generate markdown documentation from codebase model.
+
+    Long description with more context about what this function does, why it's needed,
+
+    and edge cases to be aware of.
+
+    Args:
+
+        model: Pydantic CodebaseModel with extracted metadata
+
+        template_name: Name of Jinja2 template in templates/ directory
+
+    Returns:
+
+        Generated markdown as string
+
+    Raises:
+
+        TemplateNotFoundError: If template_name doesn't exist
+
+        RenderError: If template rendering fails
+
+    Example:
+
+        >>> codebase = parse_repo("./src")
+
+        >>> docs = generate_markdown(codebase, "api")
+
+        >>> print(docs)
+
+    """
+
+```
+
+### Context Managers for Resource Cleanup
+
+```python
+
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+
+async def open_git_repo(path: str):
+
+    """Context manager for git repository operations."""
+
+    repo = Repo(path)
+
+    try:
+
+        yield repo
+
+    finally:
+
+        repo.close()
+
+# Usage
+
+async with open_git_repo("./my-repo") as repo:
+
+    commits = repo.iter_commits(max_count=100)
+
+```
+
+### Error Handling
+
+```python
+
+from typing import Optional
+
+def safe_parse(path: str) -> Optional[ModuleMetadata]:
+
+    """Parse with graceful error handling."""
+
+    try:
+
+        return parse_module(path)
+
+    except SyntaxError as e:
+
+        logger.error(f"Failed to parse {path}", exc_info=e)
+
+        return None  # Graceful degradation
+
+```
+
+## Pydantic Models
+
+### Data Classes (Type Safety + Validation)
+
+```python
+
+from pydantic import BaseModel, Field, validator, ConfigDict
+
+class FunctionMetadata(BaseModel):
+
+    model_config = ConfigDict(frozen=True)  # Immutable
+
+    name: str
+
+    signature: str
+
+    docstring: Optional[str] = None
+
+    return_type: Optional[str] = None
+
+    parameters: list[ParameterMetadata] = Field(default_factory=list)
+
+    decorators: list[str] = Field(default_factory=list)
+
+    is_async: bool = False
+
+    is_private: bool = Field(default=False)
+
+    @validator('name')
+
+    @classmethod
+
+    def validate_name(cls, v: str) -> str:
+
+        if not v.isidentifier():
+
+            raise ValueError(f"Invalid identifier: {v}")
+
+        return v
+
+    @property
+
+    def is_dunder(self) -> bool:
+
+        return self.name.startswith('__') and self.name.endswith('__')
+
+class CodebaseModel(BaseModel):
+
+    name: str
+
+    path: str
+
+    language: str
+
+    modules: list[ModuleMetadata] = Field(default_factory=list)
+
+    root_functions: list[FunctionMetadata] = Field(default_factory=list)
+
+    dependencies: dict[str, str] = Field(default_factory=dict)  # name → version
+
+    def get_module(self, name: str) -> Optional[ModuleMetadata]:
+
+        return next((m for m in self.modules if m.name == name), None)
+
+```
+
+### Serialization
+
+```python
+
+# Export to JSON
+
+model.model_dump_json(indent=2)
+
+# Export to dict
+
+model.model_dump(exclude={'_internal'})
+
+# Load from dict
+
+loaded = CodebaseModel.model_validate(json_dict)
+
+```
+
+## Jinja2 Template Patterns
+
+### Template Inheritance (DRY)
+
+```jinja2
+
+{# base.jinja2 #}
+
+# {{ codebase.name }}
+
+{{ codebase.docstring }}
+
+{% for module in codebase.modules %}
+
+## {{ module.name }}
+
+{{ module.docstring }}
+
+{% for func in module.functions %}
+
+### `{{ func.signature }}`
+
+{{ func.docstring }}
+
+{% endfor %}
+
+{% endfor %}
+
+```
+
+### Child Template
+
+```jinja2
+
+{# api.jinja2 #}
+
+{% extends "base.jinja2" %}
+
+{% block api_section %}
+
+## API Reference
+
+{% for func in codebase.all_functions %}
+
+- `{{ func.name }}` — {{ func.docstring | first_line }}
+
+{% endfor %}
+
+{% endblock %}
+
+```
+
+### Custom Filters
+
+```python
+
+from jinja2 import Environment
+
+env = Environment()
+
+@env.filter
+
+def first_line(text: str) -> str:
+
+    return text.split('\n')[0] if text else ""
+
+@env.filter
+
+def markdown_code(text: str, language: str = "python") -> str:
+
+    return f"```{language}\n{text}\n```"
+
+```

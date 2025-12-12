@@ -1,0 +1,411 @@
+# Docker Operations & Build Optimization
+
+## Dockerfile Best Practices
+
+### Multi-Stage Build
+
+```dockerfile
+
+# Stage 1: Build dependencies
+
+FROM python:3.11-slim as builder
+
+WORKDIR /build
+
+# Pin all dependencies
+
+COPY requirements.txt .
+
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# Stage 2: Runtime (slim final image)
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Non-root user for security
+
+RUN useradd -m -u 1000 pipelines
+
+# Copy only runtime dependencies from builder
+
+COPY --from=builder --chown=pipelines:pipelines /root/.local /home/pipelines/.local
+
+# Copy application code
+
+COPY --chown=pipelines:pipelines src/ /app/src/
+
+USER pipelines
+
+ENV PATH=/home/pipelines/.local/bin:$PATH
+
+ENV PYTHONUNBUFFERED=1
+
+ENTRYPOINT ["python", "-m", "docs_pipeline.cli"]
+
+CMD ["--help"]
+
+# Health check
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+
+CMD python -m docs_pipeline.cli health-check || exit 1
+
+```
+
+### Build Command
+
+```bash
+
+# Development (with layer caching)
+
+docker build \
+
+--build-arg BUILDKIT_INLINE_CACHE=1 \
+
+-t docs-pipeline:dev .
+
+# Production (tagged)
+
+docker build \
+
+-t docs-pipeline:latest \
+
+-t docs-pipeline:$(git rev-parse --short HEAD) .
+
+# With progress output
+
+docker build --progress=plain -t docs-pipeline:latest .
+
+```
+
+### .dockerignore
+
+```
+
+.git
+
+.gitignore
+
+__pycache__
+
+*.pyc
+
+.pytest_cache
+
+.mypy_cache
+
+.venv
+
+venv
+
+.env
+
+.env.local
+
+*.egg-info
+
+dist/
+
+build/
+
+tests/
+
+.cursor/
+
+.github/
+
+docs/
+
+*.md
+
+.DS_Store
+
+```
+
+## Container Runtime
+
+### Volume Mounting Strategy
+
+```bash
+
+docker run --rm \
+
+--volume $(pwd)/source:/workspace/source:ro \
+
+--volume $(pwd)/output:/workspace/output:rw \
+
+--volume $(pwd)/config:/workspace/config:ro \
+
+docs-pipeline:latest
+
+```
+
+**Volume Permissions**:
+
+- Source: `:ro` (read-only, prevent accidental mutations)
+
+- Output: `:rw` (read-write, for doc generation)
+
+- Config: `:ro` (read-only, immutable configuration)
+
+### Resource Limits (Kubernetes/Orchestrated)
+
+```bash
+
+docker run --rm \
+
+--memory 2g \
+
+--cpus 1.5 \
+
+--pids-limit 100 \
+
+docs-pipeline:latest
+
+```
+
+### Security Options
+
+```bash
+
+docker run --rm \
+
+--read-only \
+
+--cap-drop=ALL \
+
+--security-opt=no-new-privileges:true \
+
+--user 1000:1000 \
+
+docs-pipeline:latest
+
+```
+
+## Docker Compose (Multi-Container Orchestration)
+
+```yaml
+
+version: '3.8'
+
+services:
+
+  docs-generator:
+
+    build:
+
+      context: .
+
+      dockerfile: Dockerfile
+
+    container_name: docs-pipeline-gen
+
+    volumes:
+
+      - ./source:/workspace/source:ro
+
+      - ./output:/workspace/output:rw
+
+      - ./config:/workspace/config:ro
+
+    environment:
+
+      - LOG_LEVEL=INFO
+
+    command: generate --source-path /workspace/source --output-path /workspace/output
+
+    restart: "no"
+
+    healthcheck:
+
+      test: ["CMD", "python", "-m", "docs_pipeline.cli", "health-check"]
+
+      interval: 30s
+
+      timeout: 5s
+
+      retries: 3
+
+      start_period: 10s
+
+```
+
+Run with:
+
+```bash
+
+docker-compose up --build docs-generator
+
+```
+
+## Layer Caching Strategy
+
+**Goal**: Minimize rebuild time by ordering Dockerfile steps from least → most volatile.
+
+```dockerfile
+
+# Layer 1: Base image (cached, never changes)
+
+FROM python:3.11-slim
+
+# Layer 2: System dependencies (cached if unchanged)
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+
+    git \
+
+    && rm -rf /var/lib/apt/lists/*
+
+# Layer 3: Python dependencies (cached unless requirements.txt changes)
+
+COPY requirements.txt .
+
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# Layer 4: Application code (frequently changes, separate layer)
+
+COPY src/ /app/src/
+
+# Layer 5: Entrypoint (static)
+
+ENTRYPOINT ["python", "-m", "docs_pipeline.cli"]
+
+```
+
+## Image Size Optimization
+
+### Slim vs Alpine
+
+```
+
+python:3.11-slim → ~130 MB (recommended)
+
+python:3.11-alpine → ~50 MB (minimal, slower on first run)
+
+python:3.11 → ~900 MB (bloated, avoid)
+
+```
+
+Use `slim` unless size is critical.
+
+### Minimize Layers
+
+- Combine `RUN` commands with `&&`
+
+- Use `pip install --no-cache-dir`
+
+- Remove build artifacts after use
+
+## Registry Operations
+
+### Push to Container Registry
+
+```bash
+
+# Docker Hub
+
+docker tag docs-pipeline:latest myusername/docs-pipeline:latest
+
+docker push myusername/docs-pipeline:latest
+
+# GitHub Container Registry (ghcr.io)
+
+docker tag docs-pipeline:latest ghcr.io/mjdevaccount/docs-pipeline:latest
+
+docker push ghcr.io/mjdevaccount/docs-pipeline:latest
+
+# AWS ECR
+
+aws ecr get-login-password --region us-east-1 | \
+
+docker login --username AWS --password-stdin 123456789.dkr.ecr.us-east-1.amazonaws.com
+
+docker tag docs-pipeline:latest 123456789.dkr.ecr.us-east-1.amazonaws.com/docs-pipeline:latest
+
+docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/docs-pipeline:latest
+
+```
+
+## Debugging
+
+### Interactive Shell
+
+```bash
+
+docker run -it --rm \
+
+-v $(pwd)/source:/workspace/source:ro \
+
+docs-pipeline:latest \
+
+bash
+
+```
+
+### Inspect Layers
+
+```bash
+
+docker history docs-pipeline:latest
+
+```
+
+### View Image Details
+
+```bash
+
+docker inspect docs-pipeline:latest
+
+```
+
+### Check Logs
+
+```bash
+
+docker logs
+
+```
+
+## CI/CD Integration
+
+### GitHub Actions
+
+```yaml
+
+- name: Build and Push
+
+  uses: docker/build-push-action@v5
+
+  with:
+
+    context: .
+
+    push: true
+
+    tags: ghcr.io/mjdevaccount/docs-pipeline:${{ github.sha }}
+
+    cache-from: type=registry,ref=ghcr.io/mjdevaccount/docs-pipeline:buildcache
+
+    cache-to: type=registry,ref=ghcr.io/mjdevaccount/docs-pipeline:buildcache,mode=max
+
+```
+
+### GitLab CI
+
+```yaml
+
+build:
+
+  stage: build
+
+  script:
+
+    - docker build -t docs-pipeline:$CI_COMMIT_SHA .
+
+    - docker tag docs-pipeline:$CI_COMMIT_SHA registry.gitlab.com/mjdevaccount/docs-pipeline:$CI_COMMIT_SHA
+
+    - docker push registry.gitlab.com/mjdevaccount/docs-pipeline:$CI_COMMIT_SHA
+
+```

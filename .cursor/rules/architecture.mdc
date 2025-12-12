@@ -1,0 +1,169 @@
+# Architecture & System Design
+
+## System Overview
+
+**docs-pipeline** is a containerized, zero-interaction documentation generation system. It performs AST analysis on source repositories, extracts metadata, and generates production-grade markdown documentation through templated pipelines.
+
+### Core Principles
+
+- **Zero-Interaction**: All configuration via YAML + CLI flags, no prompts
+
+- **Deterministic**: Same input → identical output, idempotent
+
+- **Containerized**: Docker isolation, reproducible builds
+
+- **Graceful Degradation**: Skip broken modules, log, continue
+
+- **Observable**: Structured JSON logging for debugging
+
+### System Components
+
+**docs_pipeline.core**
+
+- `parser.py` — AST traversal, language-specific analysis
+
+- `extractor.py` — Metadata extraction (signatures, docstrings, types)
+
+- `analyzer.py` — Architecture inference, dependency graphs
+
+**docs_pipeline.generators**
+
+- `readme_gen.py` — Project overview, setup, quick-start
+
+- `api_doc_gen.py` — Function/class reference documentation
+
+- `architecture_gen.py` — System design, data flow, deployment
+
+- `changelog_gen.py` — Git-based changelog synthesis
+
+- `index_gen.py` — Table of contents, navigation
+
+**docs_pipeline.pipeline**
+
+- `orchestrator.py` — Coordinates all stages, retry logic
+
+- `handlers.py` — Error handling, validation
+
+- `stages.py` — Individual pipeline stage definitions
+
+**docs_pipeline.models**
+
+- Pydantic-based data models for type safety
+
+- `CodebaseModel`, `ModuleMetadata`, `FunctionMetadata`, `Config`
+
+### Data Flow
+
+```
+
+Source Repo → Discovery & Validation
+
+
+
+Parse & Extract (AST analysis)
+
+
+
+Enrich (git history, metrics)
+
+
+
+Render Templates (Jinja2)
+
+
+
+Validate Output (linting, links)
+
+
+
+Write Artifacts + Compress
+
+
+
+Exit (code 0 or 1)
+
+```
+
+## Docker Architecture
+
+### Base Image
+
+- `python:3.11-slim` (lightweight, security-focused)
+
+- Or `python:3.11-alpine` for minimal footprint
+
+### Container Volumes
+
+```
+
+/workspace/source → Input repo (read-only)
+
+/workspace/output → Generated docs (read-write)
+
+/workspace/config → Config files (read-only)
+
+```
+
+### Entrypoint
+
+```
+
+ENTRYPOINT ["python", "-m", "docs_pipeline.cli"]
+
+```
+
+### Health Check
+
+```dockerfile
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+
+CMD python -m docs_pipeline.cli health-check
+
+```
+
+## Entry Point: CLI
+
+**File**: `src/docs_pipeline/cli.py`
+
+Primary command:
+
+```
+
+python -m docs_pipeline.cli generate \
+
+--source-path \
+
+--output-path \
+
+--config \
+
+--log-level [DEBUG|INFO|WARN|ERROR]
+
+```
+
+Exit codes:
+
+- 0 → Success
+
+- 1 → Runtime/validation error
+
+- 2 → Configuration error
+
+- 130 → Interrupted (SIGINT)
+
+Flags:
+
+- `--source-path` (required)
+
+- `--output-path` (required)
+
+- `--config` (optional, defaults to `./config/pipeline.yaml`)
+
+- `--log-level` (optional, default: INFO)
+
+- `--skip-validation` (optional)
+
+- `--dry-run` (optional)
+
+- `--watch` (dev only, enables watch-mode)
