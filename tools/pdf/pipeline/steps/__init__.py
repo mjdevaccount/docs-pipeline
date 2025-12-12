@@ -13,6 +13,9 @@ Conversion Steps:
     - DiagramRenderingStep: Render Mermaid/PlantUML/Graphviz diagrams
     - PandocConversionStep: Convert Markdown to HTML
 
+Enhancement Steps:
+    - MermaidEnhancementStep: Inject Mermaid 11 with CSS variable theming
+
 Post-processing Steps:
     - CSSStrippingStep: Strip inline styles from HTML
     - TitlePageInjectionStep: Inject title page HTML
@@ -34,6 +37,8 @@ from .preprocessing import (
 from .diagram_step import DiagramRenderingStep
 
 from .pandoc_step import PandocConversionStep
+
+from .mermaid_enhancement_step import MermaidEnhancementStep
 
 from .postprocessing import (
     CSSStrippingStep,
@@ -58,6 +63,9 @@ __all__ = [
     'DiagramRenderingStep',
     'PandocConversionStep',
     
+    # Enhancement
+    'MermaidEnhancementStep',
+    
     # Post-processing
     'CSSStrippingStep',
     'TitlePageInjectionStep',
@@ -68,4 +76,3 @@ __all__ = [
     'DocxRenderingStep',
     'HtmlRenderingStep',
 ]
-
