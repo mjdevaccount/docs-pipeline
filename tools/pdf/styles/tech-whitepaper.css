@@ -9,7 +9,7 @@
  * - Automatic dark mode support
  * - GitHub-inspired table styling
  * - Better accessibility and contrast
- * - Full-width layout (no right-side truncation)
+ * - Full-width layout using calc(100% + margins)
  */
 
 /* ============================================================================
@@ -112,7 +112,7 @@
 }
 
 /* ============================================================================
-   PAGE SETUP
+   PAGE SETUP - Margins: 2.5cm top, 2cm left/right, 2cm bottom
    ========================================================================== */
 
 @page {
@@ -267,8 +267,9 @@ pre {
     overflow-x: auto;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    width: 100%;
-    max-width: 100%;
+    /* Full-width using calc(100% + 2cm left + 2cm right margins) */
+    width: calc(100% + 4cm);
+    max-width: none;
     /* page-break rules removed - handled by layout.css */
 }
 
@@ -323,8 +324,8 @@ li::marker {
    ========================================================================== */
 
 table {
-    width: 100%;
-    max-width: 100%;
+    /* Full-width using calc(100% + 2cm left + 2cm right margins) */
+    width: calc(100% + 4cm);
     border-collapse: separate;
     border-spacing: 0;
     font-size: 0.925rem;
@@ -392,7 +393,8 @@ blockquote {
     margin: 1.5em 0;
     margin-left: 0;
     margin-right: 0;
-    width: 100%;
+    /* Full-width using calc(100% + 2cm left + 2cm right margins) */
+    width: calc(100% + 4cm);
     max-width: none;
     font-style: italic;
     color: var(--color-blockquote-text);
