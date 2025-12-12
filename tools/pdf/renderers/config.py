@@ -17,7 +17,6 @@ class PageFormat(Enum):
 
 class RendererType(Enum):
     """Available PDF renderers"""
-    WEASYPRINT = 'weasyprint'
     PLAYWRIGHT = 'playwright'
     # Future: PRINCE = 'prince', WKHTMLTOPDF = 'wkhtmltopdf'
 
@@ -106,4 +105,3 @@ class RenderConfig:
             raise ValueError(f"Logo file not found: {self.logo_path}")
         
         return True
-
