@@ -1,8 +1,7 @@
 # PDF Generation Requirements
-# Professional Markdown to PDF conversion using Pandoc + WeasyPrint + Mermaid-CLI
+# Professional Markdown to PDF conversion using Pandoc + Playwright + Mermaid-CLI
 
 # Python Dependencies
-weasyprint>=60.0  # Default PDF renderer (fast, but limited SVG foreignObject support)
 playwright>=1.40.0  # FAANG-grade PDF renderer (perfect SVG rendering including foreignObject)
 PyPDF2>=3.0.0  # PDF metadata embedding
 pyyaml>=6.0
@@ -23,9 +22,3 @@ pytest-watch>=4.2.0  # Watch mode for development
 #
 # - Mermaid-CLI (https://github.com/mermaid-js/mermaid-cli)
 #   npm install -g @mermaid-js/mermaid-cli
-#
-# - GTK Runtime (Windows only, for WeasyPrint)
-#   Option 1: Install MSYS2, then: pacman -S mingw-w64-x86_64-gtk3
-#   Option 2: Use Chocolatey: choco install gtk-runtime
-#   Add C:\msys64\mingw64\bin to PATH
-
