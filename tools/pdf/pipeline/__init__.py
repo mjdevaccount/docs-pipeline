@@ -64,6 +64,9 @@ from .steps import (
     DiagramRenderingStep,
     PandocConversionStep,
     
+    # Enhancement
+    MermaidEnhancementStep,
+    
     # Post-processing
     CSSStrippingStep,
     TitlePageInjectionStep,
@@ -91,6 +94,7 @@ __all__ = [
     'MathRenderingStep',
     'DiagramRenderingStep',
     'PandocConversionStep',
+    'MermaidEnhancementStep',
     'CSSStrippingStep',
     'TitlePageInjectionStep',
     'MetadataInjectionStep',
@@ -139,6 +143,7 @@ def create_pdf_pipeline(include_math: bool = True, include_glossary: bool = True
     steps.extend([
         DiagramRenderingStep(),
         PandocConversionStep(),
+        MermaidEnhancementStep(),      # NEW: Mermaid 11 CSS variable theming
         CSSStrippingStep(),
         TitlePageInjectionStep(),
         MetadataInjectionStep(),
@@ -199,6 +204,7 @@ def create_html_pipeline(include_math: bool = True, include_glossary: bool = Tru
     steps.extend([
         DiagramRenderingStep(),
         PandocConversionStep(),
+        MermaidEnhancementStep(),      # NEW: Mermaid 11 CSS variable theming
         CSSStrippingStep(),
         HtmlRenderingStep(),
     ])
@@ -260,4 +266,3 @@ def process_document(
         import shutil
         if context.work_dir.exists():
             shutil.rmtree(context.work_dir, ignore_errors=True)
-
