@@ -1,29 +1,96 @@
 /**
- * Dark Pro Profile
+ * Dark Pro Profile - December 2025 Modernized
  * Modern dark theme for on-screen viewing
- * High contrast, neon accents, dramatic presentation
+ * High contrast, clean design, semantic colors
+ * 
+ * IMPROVEMENTS:
+ * - Modern fonts: Inter (body) + JetBrains Mono (code)
+ * - Semantic CSS variables for easier maintenance
+ * - GitHub-inspired table styling
+ * - Better accessibility and contrast
+ * - Professional shadows and spacing
  */
 
-/* Page setup */
+/* ============================================================================
+   IMPORTS & VARIABLES
+   ========================================================================== */
+
+/* Import modern fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* Semantic color system - Dark mode (default for this profile) */
+:root {
+    /* Primary colors - Blue bright for dark background */
+    --color-primary: #60a5fa;               /* Blue-400 */
+    --color-primary-light: #93c5fd;         /* Blue-300 */
+    --color-primary-dark: #3b82f6;          /* Blue-500 */
+    --color-primary-muted: #bfdbfe;         /* Blue-200 */
+    
+    /* Text colors - Light for dark background */
+    --color-text-primary: #f3f4f6;          /* Gray-100 */
+    --color-text-secondary: #d1d5db;        /* Gray-300 */
+    --color-text-muted: #9ca3af;            /* Gray-400 */
+    
+    /* Background & borders - Dark theme */
+    --color-bg-page: #0f172a;               /* Slate-950 */
+    --color-bg-surface: #1e293b;            /* Slate-800 */
+    --color-bg-subtle: #1a2332;             /* Slate-800 variant */
+    --color-border: #334155;                /* Slate-700 */
+    --color-border-subtle: #2d3748;        /* Slate-700 variant */
+    
+    /* Status colors - Muted for dark background */
+    --color-success: #10b981;               /* Emerald-500 */
+    --color-warning: #f59e0b;               /* Amber-500 */
+    --color-error: #ef4444;                 /* Red-500 */
+    --color-info: #06b6d4;                  /* Cyan-500 */
+    
+    /* Component colors */
+    --color-code-bg: #111827;               /* Gray-900 */
+    --color-code-text: #e5e7eb;             /* Gray-100 */
+    --color-pre-bg: #020617;                /* Slate-950 */
+    --color-pre-text: #e2e8f0;              /* Slate-100 */
+    --color-blockquote-border: #60a5fa;     /* Blue-400 */
+    --color-blockquote-bg: #1e3a4c;         /* Dark blue-tinted */
+    --color-blockquote-text: #93c5fd;       /* Blue-300 */
+}
+
+/* ============================================================================
+   PAGE SETUP - Margins: 2cm all sides
+   ========================================================================== */
+
 @page {
     size: A4;
     margin: 2cm 1.8cm 2cm 1.8cm;
-    background-color: #0f172a;  /* Dark navy page background */
+    background-color: var(--color-bg-page);
 }
 
-/* Base typography - Dark background */
+/* ============================================================================
+   BASE TYPOGRAPHY
+   ========================================================================== */
+
+html {
+    background: var(--color-bg-page) !important;
+}
+
 body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    /* Modern fonts with fallbacks */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 11pt;
-    line-height: 1.75;
-    color: #e5e7eb;
-    background: #0f172a !important;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-page) !important;
     margin: 0;
     padding: 0;
     width: 100%;
     max-width: none;
     -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
+    -moz-osx-font-smoothing: grayscale;
+    /* Enable font ligatures for better typography */
+    font-feature-settings: 'liga' 1, 'calt' 1;
+    /* Force print color adjustment for Chromium PDF */
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
 }
 
 /* Reset any Pandoc wrapper divs that might constrain width */
@@ -36,247 +103,319 @@ body > section,
     max-width: none;
 }
 
-/* Ensure dark background extends to full page in PDF */
-html {
-    background: #0f172a !important;
-}
+/* ============================================================================
+   HEADINGS
+   ========================================================================== */
 
-/* Force print color adjustment for Chromium PDF */
-* {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-}
-
-/* Headings - Light with subtle glow effect */
 h1, h2, h3, h4, h5, h6 {
-    font-weight: 700;
-    color: #f8fafc;
-    margin-top: 1.6em;
-    margin-bottom: 0.6em;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
     margin-left: 0;
     margin-right: 0;
     padding: 0;
     width: 100%;
     max-width: none;
-    line-height: 1.25;
-    letter-spacing: 0.02em;
-    /* page-break rules removed - handled by layout.css */
+    line-height: 1.3;
+    letter-spacing: -0.01em;
 }
 
 h1 {
-    font-size: 2.1rem;
+    font-size: 2.2rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    border-bottom: 2px solid #334155;
-    padding-bottom: 0.5em;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 0.4em;
     margin-top: 0.5em;
-    color: #e0e7ff;
-    page-break-before: auto;
+    color: var(--color-primary-muted);
 }
 
 h2 {
     font-size: 1.6rem;
-    color: #93c5fd;
-    border-bottom: 1px solid #1e293b;
-    padding-bottom: 0.4em;
+    color: var(--color-primary-light);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.3em;
 }
 
 h3 {
     font-size: 1.3rem;
-    color: #bfdbfe;
+    color: var(--color-primary);
 }
 
 h4 {
     font-size: 1.1rem;
-    color: #dbeafe;
+    color: var(--color-primary);
 }
 
-/* Paragraphs */
+h5 {
+    font-size: 1rem;
+    color: var(--color-primary-light);
+}
+
+h6 {
+    font-size: 0.95rem;
+    color: var(--color-primary-light);
+}
+
+/* ============================================================================
+   PARAGRAPHS & INLINE TEXT
+   ========================================================================== */
+
 p {
-    margin: 0.6em 0 1em 0;
+    margin: 0.5em 0 1em 0;
     margin-left: 0;
     margin-right: 0;
     padding: 0;
     width: 100%;
     max-width: none;
-    color: #d1d5db;
+    color: var(--color-text-secondary);
     text-align: left;
     orphans: 3;
     widows: 3;
 }
 
-/* Links - Bright cyan */
+/* Links - Bright blue */
 a {
-    color: #60a5fa;
+    color: var(--color-primary);
     text-decoration: none;
     font-weight: 500;
+    transition: color 0.2s ease;
 }
 
 a:hover {
-    color: #93c5fd;
+    color: var(--color-primary-light);
     text-decoration: underline;
 }
 
-/* Code - Very dark background with subtle border */
+/* ============================================================================
+   CODE & PREFORMATTED TEXT
+   ========================================================================== */
+
 code {
-    font-family: 'Fira Code', 'JetBrains Mono', 'SF Mono', monospace;
+    /* Modern monospace font */
+    font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
     font-size: 0.88em;
-    background: #111827;
-    color: #e5e7eb;
-    padding: 0.25em 0.45em;
-    border-radius: 4px;
-    border: 1px solid #1f2937;
+    background: var(--color-code-bg);
+    color: var(--color-code-text);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    border: 1px solid var(--color-border);
+    /* Enable tabular figures for better code alignment */
+    font-variant-numeric: tabular-nums;
 }
 
 pre {
-    background: #020617;
-    border-left: 4px solid #3b82f6;
-    padding: 1.1em 1.3em;
-    margin: 1.3em 0;
-    border-radius: 8px;
+    background: var(--color-pre-bg);
+    border-left: 4px solid var(--color-primary);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-primary);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin: 1.5em 0;
+    margin-left: 0;
+    margin-right: 0;
     overflow-x: auto;
-    box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.15), 
-                0 8px 24px rgba(0, 0, 0, 0.4);
-    /* page-break rules removed - handled by layout.css */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
 }
 
 pre code {
     background: transparent;
-    color: #e5e7eb;
+    color: var(--color-pre-text);
     padding: 0;
     border: none;
-    font-size: 0.9em;
-    line-height: 1.7;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    /* Enable ligatures in code blocks */
+    font-variant-ligatures: common-ligatures contextual;
 }
 
-/* Lists */
+/* ============================================================================
+   LISTS
+   ========================================================================== */
+
 ul, ol {
-    margin: 0.9em 0;
+    margin: 1rem 0;
     margin-left: 0;
     margin-right: 0;
-    padding-left: 2em;
-    padding-right: 0;
+    padding-left: 1.75rem;
     width: 100%;
     max-width: none;
 }
 
 li {
-    margin: 0.5em 0;
-    line-height: 1.7;
-    color: #d1d5db;
+    margin: 0.5rem 0;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
 }
 
-/* Tables - Dark theme */
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+/* Modern list markers */
+ul {
+    list-style-type: '•';
+}
+
+li::marker {
+    color: var(--color-primary);
+    font-weight: 500;
+    margin-right: 0.75em;
+}
+
+/* ============================================================================
+   TABLES (GitHub-inspired styling)
+   ========================================================================== */
+
 table {
-    border-collapse: collapse;
     width: 100%;
-    max-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.925rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    overflow: hidden;
     margin: 1.5em 0;
     margin-left: 0;
     margin-right: 0;
-    font-size: 0.95em;
-    background: #1e293b;
-    border-radius: 8px;
-    overflow: hidden;
-    /* page-break rules removed - handled by layout.css */
+    box-sizing: border-box;
+    background: var(--color-bg-surface);
 }
 
-th, td {
-    border: 1px solid #334155;
-    padding: 0.9em 1.1em;
-    text-align: left;
+thead {
+    background: var(--color-bg-subtle);
+    font-weight: 600;
 }
 
 th {
-    background: #0f172a;
-    color: #f8fafc;
-    font-weight: 700;
-    border-bottom: 2px solid #3b82f6;
+    padding: 0.875rem 1rem;
+    text-align: left;
+    color: var(--color-text-primary);
+    border-bottom: 2px solid var(--color-primary);
+    font-size: 0.875rem;
     text-transform: uppercase;
-    font-size: 0.85em;
-    letter-spacing: 0.05em;
-}
-
-tr:nth-child(even) {
-    background: #1a2332;
+    letter-spacing: 0.025em;
+    font-weight: 600;
 }
 
 td {
-    color: #d1d5db;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
 }
 
-/* Blockquotes - Subtle cyan accent */
+/* Remove bottom border from last row */
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Hover effect for rows */
+tbody tr:hover {
+    background: rgba(96, 165, 250, 0.05);
+}
+
+/* Subtle striping */
+tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* ============================================================================
+   BLOCKQUOTES
+   ========================================================================== */
+
 blockquote {
-    border-left: 4px solid #3b82f6;
-    background: #1e293b;
-    padding: 1.1em 1.6em;
-    margin: 1.3em 0;
+    border-left: 4px solid var(--color-blockquote-border);
+    background: var(--color-blockquote-bg);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5em 0;
     margin-left: 0;
     margin-right: 0;
     width: 100%;
     max-width: none;
     font-style: italic;
-    color: #cbd5e1;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    color: var(--color-blockquote-text);
+    border-radius: 0 0.25rem 0.25rem 0;
     box-sizing: border-box;
+    line-height: 1.6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 blockquote p {
-    margin: 0.4em 0;
+    margin: 0.5rem 0;
 }
 
-/* Horizontal rules */
+blockquote > :first-child {
+    margin-top: 0;
+}
+
+blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================================
+   HORIZONTAL RULES
+   ========================================================================== */
+
 hr {
     border: none;
-    border-top: 2px solid #1e293b;
-    margin: 2.5em 0;
+    border-top: 2px solid var(--color-border);
+    margin: 2em 0;
 }
 
-/* Images and diagrams - Pop on dark background */
+/* ============================================================================
+   IMAGES & DIAGRAMS
+   ========================================================================== */
+
 img, svg {
     max-width: 100%;
     height: auto;
     display: block;
-    margin: 1.8em auto;
-    background: #0f172a;
-    border-radius: 8px;
-    padding: 1em;
-    box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.1),
+    margin: 1.5em auto;
+    background: var(--color-bg-page);
+    border-radius: 0.5rem;
+    padding: 0.75em;
+    box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.1),
                 0 10px 30px rgba(0, 0, 0, 0.5);
-    /* page-break rules removed - handled by layout.css */
 }
 
 figure {
-    margin: 1.8em 0;
+    margin: 1.5em 0;
     text-align: center;
-    /* page-break rules removed - handled by layout.css */
 }
 
 figcaption {
     font-size: 0.9em;
-    color: #94a3b8;
-    margin-top: 0.7em;
+    color: var(--color-text-muted);
+    margin-top: 0.5em;
     font-style: italic;
 }
 
-/* Table of Contents - Dark styled */
+/* ============================================================================
+   TABLE OF CONTENTS
+   ========================================================================== */
+
 nav#TOC, #TOC {
-    background: #1e293b;
-    padding: 1.8em;
-    border: 2px solid #334155;
-    border-radius: 10px;
-    margin: 2.5em 0;
+    background: var(--color-bg-surface);
+    padding: 1.5em;
+    border: 2px solid var(--color-border);
+    border-radius: 0.5rem;
+    margin: 2em 0;
     page-break-after: always;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 nav#TOC h2, #TOC h2 {
     font-size: 1.5rem;
-    color: #f8fafc;
+    color: var(--color-text-primary);
     margin-top: 0;
-    border-bottom: 2px solid #3b82f6;
-    padding-bottom: 0.6em;
+    border-bottom: 2px solid var(--color-primary);
+    padding-bottom: 0.5em;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -287,40 +426,44 @@ nav#TOC ul, #TOC ul {
 }
 
 nav#TOC li, #TOC li {
-    margin: 0.7em 0;
+    margin: 0.6em 0;
     padding-left: 1.5em;
 }
 
 nav#TOC a, #TOC a {
-    color: #93c5fd;
+    color: var(--color-primary);
     text-decoration: none;
+    transition: color 0.2s ease;
 }
 
 nav#TOC a:hover, #TOC a:hover {
-    color: #bfdbfe;
+    color: var(--color-primary-light);
     text-decoration: underline;
 }
 
-/* Cover page - Dark theme styling */
+/* ============================================================================
+   COVER PAGE STYLING
+   ========================================================================== */
+
 .cover-page-wrapper {
-    background: #0f172a;
-    color: #e5e7eb;
+    background: var(--color-bg-page);
+    color: var(--color-text-secondary);
 }
 
 .cover-title {
-    color: #e0e7ff !important;
+    color: var(--color-primary-muted) !important;
 }
 
 .cover-subtitle {
-    color: #93c5fd !important;
+    color: var(--color-primary-light) !important;
 }
 
 .cover-metadata {
-    color: #9ca3af !important;
+    color: var(--color-text-muted) !important;
 }
 
 .cover-version {
-    color: #6b7280 !important;
+    color: var(--color-text-muted) !important;
 }
 
 .cover-classification {
@@ -328,39 +471,47 @@ nav#TOC a:hover, #TOC a:hover {
     background: rgba(220, 38, 38, 0.15);
     padding: 8px 16px;
     border-radius: 4px;
+    border: 1px solid var(--color-error);
 }
 
-/* TOC - Dark theme styling */
+/* ============================================================================
+   TOC STYLING
+   ========================================================================== */
+
 .toc-wrapper {
-    background: #0f172a;
-    color: #e5e7eb;
+    background: var(--color-bg-page);
+    color: var(--color-text-secondary);
 }
 
 .toc-title {
-    color: #f8fafc !important;
-    border-bottom: 2px solid #334155 !important;
+    color: var(--color-text-primary) !important;
+    border-bottom: 2px solid var(--color-border) !important;
 }
 
 .toc-link {
-    color: #93c5fd !important;
+    color: var(--color-primary) !important;
 }
 
 .toc-link:hover {
-    color: #bfdbfe !important;
+    color: var(--color-primary-light) !important;
 }
 
-/* Print-specific adjustments */
+/* ============================================================================
+   PRINT-SPECIFIC ADJUSTMENTS
+   ========================================================================== */
+
 @media print {
-    /* Keep dark theme even in print for consistency */
     body {
-        background: #0f172a;
-        color: #e5e7eb;
+        background: var(--color-bg-page);
+        color: var(--color-text-secondary);
     }
     
     a {
-        color: #60a5fa;
+        color: var(--color-primary);
+        text-decoration: none;
     }
     
-    /* Page break rules removed - handled by layout.css */
+    pre, blockquote {
+        background: var(--color-bg-surface);
+    }
 }
-
