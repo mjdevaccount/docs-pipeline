@@ -18,12 +18,6 @@ class RendererFactory:
         
         # Auto-select available renderer
         renderer = factory.get_available_renderer()
-        
-        # With fallback chain
-        renderer = factory.get_renderer_with_fallback(
-            preferred=RendererType.PLAYWRIGHT,
-            fallback=RendererType.WEASYPRINT
-        )
     """
     
     # Registry of available renderers (lazy loaded to avoid import errors)
@@ -37,12 +31,6 @@ class RendererFactory:
             return
         
         # Import renderers only when needed
-        try:
-            from .weasyprint_renderer import WeasyPrintRenderer
-            cls._RENDERERS[RendererType.WEASYPRINT] = WeasyPrintRenderer
-        except ImportError:
-            pass
-        
         try:
             from .playwright_wrapper import PlaywrightRenderer
             cls._RENDERERS[RendererType.PLAYWRIGHT] = PlaywrightRenderer
@@ -87,62 +75,25 @@ class RendererFactory:
     @classmethod
     def get_available_renderer(cls, verbose: bool = False) -> Optional[PdfRenderer]:
         """
-        Get first available renderer (Playwright preferred, WeasyPrint fallback).
+        Get available renderer (Playwright).
         
         Args:
             verbose: Print availability status
         
         Returns:
-            First available renderer, or None if none available
+            Playwright renderer, or None if not available
         """
         cls._init_renderers()
         
-        # Preference order: Playwright > WeasyPrint
-        preference = [RendererType.PLAYWRIGHT, RendererType.WEASYPRINT]
-        
-        for renderer_type in preference:
-            try:
-                renderer = cls.get_renderer(renderer_type)
-                if verbose:
-                    print(f"[OK] Using {renderer.get_name()} renderer")
-                return renderer
-            except (ImportError, ValueError):
-                if verbose:
-                    print(f"[SKIP] {renderer_type.value} not available")
-                continue
-        
-        return None
-    
-    @classmethod
-    def get_renderer_with_fallback(
-        cls,
-        preferred: RendererType,
-        fallback: RendererType,
-        verbose: bool = False
-    ) -> PdfRenderer:
-        """
-        Get renderer with fallback if preferred not available.
-        
-        Args:
-            preferred: Preferred renderer type
-            fallback: Fallback renderer type
-            verbose: Print selection status
-        
-        Returns:
-            Renderer instance
-        
-        Raises:
-            ImportError: If neither renderer available
-        """
         try:
-            renderer = cls.get_renderer(preferred)
+            renderer = cls.get_renderer(RendererType.PLAYWRIGHT)
             if verbose:
                 print(f"[OK] Using {renderer.get_name()} renderer")
             return renderer
         except (ImportError, ValueError):
             if verbose:
-                print(f"[WARN] {preferred.value} not available, falling back to {fallback.value}")
-            return cls.get_renderer(fallback)
+                print(f"[ERROR] Playwright renderer not available")
+            return None
     
     @classmethod
     def list_available_renderers(cls) -> List[str]:
@@ -186,4 +137,3 @@ class RendererFactory:
             raise TypeError(f"{renderer_class} must inherit from PdfRenderer")
         
         cls._RENDERERS[renderer_type] = renderer_class
-
