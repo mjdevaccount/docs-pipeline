@@ -2,11 +2,13 @@
 
 # 📄 docs-pipeline
 
-**Production-grade documentation platform: Transform Markdown into publication-quality PDFs with professional styling, intelligent caching, comprehensive testing, glossary management, and multi-format export.**
+**Production-grade documentation platform: Transform Markdown into publication-quality PDFs with professional styling, intelligent caching, comprehensive testing, glossary management, multi-format export, and live dev loop.**
 
 [![Release](https://img.shields.io/github/v/release/mjdevaccount/docs-pipeline?label=latest)](https://github.com/mjdevaccount/docs-pipeline/releases)
 [![Tests](https://img.shields.io/badge/coverage-94%25-success)](docs/TESTING.md)
 [![Build](https://img.shields.io/badge/build-50x%20faster-blueviolet)](#-incremental-builds--50x-faster)
+[![Watch Mode](https://img.shields.io/badge/watch-live%20reload-green)](#-7-watch-mode--live-dev-loop)
+[![Formats](https://img.shields.io/badge/formats-5-blue)](#-multi-format-export)
 [![Docker](https://img.shields.io/badge/docker-ready-blue)](#-docker-setup-recommended---30-seconds)
 [![License](https://img.shields.io/github/license/mjdevaccount/docs-pipeline)](LICENSE)
 
@@ -25,7 +27,7 @@
 | **Slow iterative builds** | ⚡ Incremental builds with smart caching | **50x faster** when editing text (2.5s → 0.05s) |
 | **Invisible test quality** | 📊 Interactive test coverage dashboard | **94%+ coverage** with trend analysis |
 | **Scattered terminology** | 📚 Professional glossary system | **70+ pre-built terms**, auto-highlighting, cross-references |
-| **Single output format** | 📤 Multi-format export (PDF, DOCX, HTML, Markdown) | Export to **4 formats** from same source |
+| **Limited output formats** | 📤 Multi-format export (5 formats) | Export to **PDF, DOCX, HTML, Markdown, EPUB** from same source |
 
 ---
 
@@ -121,21 +123,11 @@ make glossary-report
 - ✅ Index generation with `make glossary-index`
 - ✅ CLI search: `python -m tools.pdf.cli.glossary_commands search glossary.yaml API`
 
-**Example YAML:**
-```yaml
-terms:
-  - word: "API"
-    definition: "Application Programming Interface"
-    synonyms: ["Interface", "Endpoint"]
-    category: "Technical"
-    context: "REST APIs enable..."
-```
-
 ---
 
-### 4. 📤 Multi-Format Export (PDF, DOCX, HTML, Markdown)
+### 4. 📤 Multi-Format Export (5 Formats)
 
-**Export to 4 professional formats from identical source**
+**Export to 5 professional formats from identical source**
 
 ```bash
 # PDF (professional publishing)
@@ -147,20 +139,54 @@ python -m tools.pdf.cli.main doc.md output.docx
 # Web-ready HTML (documentation sites)
 python -m tools.pdf.cli.main doc.md output.html
 
-# Markdown (archival, version control, re-processing) ← NEW
+# Markdown (archival, version control, re-processing)
 python -m tools.pdf.cli.main doc.md output.md --format markdown --toc
+
+# EPUB (e-books for Kindle, iBooks, Kobo) ← NEW
+python -m tools.pdf.cli.main book.md book.epub --format epub --title "My Book" --author "Jane Doe"
 ```
 
-**Markdown Export Features:**
-- ✅ Preserve document structure (headings, lists, tables)
-- ✅ Auto-generate YAML frontmatter
-- ✅ Generate table of contents
-- ✅ Works seamlessly with glossary system
-- ✅ Statistics tracking (headings, code blocks, images, links)
+**Each Format Optimized For:**
+- **PDF** - Print, archival, professional distribution
+- **DOCX** - Client editing, Microsoft compatibility
+- **HTML** - Web publishing, responsive design
+- **Markdown** - Git version control, re-processing
+- **EPUB** - E-readers (Kindle, iBooks, Kobo, etc.)
 
 ---
 
-### 5. 🎨 4 Professional Visual Profiles
+### 5. 🔄 Live Watch Mode (Zero Manual Rebuilds)
+
+**Automatic rebuilds on every save - true dev loop**
+
+```bash
+# Install watchdog (one-time)
+pip install watchdog
+
+# Start watching
+python -m tools.pdf.cli.watch_mode book.md book.pdf
+
+# Now: Edit → Save → Automatic rebuild ✨
+```
+
+**Features:**
+- ✅ Real-time file system monitoring
+- ✅ Smart debouncing (batches rapid changes - 500ms)
+- ✅ Dependency tracking (CSS, images, glossaries)
+- ✅ Multi-file support (config-based)
+- ✅ Comprehensive metrics & statistics
+- ✅ Graceful error handling
+
+**Example output:**
+```
+[WATCH] File changed: book.md
+[BUILD] book.md -> book.pdf
+[OK] Built in 0.38s
+```
+
+---
+
+### 6. 🎨 4 Professional Visual Profiles
 
 **Same Markdown, drastically different output**
 
@@ -181,7 +207,7 @@ python -m tools.pdf.cli.main spec.md output.pdf --profile enterprise-blue     # 
 
 ---
 
-### 6. 🧪 Mermaid Diagram Auto-Rendering
+### 7. 🧪 Mermaid Diagram Auto-Rendering
 
 **Diagrams with automatic theme matching**
 
@@ -280,6 +306,9 @@ python -m tools.pdf.cli.main architecture.md README.md --format markdown --toc
 
 # Word for sharing
 python -m tools.pdf.cli.main architecture.md arch.docx
+
+# EPUB for e-readers
+python -m tools.pdf.cli.main architecture.md arch.epub --format epub
 ```
 
 #### Batch Process with Glossary
@@ -288,6 +317,15 @@ python -m tools.pdf.cli.main --batch *.md \
     --format markdown \
     --glossary glossaries/technical.yaml \
     --threads 4
+```
+
+#### Watch Mode for Live Development
+```bash
+# Terminal 1: Start watch
+python -m tools.pdf.cli.watch_mode book.md book.pdf --profile tech-whitepaper
+
+# Terminal 2: Edit in your editor
+# Save → PDF updates automatically
 ```
 
 #### Validate Everything with Makefile
@@ -364,13 +402,16 @@ docs-pipeline/
 ├── 🐳 Docker (all dependencies containerized)
 ├── 📦 tools/
 │   ├── pdf/
-│   │   ├── cli/main.py                ← Primary CLI entry point
+│   │   ├── cli/
+│   │   │   ├── main.py                ← Primary CLI entry point
+│   │   │   └── watch_mode.py          ← Live dev loop (Priority 7)
 │   │   ├── core/
-│   │   │   ├── converter.py           ← Markdown to PDF/DOCX/HTML/MD
+│   │   │   ├── converter.py           ← Markdown to 5 formats
 │   │   │   ├── build_cache.py         ← Incremental builds (Priority 3)
 │   │   │   ├── incremental_processor.py ← Smart change detection
 │   │   │   ├── glossary_processor.py  ← Term highlighting (Priority 4)
 │   │   │   ├── markdown_exporter.py   ← Markdown export (Priority 5)
+│   │   │   ├── epub_generator.py      ← EPUB generation (Priority 6)
 │   │   │   └── utils.py               ← Helpers
 │   │   ├── diagram_rendering/         ← Mermaid + caching
 │   │   ├── renderers/
@@ -394,7 +435,7 @@ docs-pipeline/
 ├── tests/                            ← 140KB comprehensive suite
 ├── Makefile                          ← Automation (20+ targets)
 ├── web_demo.py                       ← Flask interface (port 8080)
-├── TODAY_ACCOMPLISHMENTS.md          ← Session summary
+├── PROGRESS_SUMMARY.md               ← All 7 priorities documented
 └── [documentation files]
 ```
 
@@ -404,6 +445,24 @@ docs-pipeline/
 - ✅ Production-tested (94%+ coverage, real tests not aspirational)
 - ✅ Professional packaging (industry-standard Python structure)
 - ✅ Docker-first (zero-config deployment)
+
+---
+
+## 🎯 Seven Priorities Delivered (December 12, 2025)
+
+✅ **7 Major Features** | **4,350 lines** | **15.5 hours** | **0 breaking changes**
+
+| Priority | Feature | Impact | Status |
+|----------|---------|--------|--------|
+| **1** | Cache Metrics | Performance visibility | ✅ Complete |
+| **2** | Test Dashboard | 94%+ coverage with trends | ✅ Complete |
+| **3** | Incremental Builds | 50x faster rebuilds | ✅ Complete |
+| **4** | Glossary Integration | 70+ pre-built terms | ✅ Complete |
+| **5** | Markdown Export | 5-format publishing | ✅ Complete |
+| **6** | EPUB Export | E-reader support | ✅ Complete |
+| **7** | Watch Mode | Live dev loop | ✅ Complete |
+
+**[See detailed breakdown →](PROGRESS_SUMMARY.md)**
 
 ---
 
@@ -422,11 +481,12 @@ python -m tools.pdf.cli.main document.md output.pdf [--flags]
 ### Core Commands
 
 ```bash
-# Single file (4 formats supported)
+# Single file (5 formats supported)
 python -m tools.pdf.cli.main doc.md output.pdf                    # PDF
 python -m tools.pdf.cli.main doc.md output.docx                   # Word
 python -m tools.pdf.cli.main doc.md output.html                   # HTML
 python -m tools.pdf.cli.main doc.md output.md --format markdown   # Markdown
+python -m tools.pdf.cli.main doc.md output.epub --format epub     # EPUB
 
 # With options
 python -m tools.pdf.cli.main doc.md output.pdf \
@@ -435,6 +495,9 @@ python -m tools.pdf.cli.main doc.md output.pdf \
     --toc \
     --glossary glossary.yaml \
     --verbose
+
+# Live watch mode (auto-rebuild on save)
+python -m tools.pdf.cli.watch_mode doc.md output.pdf
 
 # Batch processing
 python -m tools.pdf.cli.main --batch *.md --format markdown --threads 4
@@ -482,7 +545,8 @@ make ci                      # Full CI pipeline (lint + test + validate)
 | **Incremental Builds** | ✅ 50x faster | ❌ No | ⚠️ Slow | ❌ No |
 | **Test Coverage** | ✅ 94% (real) | ❌ None | ⚠️ Moderate | ⚠️ Moderate |
 | **Glossary System** | ✅ 70+ terms | ❌ None | ⚠️ Sphinx glossary | ❌ None |
-| **Multi-format Export** | ✅ 4 formats | ✅ Universal | ❌ PDF-focused | ❌ HTML-focused |
+| **Multi-format Export** | ✅ 5 formats | ✅ Universal | ❌ PDF-focused | ❌ HTML-focused |
+| **Watch Mode** | ✅ Live reload | ❌ No | ⚠️ Manual | ❌ No |
 | **Visual Profiles** | ✅ 4 ready | ❌ Write from scratch | ❌ Complex LaTeX | ⚠️ HTML themes only |
 | **Docker Ready** | ✅ Official | ❌ Manual | ⚠️ Community | ⚠️ Community |
 | **Dependency Hell** | ✅ Solved | ❌ Complex | ❌ Very complex | ⚠️ Node + Python |
@@ -494,9 +558,10 @@ make ci                      # Full CI pipeline (lint + test + validate)
 - [**Getting Started**](docs/getting-started.md) - Step-by-step guide
 - [**PDF Generation Guide**](tools/pdf/README.md) - Layout, diagrams, profiles
 - [**Glossary Usage**](GLOSSARY_USAGE_GUIDE.md) - 10,000+ words on term management
+- [**Watch Mode Quick Start**](WATCH_MODE_QUICK_START.md) - Live editing workflow
 - [**Testing**](docs/TESTING.md) - Test suite overview and extending
 - [**Architecture**](tools/pdf/REORGANIZATION_SUMMARY.md) - System design
-- [**Today's Accomplishments**](TODAY_ACCOMPLISHMENTS.md) - Five priorities delivered
+- [**Progress Summary**](PROGRESS_SUMMARY.md) - All 7 priorities documented
 
 ---
 
@@ -526,23 +591,8 @@ make ci                      # Full CI pipeline (lint + test + validate)
 | **Client Proposals** | enterprise-blue | `--profile enterprise-blue --cover --glossary business.yaml` |
 | **Architecture Docs** | minimalist | `--profile minimalist` |
 | **GitHub/Version Control** | markdown | `--format markdown --toc` |
+| **E-book Publishing** | epub | `--format epub --title "My Book" --author "Jane Doe"` |
 | **Portfolio Pieces** | dark-pro | `--profile dark-pro --generate-cover` |
-
----
-
-## 🎬 Recent Accomplishments (December 12, 2025)
-
-✅ **5 Major Priorities Delivered** in 12.5 hours:
-
-1. **Priority 1: Cache Metrics** (100 lines) - Hit ratio tracking, time saved reporting
-2. **Priority 2: Test Dashboard** (760 lines) - 94%+ coverage with interactive dashboard
-3. **Priority 3: Incremental Builds** (700 lines) - **50x faster** for unchanged documents
-4. **Priority 4: Glossary Integration** (1,000 lines) - 70+ pre-built terms, auto-highlighting
-5. **Priority 5: Markdown Export** (800 lines) - Export to markdown with TOC & metadata
-
-**Total:** 3,360+ lines | 7 new files | 20,000+ words documentation | 0 breaking changes
-
-[See full breakdown →](TODAY_ACCOMPLISHMENTS.md)
 
 ---
 
@@ -564,6 +614,7 @@ Building production-grade tools for technical documentation, AI agents, and dist
 - [Pandoc](https://pandoc.org) - Markdown processing
 - [Mermaid](https://mermaid.js.org) - Diagram syntax
 - [WeasyPrint](https://weasyprint.org) - CSS to PDF
+- [watchdog](https://github.com/gorakhargosh/watchdog) - File system events
 
 ---
 
