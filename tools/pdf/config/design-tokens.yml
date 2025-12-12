@@ -1,0 +1,822 @@
+# Design Token System - Central Source of Truth
+#
+# This file contains all design tokens for the docs-pipeline theming system.
+# Extracted from 5 separate CSS files (dark-pro, enterprise-blue, etc.)
+# Now managed as a single source of truth.
+#
+# Structure:
+# - global: Tokens used across all themes (fonts, spacing, etc.)
+# - themes: Per-theme token sets (colors, mermaid vars, etc.)
+#
+# Usage:
+# 1. Validation: Pydantic validators check colors, contrast, accessibility
+# 2. Generation: Theme manager generates CSS from these tokens
+# 3. Documentation: Auto-generate token reference from this file
+
+---
+version: "1.0"
+title: "Design Tokens - docs-pipeline"
+description: "Centralized design system for all document themes"
+last_updated: "2025-12-12"
+
+# ============================================================================
+# GLOBAL TOKENS - Used across all themes
+# ============================================================================
+
+global:
+  # Typography
+  fonts:
+    body: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+    mono: "JetBrains Mono, 'SF Mono', Monaco, Menlo, 'Courier New', monospace"
+    ui: "Inter, sans-serif"
+  
+  # Font sizes
+  font_sizes:
+    xs: "11px"
+    sm: "12px"
+    base: "14px"
+    md: "14px"
+    lg: "16px"
+    xl: "18px"
+    2xl: "20px"
+    3xl: "24px"
+    4xl: "30px"
+  
+  # Font weights
+  font_weights:
+    normal: 400
+    medium: 500
+    semibold: 550
+    bold: 600
+  
+  # Spacing scale
+  spacing:
+    0: "0"
+    1: "1px"
+    2: "2px"
+    4: "4px"
+    6: "6px"
+    8: "8px"
+    10: "10px"
+    12: "12px"
+    16: "16px"
+    20: "20px"
+    24: "24px"
+    32: "32px"
+  
+  # Border radius
+  radius:
+    sm: "4px"
+    base: "6px"
+    md: "8px"
+    lg: "10px"
+    full: "12px"
+  
+  # Line height
+  line_height:
+    tight: 1.2
+    normal: 1.5
+    relaxed: 1.7
+  
+  # Letter spacing
+  letter_spacing:
+    tight: "-0.01em"
+    normal: "0em"
+    wide: "0.05em"
+  
+  # Shadows
+  shadows:
+    xs: "0 1px 2px rgba(0, 0, 0, 0.02)"
+    sm: "0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)"
+    md: "0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02)"
+    lg: "0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02)"
+    inset: "inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.03)"
+  
+  # Animations
+  duration:
+    fast: "150ms"
+    normal: "250ms"
+    slow: "500ms"
+  
+  easing:
+    standard: "cubic-bezier(0.16, 1, 0.3, 1)"
+    ease_in: "cubic-bezier(0.4, 0, 1, 1)"
+    ease_out: "cubic-bezier(0, 0, 0.2, 1)"
+
+# ============================================================================
+# THEMES - Per-theme token sets
+# ============================================================================
+
+themes:
+  # ========================================================================
+  # DARK PRO - Modern dark theme for on-screen viewing
+  # ========================================================================
+  dark-pro:
+    metadata:
+      name: "Dark Pro"
+      description: "Modern dark theme for on-screen viewing. High contrast, dramatic presentation, neon accents."
+      mode: "dark"
+      author: "docs-pipeline"
+      version: "1.0"
+    
+    colors:
+      # Primary palette - Blue bright for dark background
+      primary:
+        base: "#60a5fa"              # Blue-400
+        light: "#93c5fd"             # Blue-300
+        dark: "#3b82f6"              # Blue-500
+        muted: "#bfdbfe"             # Blue-200
+      
+      # Text colors - Light for dark background
+      text:
+        primary: "#f3f4f6"           # Gray-100
+        secondary: "#d1d5db"         # Gray-300
+        muted: "#9ca3af"             # Gray-400
+      
+      # Background & borders - Dark theme
+      background:
+        page: "#0f172a"              # Slate-950
+        surface: "#1e293b"           # Slate-800
+        subtle: "#1a2332"            # Slate-800 variant
+      
+      border:
+        primary: "#334155"            # Slate-700
+        subtle: "#2d3748"             # Slate-700 variant
+      
+      # Status colors
+      status:
+        success: "#10b981"            # Emerald-500
+        warning: "#f59e0b"            # Amber-500
+        error: "#ef4444"              # Red-500
+        info: "#06b6d4"               # Cyan-500
+      
+      # Component colors
+      component:
+        code_bg: "#111827"            # Gray-900
+        code_text: "#e5e7eb"          # Gray-100
+        pre_bg: "#020617"             # Slate-950
+        pre_text: "#e2e8f0"           # Slate-100
+        blockquote_border: "#60a5fa"  # Blue-400
+        blockquote_bg: "#1e3a4c"      # Dark blue-tinted
+        blockquote_text: "#93c5fd"    # Blue-300
+      
+      # Syntax highlighting
+      syntax:
+        keyword: "#f472b6"            # Pink
+        string: "#86efac"             # Light green
+        comment: "#c4b5fd"            # Light purple
+        number: "#fed7aa"             # Light orange
+        function: "#67e8f9"           # Cyan
+        tag: "#fca5a5"                # Light red
+        attribute: "#d8b4fe"          # Light purple
+      
+      # Callout boxes
+      callout:
+        note:
+          bg: "#164e63"               # Dark cyan
+          border: "#06b6d4"           # Cyan
+          text: "#cffafe"             # Light cyan
+        tip:
+          bg: "#143f32"               # Dark green
+          border: "#10b981"           # Green
+          text: "#d1fae5"             # Light green
+        warning:
+          bg: "#57340d"               # Dark amber
+          border: "#f59e0b"           # Amber
+          text: "#fef3c7"             # Light amber
+        danger:
+          bg: "#7f1d1d"               # Dark red
+          border: "#ef4444"           # Red
+          text: "#fee2e2"             # Light red
+        info:
+          bg: "#134e4a"               # Dark teal
+          border: "#14b8a6"           # Teal
+          text: "#ccfbf1"             # Light teal
+    
+    # Mermaid diagram theming (60+ variables)
+    mermaid:
+      # Primary diagram colors
+      primary_color: "#0f172a"         # Very dark blue - node background
+      primary_text_color: "#f3f4f6"    # Light gray - node text
+      primary_border_color: "#60a5fa"  # Blue - node border
+      line_color: "#60a5fa"            # Blue - connection lines
+      second_bkg_color: "#1e293b"      # Dark slate - alternate nodes
+      tertiary_color: "#334155"        # Medium slate - tertiary elements
+      
+      # Text styling
+      tertiary_text_color: "#f3f4f6"   # Light gray - tertiary text
+      text_color: "#f3f4f6"            # Light gray - main text
+      title_color: "#93c5fd"           # Light blue - titles
+      label_text_color: "#f3f4f6"      # Light gray - labels
+      
+      # Border and stroke styles
+      border_color: "#60a5fa"          # Blue - borders
+      tertiary_border_color: "#334155" # Slate - secondary borders
+      note_bkg_color: "#164e63"        # Dark cyan - note background
+      note_border_color: "#06b6d4"     # Cyan - note border
+      note_text_color: "#cffafe"       # Light cyan - note text
+      
+      # Graph/diagram specific
+      grid_color: "#334155"            # Slate - grid lines
+      marker_accent: "#60a5fa"         # Blue - marker accent
+      
+      # Flowchart specific
+      flowchart_bkg_color: "#1e293b"   # Slate - flowchart background
+      flowchart_border_color: "#60a5fa" # Blue - flowchart border
+      node_text_color: "#f3f4f6"       # Light gray - node text
+      
+      # Sequence diagram
+      actor_bkg: "#0f172a"             # Very dark - actor background
+      actor_border: "#60a5fa"          # Blue - actor border
+      actor_text_color: "#f3f4f6"      # Light - actor text
+      actor_line_color: "#60a5fa"      # Blue - actor line
+      message_label_background: "#1e293b" # Dark - message label bg
+      label_box_bkg_color: "#1e293b"   # Dark - label box background
+      label_box_border_color: "#60a5fa" # Blue - label box border
+      
+      # State diagram
+      state_bkg: "#1e293b"             # Dark - state background
+      state_border: "#60a5fa"          # Blue - state border
+      state_text_color: "#f3f4f6"      # Light - state text
+      transition_text_color: "#d1d5db" # Gray - transition text
+      
+      # Class diagram
+      classifier_bkg_color: "#0f172a"  # Very dark - classifier bg
+      classifier_border: "#60a5fa"     # Blue - classifier border
+      class_text_color: "#f3f4f6"      # Light - class text
+      
+      # ER diagram
+      entity_bkg: "#1e293b"            # Dark - entity background
+      entity_border: "#60a5fa"         # Blue - entity border
+      entity_text_color: "#f3f4f6"     # Light - entity text
+      relationship_text_color: "#d1d5db" # Gray - relationship text
+      
+      # Gantt chart
+      task_bkg: "#60a5fa"              # Blue - task background
+      task_border: "#3b82f6"           # Darker blue - task border
+      task_text_color: "#0f172a"       # Very dark - task text
+      done_task_bkg: "#10b981"         # Green - done task
+      done_task_border: "#059669"      # Darker green - done border
+      crit: "#ef4444"                  # Red - critical tasks
+      crit_border: "#dc2626"           # Darker red - critical border
+      crit_text_color: "#0f172a"       # Very dark - critical text
+      today_line_color: "#f59e0b"      # Amber - today line
+      section_bkg_color: "#1e293b"     # Dark - section background
+      section_bkg_color_2: "#334155"   # Medium - section background 2
+      
+      # Pie chart
+      pie_stroke_color: "#ffffff"      # White - pie stroke
+      
+      # Git graph
+      git_inv: "#0f172a"               # Very dark - git inverse
+      git_bkg: "#1e293b"               # Dark - git background
+      git_border: "#60a5fa"            # Blue - git border
+      git_label: "#f3f4f6"             # Light - git label
+      commit_text_color: "#0f172a"     # Very dark - commit text
+      branch_text_color: "#f3f4f6"     # Light - branch text
+      tag_text_color: "#f3f4f6"        # Light - tag text
+  
+  # ========================================================================
+  # ENTERPRISE BLUE - Corporate-friendly, conservative styling
+  # ========================================================================
+  enterprise-blue:
+    metadata:
+      name: "Enterprise Blue"
+      description: "Corporate-friendly, conservative styling. Blue and gray color scheme, structured layout."
+      mode: "light"
+      author: "docs-pipeline"
+      version: "1.0"
+    
+    colors:
+      primary:
+        base: "#2563eb"               # Blue-600
+        light: "#3b82f6"              # Blue-500
+        dark: "#1e40af"               # Blue-700
+        muted: "#dbeafe"              # Blue-100
+      
+      text:
+        primary: "#1e293b"            # Slate-900
+        secondary: "#475569"          # Slate-600
+        muted: "#94a3b8"              # Slate-400
+      
+      background:
+        page: "#ffffff"                # White
+        surface: "#f8fafc"            # Slate-50
+        subtle: "#f1f5f9"             # Slate-100
+      
+      border:
+        primary: "#e2e8f0"            # Slate-200
+        subtle: "#cbd5e1"             # Slate-300
+      
+      status:
+        success: "#16a34a"            # Green-600
+        warning: "#d97706"            # Amber-600
+        error: "#dc2626"              # Red-600
+        info: "#0891b2"               # Cyan-600
+      
+      component:
+        code_bg: "#f8fafc"            # Slate-50
+        code_text: "#1e293b"          # Slate-900
+        pre_bg: "#0f172a"             # Slate-950
+        pre_text: "#e2e8f0"           # Slate-100
+        blockquote_border: "#2563eb"  # Blue-600
+        blockquote_bg: "#eff6ff"      # Blue-50
+        blockquote_text: "#1e3a8a"    # Blue-900
+      
+      syntax:
+        keyword: "#9333ea"            # Purple-600
+        string: "#15803d"             # Green-700
+        comment: "#6b7280"            # Gray-500
+        number: "#ea580c"             # Orange-600
+        function: "#0891b2"           # Cyan-600
+        tag: "#dc2626"                # Red-600
+        attribute: "#7c3aed"          # Violet-600
+      
+      callout:
+        note:
+          bg: "#ecf0ff"               # Blue-50
+          border: "#2563eb"           # Blue-600
+          text: "#1e3a8a"             # Blue-900
+        tip:
+          bg: "#f0fdf4"               # Green-50
+          border: "#16a34a"           # Green-600
+          text: "#15803d"             # Green-700
+        warning:
+          bg: "#fffbeb"               # Amber-50
+          border: "#d97706"           # Amber-600
+          text: "#92400e"             # Amber-900
+        danger:
+          bg: "#fef2f2"               # Red-50
+          border: "#dc2626"           # Red-600
+          text: "#7f1d1d"             # Red-900
+        info:
+          bg: "#ecfdfd"               # Cyan-50
+          border: "#0891b2"           # Cyan-600
+          text: "#164e63"             # Cyan-900
+    
+    # Mermaid for enterprise-blue
+    mermaid:
+      primary_color: "#ffffff"
+      primary_text_color: "#1e293b"
+      primary_border_color: "#2563eb"
+      line_color: "#2563eb"
+      second_bkg_color: "#f8fafc"
+      tertiary_color: "#e2e8f0"
+      tertiary_text_color: "#1e293b"
+      text_color: "#1e293b"
+      title_color: "#1e40af"
+      label_text_color: "#1e293b"
+      border_color: "#2563eb"
+      tertiary_border_color: "#e2e8f0"
+      note_bkg_color: "#eff6ff"
+      note_border_color: "#2563eb"
+      note_text_color: "#1e3a8a"
+      grid_color: "#cbd5e1"
+      marker_accent: "#2563eb"
+      flowchart_bkg_color: "#f8fafc"
+      flowchart_border_color: "#2563eb"
+      node_text_color: "#1e293b"
+      actor_bkg: "#ffffff"
+      actor_border: "#2563eb"
+      actor_text_color: "#1e293b"
+      actor_line_color: "#2563eb"
+      message_label_background: "#f8fafc"
+      label_box_bkg_color: "#f8fafc"
+      label_box_border_color: "#2563eb"
+      state_bkg: "#f8fafc"
+      state_border: "#2563eb"
+      state_text_color: "#1e293b"
+      transition_text_color: "#475569"
+      classifier_bkg_color: "#ffffff"
+      classifier_border: "#2563eb"
+      class_text_color: "#1e293b"
+      entity_bkg: "#f8fafc"
+      entity_border: "#2563eb"
+      entity_text_color: "#1e293b"
+      relationship_text_color: "#475569"
+      task_bkg: "#2563eb"
+      task_border: "#1e40af"
+      task_text_color: "#ffffff"
+      done_task_bkg: "#16a34a"
+      done_task_border: "#15803d"
+      crit: "#dc2626"
+      crit_border: "#b91c1c"
+      crit_text_color: "#ffffff"
+      today_line_color: "#d97706"
+      section_bkg_color: "#f8fafc"
+      section_bkg_color_2: "#e2e8f0"
+      git_inv: "#ffffff"
+      git_bkg: "#f8fafc"
+      git_border: "#2563eb"
+      git_label: "#1e293b"
+      commit_text_color: "#ffffff"
+      branch_text_color: "#1e293b"
+      tag_text_color: "#1e293b"
+  
+  # ========================================================================
+  # TECH WHITEPAPER - Professional engineering documentation
+  # ========================================================================
+  tech-whitepaper:
+    metadata:
+      name: "Tech Whitepaper"
+      description: "Professional engineering documentation. Clean, blue accents, generous margins."
+      mode: "light"
+      author: "docs-pipeline"
+      version: "1.0"
+    
+    colors:
+      primary:
+        base: "#0369a1"               # Cyan-600
+        light: "#06b6d4"              # Cyan-500
+        dark: "#0c4a6e"               # Cyan-900
+        muted: "#cffafe"              # Cyan-100
+      
+      text:
+        primary: "#0f172a"            # Slate-950
+        secondary: "#475569"          # Slate-600
+        muted: "#94a3b8"              # Slate-400
+      
+      background:
+        page: "#ffffff"                # White
+        surface: "#f8fafc"            # Slate-50
+        subtle: "#f1f5f9"             # Slate-100
+      
+      border:
+        primary: "#e2e8f0"            # Slate-200
+        subtle: "#cbd5e1"             # Slate-300
+      
+      status:
+        success: "#059669"            # Emerald-600
+        warning: "#ca8a04"            # Yellow-600
+        error: "#dc2626"              # Red-600
+        info: "#0369a1"               # Cyan-600
+      
+      component:
+        code_bg: "#f1f5f9"            # Slate-100
+        code_text: "#0f172a"          # Slate-950
+        pre_bg: "#1e293b"             # Slate-800
+        pre_text: "#f8fafc"           # Slate-50
+        blockquote_border: "#0369a1"  # Cyan-600
+        blockquote_bg: "#ecfdfd"      # Cyan-50
+        blockquote_text: "#0c4a6e"    # Cyan-900
+      
+      syntax:
+        keyword: "#7c3aed"            # Violet-600
+        string: "#059669"             # Emerald-600
+        comment: "#64748b"            # Slate-500
+        number: "#d97706"             # Amber-600
+        function: "#0369a1"           # Cyan-600
+        tag: "#dc2626"                # Red-600
+        attribute: "#7c3aed"          # Violet-600
+      
+      callout:
+        note:
+          bg: "#ecfdfd"               # Cyan-50
+          border: "#0369a1"           # Cyan-600
+          text: "#0c4a6e"             # Cyan-900
+        tip:
+          bg: "#f0fdf4"               # Green-50
+          border: "#059669"           # Green-600
+          text: "#14532d"             # Green-900
+        warning:
+          bg: "#fefce8"               # Yellow-50
+          border: "#ca8a04"           # Yellow-600
+          text: "#451a03"             # Yellow-900
+        danger:
+          bg: "#fef2f2"               # Red-50
+          border: "#dc2626"           # Red-600
+          text: "#7f1d1d"             # Red-900
+        info:
+          bg: "#ecfdfd"               # Cyan-50
+          border: "#0369a1"           # Cyan-600
+          text: "#164e63"             # Cyan-900
+    
+    mermaid:
+      primary_color: "#ffffff"
+      primary_text_color: "#0f172a"
+      primary_border_color: "#0369a1"
+      line_color: "#0369a1"
+      second_bkg_color: "#f8fafc"
+      tertiary_color: "#e2e8f0"
+      tertiary_text_color: "#0f172a"
+      text_color: "#0f172a"
+      title_color: "#0c4a6e"
+      label_text_color: "#0f172a"
+      border_color: "#0369a1"
+      tertiary_border_color: "#cbd5e1"
+      note_bkg_color: "#ecfdfd"
+      note_border_color: "#0369a1"
+      note_text_color: "#0c4a6e"
+      grid_color: "#cbd5e1"
+      marker_accent: "#0369a1"
+      flowchart_bkg_color: "#f8fafc"
+      flowchart_border_color: "#0369a1"
+      node_text_color: "#0f172a"
+      actor_bkg: "#ffffff"
+      actor_border: "#0369a1"
+      actor_text_color: "#0f172a"
+      actor_line_color: "#0369a1"
+      message_label_background: "#f8fafc"
+      label_box_bkg_color: "#f8fafc"
+      label_box_border_color: "#0369a1"
+      state_bkg: "#f8fafc"
+      state_border: "#0369a1"
+      state_text_color: "#0f172a"
+      transition_text_color: "#475569"
+      classifier_bkg_color: "#ffffff"
+      classifier_border: "#0369a1"
+      class_text_color: "#0f172a"
+      entity_bkg: "#f8fafc"
+      entity_border: "#0369a1"
+      entity_text_color: "#0f172a"
+      relationship_text_color: "#475569"
+      task_bkg: "#0369a1"
+      task_border: "#0c4a6e"
+      task_text_color: "#ffffff"
+      done_task_bkg: "#059669"
+      done_task_border: "#047857"
+      crit: "#dc2626"
+      crit_border: "#b91c1c"
+      crit_text_color: "#ffffff"
+      today_line_color: "#ca8a04"
+      section_bkg_color: "#f8fafc"
+      section_bkg_color_2: "#f1f5f9"
+      git_inv: "#ffffff"
+      git_bkg: "#f8fafc"
+      git_border: "#0369a1"
+      git_label: "#0f172a"
+      commit_text_color: "#ffffff"
+      branch_text_color: "#0f172a"
+      tag_text_color: "#0f172a"
+  
+  # ========================================================================
+  # MINIMALIST - Clean, spacious design with maximum whitespace
+  # ========================================================================
+  minimalist:
+    metadata:
+      name: "Minimalist"
+      description: "Clean, spacious design with maximum whitespace. Thin typography, subtle colors."
+      mode: "light"
+      author: "docs-pipeline"
+      version: "1.0"
+    
+    colors:
+      primary:
+        base: "#6366f1"               # Indigo-500
+        light: "#818cf8"              # Indigo-400
+        dark: "#4f46e5"               # Indigo-600
+        muted: "#e0e7ff"              # Indigo-100
+      
+      text:
+        primary: "#1f2937"            # Gray-800
+        secondary: "#6b7280"          # Gray-500
+        muted: "#d1d5db"              # Gray-300
+      
+      background:
+        page: "#ffffff"                # White
+        surface: "#ffffff"            # White
+        subtle: "#f9fafb"             # Gray-50
+      
+      border:
+        primary: "#f3f4f6"            # Gray-100
+        subtle: "#e5e7eb"             # Gray-200
+      
+      status:
+        success: "#10b981"            # Emerald-500
+        warning: "#f59e0b"            # Amber-500
+        error: "#ef4444"              # Red-500
+        info: "#06b6d4"               # Cyan-500
+      
+      component:
+        code_bg: "#f9fafb"            # Gray-50
+        code_text: "#1f2937"          # Gray-800
+        pre_bg: "#1f2937"             # Gray-800
+        pre_text: "#ffffff"           # White
+        blockquote_border: "#6366f1"  # Indigo-500
+        blockquote_bg: "#f5f3ff"      # Indigo-50
+        blockquote_text: "#1f2937"    # Gray-800
+      
+      syntax:
+        keyword: "#a855f7"            # Purple-500
+        string: "#10b981"             # Emerald-500
+        comment: "#9ca3af"            # Gray-400
+        number: "#f59e0b"             # Amber-500
+        function: "#06b6d4"           # Cyan-500
+        tag: "#ef4444"                # Red-500
+        attribute: "#a855f7"          # Purple-500
+      
+      callout:
+        note:
+          bg: "#f0f9ff"               # Blue-50
+          border: "#06b6d4"           # Cyan-500
+          text: "#164e63"             # Cyan-900
+        tip:
+          bg: "#f0fdf4"               # Green-50
+          border: "#10b981"           # Green-500
+          text: "#15803d"             # Green-700
+        warning:
+          bg: "#fffbeb"               # Amber-50
+          border: "#f59e0b"           # Amber-500
+          text: "#92400e"             # Amber-900
+        danger:
+          bg: "#fef2f2"               # Red-50
+          border: "#ef4444"           # Red-500
+          text: "#7f1d1d"             # Red-900
+        info:
+          bg: "#f0f9ff"               # Blue-50
+          border: "#0284c7"           # Blue-500
+          text: "#082f49"             # Blue-950
+    
+    mermaid:
+      primary_color: "#ffffff"
+      primary_text_color: "#1f2937"
+      primary_border_color: "#6366f1"
+      line_color: "#6366f1"
+      second_bkg_color: "#f9fafb"
+      tertiary_color: "#f3f4f6"
+      tertiary_text_color: "#1f2937"
+      text_color: "#1f2937"
+      title_color: "#4f46e5"
+      label_text_color: "#1f2937"
+      border_color: "#6366f1"
+      tertiary_border_color: "#e5e7eb"
+      note_bkg_color: "#f5f3ff"
+      note_border_color: "#6366f1"
+      note_text_color: "#3730a3"
+      grid_color: "#e5e7eb"
+      marker_accent: "#6366f1"
+      flowchart_bkg_color: "#ffffff"
+      flowchart_border_color: "#6366f1"
+      node_text_color: "#1f2937"
+      actor_bkg: "#ffffff"
+      actor_border: "#6366f1"
+      actor_text_color: "#1f2937"
+      actor_line_color: "#6366f1"
+      message_label_background: "#ffffff"
+      label_box_bkg_color: "#ffffff"
+      label_box_border_color: "#6366f1"
+      state_bkg: "#f9fafb"
+      state_border: "#6366f1"
+      state_text_color: "#1f2937"
+      transition_text_color: "#6b7280"
+      classifier_bkg_color: "#ffffff"
+      classifier_border: "#6366f1"
+      class_text_color: "#1f2937"
+      entity_bkg: "#f9fafb"
+      entity_border: "#6366f1"
+      entity_text_color: "#1f2937"
+      relationship_text_color: "#6b7280"
+      task_bkg: "#6366f1"
+      task_border: "#4f46e5"
+      task_text_color: "#ffffff"
+      done_task_bkg: "#10b981"
+      done_task_border: "#059669"
+      crit: "#ef4444"
+      crit_border: "#dc2626"
+      crit_text_color: "#ffffff"
+      today_line_color: "#f59e0b"
+      section_bkg_color: "#ffffff"
+      section_bkg_color_2: "#f9fafb"
+      git_inv: "#ffffff"
+      git_bkg: "#f9fafb"
+      git_border: "#6366f1"
+      git_label: "#1f2937"
+      commit_text_color: "#ffffff"
+      branch_text_color: "#1f2937"
+      tag_text_color: "#1f2937"
+  
+  # ========================================================================
+  # PLAYWRIGHT - Playwright branding
+  # ========================================================================
+  playwright:
+    metadata:
+      name: "Playwright"
+      description: "Playwright-inspired theme with green accents and modern design."
+      mode: "light"
+      author: "docs-pipeline"
+      version: "1.0"
+    
+    colors:
+      primary:
+        base: "#2dd4bf"               # Teal-400
+        light: "#5eead4"              # Teal-300
+        dark: "#0d9488"               # Teal-600
+        muted: "#ccfbf1"              # Teal-100
+      
+      text:
+        primary: "#0f172a"            # Slate-950
+        secondary: "#475569"          # Slate-600
+        muted: "#94a3b8"              # Slate-400
+      
+      background:
+        page: "#ffffff"                # White
+        surface: "#f8fafc"            # Slate-50
+        subtle: "#f1f5f9"             # Slate-100
+      
+      border:
+        primary: "#e2e8f0"            # Slate-200
+        subtle: "#cbd5e1"             # Slate-300
+      
+      status:
+        success: "#10b981"            # Green-500
+        warning: "#f59e0b"            # Amber-500
+        error: "#ef4444"              # Red-500
+        info: "#2dd4bf"               # Teal-400
+      
+      component:
+        code_bg: "#f1f5f9"            # Slate-100
+        code_text: "#0f172a"          # Slate-950
+        pre_bg: "#1e293b"             # Slate-800
+        pre_text: "#e2e8f0"           # Slate-100
+        blockquote_border: "#2dd4bf"  # Teal-400
+        blockquote_bg: "#f0fdfa"      # Teal-50
+        blockquote_text: "#0d7377"    # Teal-800
+      
+      syntax:
+        keyword: "#e879f9"            # Pink-400
+        string: "#22c55e"             # Green-500
+        comment: "#78716c"            # Stone-500
+        number: "#f59e0b"             # Amber-500
+        function: "#06b6d4"           # Cyan-500
+        tag: "#ef4444"                # Red-500
+        attribute: "#a78bfa"          # Purple-400
+      
+      callout:
+        note:
+          bg: "#f0fdfa"               # Teal-50
+          border: "#2dd4bf"           # Teal-400
+          text: "#0d4f4f"             # Teal-900
+        tip:
+          bg: "#dcfce7"               # Green-100
+          border: "#22c55e"           # Green-500
+          text: "#15803d"             # Green-700
+        warning:
+          bg: "#fef3c7"               # Amber-100
+          border: "#f59e0b"           # Amber-500
+          text: "#92400e"             # Amber-900
+        danger:
+          bg: "#fee2e2"               # Red-100
+          border: "#ef4444"           # Red-500
+          text: "#7f1d1d"             # Red-900
+        info:
+          bg: "#cffafe"               # Cyan-100
+          border: "#06b6d4"           # Cyan-500
+          text: "#164e63"             # Cyan-900
+    
+    mermaid:
+      primary_color: "#ffffff"
+      primary_text_color: "#0f172a"
+      primary_border_color: "#2dd4bf"
+      line_color: "#2dd4bf"
+      second_bkg_color: "#f8fafc"
+      tertiary_color: "#e2e8f0"
+      tertiary_text_color: "#0f172a"
+      text_color: "#0f172a"
+      title_color: "#0d9488"
+      label_text_color: "#0f172a"
+      border_color: "#2dd4bf"
+      tertiary_border_color: "#cbd5e1"
+      note_bkg_color: "#f0fdfa"
+      note_border_color: "#2dd4bf"
+      note_text_color: "#0d7377"
+      grid_color: "#cbd5e1"
+      marker_accent: "#2dd4bf"
+      flowchart_bkg_color: "#f8fafc"
+      flowchart_border_color: "#2dd4bf"
+      node_text_color: "#0f172a"
+      actor_bkg: "#ffffff"
+      actor_border: "#2dd4bf"
+      actor_text_color: "#0f172a"
+      actor_line_color: "#2dd4bf"
+      message_label_background: "#f8fafc"
+      label_box_bkg_color: "#f8fafc"
+      label_box_border_color: "#2dd4bf"
+      state_bkg: "#f8fafc"
+      state_border: "#2dd4bf"
+      state_text_color: "#0f172a"
+      transition_text_color: "#475569"
+      classifier_bkg_color: "#ffffff"
+      classifier_border: "#2dd4bf"
+      class_text_color: "#0f172a"
+      entity_bkg: "#f8fafc"
+      entity_border: "#2dd4bf"
+      entity_text_color: "#0f172a"
+      relationship_text_color: "#475569"
+      task_bkg: "#2dd4bf"
+      task_border: "#0d9488"
+      task_text_color: "#ffffff"
+      done_task_bkg: "#10b981"
+      done_task_border: "#059669"
+      crit: "#ef4444"
+      crit_border: "#dc2626"
+      crit_text_color: "#ffffff"
+      today_line_color: "#f59e0b"
+      section_bkg_color: "#f8fafc"
+      section_bkg_color_2: "#f1f5f9"
+      git_inv: "#ffffff"
+      git_bkg: "#f8fafc"
+      git_border: "#2dd4bf"
+      git_label: "#0f172a"
+      commit_text_color: "#ffffff"
+      branch_text_color: "#0f172a"
+      tag_text_color: "#0f172a"
