@@ -52,8 +52,7 @@ help: ## Show this help message
 test: ## Run all tests with coverage
 	@echo "$(BLUE)Running all tests with coverage...$(NC)"
 	$(PYTHON) -m pytest $(TEST_DIR) -v --cov=$(PROJECT_DIR) --cov-report=html --cov-report=term-missing
-
-@echo "$(GREEN)✓ Tests complete$(NC)"
+	@echo "$(GREEN)✓ Tests complete$(NC)"
 
 test-unit: ## Run unit tests only
 	@echo "$(BLUE)Running unit tests...$(NC)"

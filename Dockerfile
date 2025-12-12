@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     pandoc \
     curl \
     git \
+    make \
     # WeasyPrint dependencies (Pango, Fontconfig, Cairo)
     libpango-1.0-0 \
     libpangoft2-1.0-0 \

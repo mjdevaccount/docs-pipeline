@@ -9,6 +9,12 @@ pyyaml>=6.0
 colorama>=0.4.6  # Optional: colored terminal output
 tqdm>=4.65.0  # Optional: progress bars for batch processing
 
+# Testing Dependencies
+pytest>=7.4.0  # Test framework
+pytest-cov>=4.1.0  # Coverage plugin
+pytest-xdist>=3.3.0  # Parallel test execution
+pytest-watch>=4.2.0  # Watch mode for development
+
 # Note: System dependencies required (see SETUP.md):
 # - Pandoc (https://pandoc.org/installing.html)
 #   Windows: choco install pandoc

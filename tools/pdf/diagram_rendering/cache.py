@@ -102,7 +102,6 @@ class DiagramCache:
             self.cache_dir = Path(cache_dir)
         else:
             # Default: pdf-tools/output/pdf-diagrams/
-            from pathlib import Path
             self.cache_dir = Path(__file__).parent.parent / 'output' / 'pdf-diagrams'
         
         # Ensure cache directory exists
