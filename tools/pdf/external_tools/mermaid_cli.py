@@ -8,6 +8,10 @@ import platform
 from .base import ExternalTool, CommandResult
 
 
+# Puppeteer config for Docker/Linux (--no-sandbox required when running as root)
+PUPPETEER_CONFIG = Path(__file__).parent.parent / "config" / "puppeteer-config.json"
+
+
 class MermaidCLI(ExternalTool):
     """
     Mermaid CLI (mmdc) wrapper for rendering diagrams.
@@ -85,6 +89,10 @@ class MermaidCLI(ExternalTool):
         if scale != 1.0:
             args.extend(['-s', str(scale)])
         
+        # Add puppeteer config for Linux/Docker (--no-sandbox required as root)
+        if platform.system().lower() != 'windows' and PUPPETEER_CONFIG.exists():
+            args.extend(['-p', str(PUPPETEER_CONFIG)])
+        
         return self.execute(args, check=False, shell=(platform.system().lower() == 'windows'))
     
     def render_to_png(
@@ -120,6 +128,10 @@ class MermaidCLI(ExternalTool):
         
         if theme_config and theme_config.exists():
             args.extend(['-c', str(theme_config)])
+        
+        # Add puppeteer config for Linux/Docker (--no-sandbox required as root)
+        if platform.system().lower() != 'windows' and PUPPETEER_CONFIG.exists():
+            args.extend(['-p', str(PUPPETEER_CONFIG)])
         
         return self.execute(args, check=False, shell=(platform.system().lower() == 'windows'))
     
