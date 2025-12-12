@@ -4,6 +4,9 @@ CSS Generator from Design Tokens
 Generates production-ready CSS files from design-tokens.yml.
 Creates complete theme stylesheets with all variables, selectors, and styles.
 
+Mermaid text colors are now properly linked from design-tokens.yml
+mermaid.text_color for each theme.
+
 Usage:
     generator = CSSGenerator('tools/pdf/config/design-tokens.yml')
     css = generator.generate_css('dark-pro')
@@ -36,6 +39,7 @@ class CSSGenerator:
     - Complete base styles (typography, components, etc.)
     - Print-specific adjustments
     - Media query support
+    - Mermaid diagram styling with theme colors
     """
     
     def __init__(self, tokens_file: str):
@@ -95,6 +99,7 @@ class CSSGenerator:
         lines.append("")  # Blank line
         
         # Mermaid tokens (60+)
+        # IMPORTANT: These are linked from design-tokens.yml mermaid section per theme
         for key, value in sorted(theme.mermaid.items()):
             css_var = f"--mermaid-{key}".replace('_', '-')
             # Handle special values (quoted strings, numbers)
@@ -144,14 +149,12 @@ class CSSGenerator:
     
     def _generate_base_styles(self, theme: CSSTheme) -> str:
         """Generate base HTML/body styles."""
-        mode_class = "dark" if theme.mode == "dark" else "light"
-        
-        return f"""
+        return """
 /* ============================================================================
    BASE TYPOGRAPHY & LAYOUT
    ========================================================================== */
 
-html {{
+html {
     background: var(--color-background-page) !important;
     font-family: var(--fonts-body);
     font-size: var(--font-sizes-base);
@@ -160,9 +163,9 @@ html {{
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: 'liga' 1, 'calt' 1;
-}}
+}
 
-body {{
+body {
     background: var(--color-background-page) !important;
     color: var(--color-text-secondary);
     margin: 0;
@@ -171,81 +174,81 @@ body {{
     max-width: none;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-}}
+}
 
 /* ============================================================================
    HEADINGS
    ========================================================================== */
 
-h1, h2, h3, h4, h5, h6 {{
+h1, h2, h3, h4, h5, h6 {
     font-weight: var(--font-weights-semibold);
     color: var(--color-text-primary);
     margin-top: 1.5em;
     margin-bottom: 0.5em;
     line-height: var(--line-height-tight);
     letter-spacing: var(--letter-spacing-tight);
-}}
+}
 
-h1 {{
+h1 {
     font-size: var(--font-sizes-4xl);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);
     border-bottom: 2px solid var(--color-border-primary);
     padding-bottom: 0.4em;
     margin-top: 0.5em;
-}}
+}
 
-h2 {{
+h2 {
     font-size: var(--font-sizes-3xl);
     border-bottom: 1px solid var(--color-border-primary);
     padding-bottom: 0.3em;
-}}
+}
 
-h3 {{
+h3 {
     font-size: var(--font-sizes-2xl);
-}}
+}
 
-h4 {{
+h4 {
     font-size: var(--font-sizes-xl);
-}}
+}
 
-h5 {{
+h5 {
     font-size: var(--font-sizes-lg);
-}}
+}
 
-h6 {{
+h6 {
     font-size: var(--font-sizes-md);
-}}
+}
 
 /* ============================================================================
    PARAGRAPHS & LINKS
    ========================================================================== */
 
-p {{
+p {
     margin: 0.5em 0 1em 0;
     color: var(--color-text-secondary);
     text-align: left;
     orphans: 3;
     widows: 3;
-}}
+}
 
-a {{
+a {
     color: var(--color-primary-base);
     text-decoration: none;
     font-weight: var(--font-weights-medium);
     transition: color 250ms cubic-bezier(0.16, 1, 0.3, 1);
-}}
+}
 
-a:hover {{
+a:hover {
     color: var(--color-primary-light);
     text-decoration: underline;
-}}
+}
 
 /* ============================================================================
    CODE & PREFORMATTED TEXT
    ========================================================================== */
 
-code {{
+code {
     font-family: var(--fonts-mono);
     font-size: 0.88em;
     background: var(--color-component-code-bg);
@@ -254,9 +257,9 @@ code {{
     border-radius: var(--radius-sm);
     border: 1px solid var(--color-border-primary);
     font-variant-numeric: tabular-nums;
-}}
+}
 
-pre {{
+pre {
     background: var(--color-component-pre-bg);
     border-left: 4px solid var(--color-primary-base);
     border: 1px solid var(--color-border-primary);
@@ -267,9 +270,9 @@ pre {{
     box-shadow: var(--shadows-lg);
     width: 100%;
     max-width: none;
-}}
+}
 
-pre code {{
+pre code {
     background: transparent;
     color: var(--color-component-pre-text);
     padding: 0;
@@ -277,45 +280,45 @@ pre code {{
     font-size: 0.875rem;
     line-height: 1.6;
     font-variant-ligatures: common-ligatures contextual;
-}}
+}
 
 /* ============================================================================
    LISTS
    ========================================================================== */
 
-ul, ol {{
+ul, ol {
     margin: 1rem 0;
     padding-left: 1.75rem;
     width: 100%;
     max-width: none;
-}}
+}
 
-li {{
+li {
     margin: 0.5rem 0;
     line-height: 1.6;
     color: var(--color-text-secondary);
-}}
+}
 
-ul ul, ol ol, ul ol, ol ul {{
+ul ul, ol ol, ul ol, ol ul {
     margin: 0.5rem 0;
     padding-left: 1.5rem;
-}}
+}
 
-ul {{
+ul {
     list-style-type: '\u2022';
-}}
+}
 
-li::marker {{
+li::marker {
     color: var(--color-primary-base);
     font-weight: var(--font-weights-medium);
     margin-right: 0.75em;
-}}
+}
 
 /* ============================================================================
    TABLES
    ========================================================================== */
 
-table {{
+table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -325,14 +328,14 @@ table {{
     margin: 1.5em 0;
     background: var(--color-background-surface);
     box-sizing: border-box;
-}}
+}
 
-thead {{
+thead {
     background: var(--color-background-subtle);
     font-weight: var(--font-weights-bold);
-}}
+}
 
-th {{
+th {
     padding: 0.875rem 1rem;
     text-align: left;
     color: var(--color-text-primary);
@@ -340,31 +343,31 @@ th {{
     font-size: 0.875rem;
     text-transform: uppercase;
     letter-spacing: 0.025em;
-}}
+}
 
-td {{
+td {
     padding: 0.875rem 1rem;
     border-bottom: 1px solid var(--color-border-primary);
     color: var(--color-text-secondary);
-}}
+}
 
-tbody tr:last-child td {{
+tbody tr:last-child td {
     border-bottom: none;
-}}
+}
 
-tbody tr:hover {{
+tbody tr:hover {
     background: rgba(96, 165, 250, 0.05);
-}}
+}
 
-tbody tr:nth-child(odd) {{
+tbody tr:nth-child(odd) {
     background: rgba(255, 255, 255, 0.02);
-}}
+}
 
 /* ============================================================================
    BLOCKQUOTES
    ========================================================================== */
 
-blockquote {{
+blockquote {
     border-left: 4px solid var(--color-component-blockquote-border);
     background: var(--color-component-blockquote-bg);
     padding: 1.25rem 1.5rem;
@@ -377,55 +380,64 @@ blockquote {{
     box-sizing: border-box;
     line-height: 1.6;
     box-shadow: var(--shadows-md);
-}}
+}
 
-blockquote p {{
+blockquote p {
     margin: 0.5rem 0;
-}}
+}
 
-blockquote > :first-child {{
+blockquote > :first-child {
     margin-top: 0;
-}}
+}
 
-blockquote > :last-child {{
+blockquote > :last-child {
     margin-bottom: 0;
-}}
+}
 
 /* ============================================================================
    PRINT-SPECIFIC ADJUSTMENTS
    ========================================================================== */
 
-@media print {{
-    body {{
+@media print {
+    body {
         background: var(--color-background-page);
         color: var(--color-text-secondary);
-    }}
+    }
     
-    a {{
+    a {
         color: var(--color-primary-base);
         text-decoration: none;
-    }}
+    }
     
-    pre, blockquote {{
+    pre, blockquote {
         background: var(--color-background-surface);
-    }}
+    }
     
-    svg {{
+    svg {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
-    }}
+    }
     
-    svg text, svg tspan {{
-        fill: var(--color-text-primary) !important;
-    }}
-}}
+    svg text, svg tspan {
+        fill: var(--mermaid-text-color) !important;
+    }
+}
 """.strip()
     
     def _generate_mermaid_styles(self) -> str:
-        """Generate Mermaid diagram styling."""
+        """Generate Mermaid diagram styling.
+        
+        IMPORTANT: Text colors are linked from design-tokens.yml mermaid.text_color
+        via the --mermaid-text-color CSS variable set in :root
+        """
         return """
 /* ============================================================================
    MERMAID DIAGRAM STYLING
+   
+   NOTE: Mermaid text colors are driven by design tokens:
+   - --mermaid-text-color (from design-tokens.yml mermaid.text_color)
+   - --mermaid-title-color (from design-tokens.yml mermaid.title_color)
+   - All colors defined per-theme in design-tokens.yml
    ========================================================================== */
 
 svg {
@@ -434,59 +446,71 @@ svg {
     color-adjust: exact !important;
 }
 
+/* Apply theme text color to all SVG text elements */
 svg text {
-    fill: var(--color-text-primary) !important;
-    color: var(--color-text-primary) !important;
+    fill: var(--mermaid-text-color) !important;
+    color: var(--mermaid-text-color) !important;
     font-family: var(--fonts-body) !important;
     font-size: 0.9rem !important;
     font-weight: var(--font-weights-medium) !important;
 }
 
+/* Specific text classes inherit from parent SVG text color */
 svg text.label,
 svg text.nodeLabel,
+svg text.edgeLabel,
 svg text.title,
 svg text.sectionTitle,
 svg text.mainTitle,
 svg tspan {
-    fill: var(--color-text-primary) !important;
-    color: var(--color-text-primary) !important;
+    fill: var(--mermaid-text-color) !important;
+    color: var(--mermaid-text-color) !important;
 }
 
+/* Mermaid container text elements */
 .mermaid text,
 .mermaid tspan,
 .mermaid foreignObject text {
-    fill: var(--color-text-primary) !important;
-    color: var(--color-text-primary) !important;
+    fill: var(--mermaid-text-color) !important;
+    color: var(--mermaid-text-color) !important;
 }
 
 .mermaid .nodeLabel,
 .mermaid .label,
 .mermaid .edgeLabel,
-.mermaid .flowchart-label {
-    fill: var(--color-text-primary) !important;
+.mermaid .flowchart-label,
+.mermaid .taskText,
+.mermaid .taskTextOutsideRight,
+.mermaid .taskTextOutsideLeft {
+    fill: var(--mermaid-text-color) !important;
 }
 
+/* Diagram element borders use primary color */
 svg rect[class*="diagram"],
 svg circle[class*="diagram"],
 svg ellipse[class*="diagram"],
 svg path[class*="diagram"] {
-    stroke: var(--color-primary-base) !important;
+    stroke: var(--mermaid-primary-border-color) !important;
     stroke-width: 2px !important;
 }
 
+/* Chart and axis labels */
 svg .axis-label,
 svg .legend-label,
 svg .chart-label,
 svg .data-label,
+svg .tick,
 svg [text-anchor] {
-    fill: var(--color-text-primary) !important;
+    fill: var(--mermaid-text-color) !important;
 }
 
+/* Catch-all for any SVG text without explicit fill */
 svg text:not([fill]),
 svg tspan:not([fill]) {
-    fill: var(--color-text-primary) !important;
+    fill: var(--mermaid-text-color) !important;
 }
 
+/* Override hard-coded fill colors to use theme color */
 svg text[fill="white"],
 svg text[fill="#fff"],
 svg text[fill="#ffffff"],
@@ -495,7 +519,7 @@ svg text[fill="#e0e0e0"],
 svg tspan[fill="white"],
 svg tspan[fill="#fff"],
 svg tspan[fill="#ffffff"] {
-    fill: var(--color-text-primary) !important;
+    fill: var(--mermaid-text-color) !important;
 }
 """.strip()
     
