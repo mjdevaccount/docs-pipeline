@@ -1,4 +1,4 @@
-.PHONY: help test test-unit test-integration test-all test-verbose test-coverage test-fast coverage-report coverage-dashboard lint format clean install watch
+.PHONY: help test test-unit test-integration test-all test-verbose test-fast clean install watch glossary-validate glossary-index glossary-report glossary-check
 
 # Default target
 .DEFAULT_GOAL := help
@@ -9,6 +9,7 @@ PIP := pip3
 PROJECT_DIR := tools/pdf
 TEST_DIR := $(PROJECT_DIR)/tests
 COVERAGE_DIR := htmlcov
+GLOSSARY_DIR := glossaries
 
 # Colors for output
 BLUE := \033[0;36m
@@ -33,6 +34,12 @@ help: ## Show this help message
 	@echo "  make coverage-dashboard - Generate interactive dashboard"
 	@echo "  make coverage-show     - Open coverage report in browser"
 	@echo ""
+	@echo "$(GREEN)Glossary$(NC)"
+	@echo "  make glossary-validate - Validate glossary files"
+	@echo "  make glossary-index    - Generate glossary index markdown"
+	@echo "  make glossary-report   - Show glossary statistics"
+	@echo "  make glossary-check    - Full glossary check"
+	@echo ""
 	@echo "$(GREEN)Quality$(NC)"
 	@echo "  make lint              - Run linting (flake8, mypy)"
 	@echo "  make format            - Auto-format code (black, isort)"
@@ -47,6 +54,7 @@ help: ## Show this help message
 	@echo "  make test                          # Full test suite"
 	@echo "  make test-unit test-coverage       # Quick unit tests + coverage"
 	@echo "  make test-fast coverage-dashboard  # Parallel tests + dashboard"
+	@echo "  make glossary-validate             # Check glossary integrity"
 
 # Test targets
 test: ## Run all tests with coverage
@@ -120,6 +128,41 @@ coverage-clean: ## Clean coverage data
 	rm -rf htmlcov .coverage coverage.json coverage.xml $(TEST_DIR)/.coverage
 	@echo "$(GREEN)✓ Coverage data cleaned$(NC)"
 
+# Glossary targets
+glossary-validate: ## Validate glossary files
+	@echo "$(BLUE)Validating glossaries...$(NC)"
+	@for glossary in $(GLOSSARY_DIR)/*.yaml $(GLOSSARY_DIR)/*.json; do \
+		if [ -f "$$glossary" ]; then \
+			echo "  Checking $$glossary..."; \
+			$(PYTHON) -m $(PROJECT_DIR).cli.glossary_commands validate "$$glossary" || exit 1; \
+		fi; \
+	done
+	@echo "$(GREEN)✓ All glossaries valid$(NC)"
+
+glossary-index: ## Generate glossary index markdown files
+	@echo "$(BLUE)Generating glossary indexes...$(NC)"
+	@mkdir -p $(GLOSSARY_DIR)/indexes
+	@for glossary in $(GLOSSARY_DIR)/*.yaml $(GLOSSARY_DIR)/*.json; do \
+		if [ -f "$$glossary" ]; then \
+			name=$$(basename "$$glossary" | cut -d. -f1); \
+			echo "  Indexing $$name..."; \
+			$(PYTHON) -m $(PROJECT_DIR).cli.glossary_commands index "$$glossary" --output "$(GLOSSARY_DIR)/indexes/$${name}_index.md"; \
+		fi; \
+	done
+	@echo "$(GREEN)✓ Glossary indexes generated$(NC)"
+
+glossary-report: ## Generate glossary statistics report
+	@echo "$(BLUE)Glossary Statistics Report$(NC)"
+	@for glossary in $(GLOSSARY_DIR)/*.yaml $(GLOSSARY_DIR)/*.json; do \
+		if [ -f "$$glossary" ]; then \
+			echo ""; \
+			$(PYTHON) -m $(PROJECT_DIR).cli.glossary_commands report "$$glossary" --verbose; \
+		fi; \
+	done
+
+glossary-check: glossary-validate glossary-report ## Full glossary check
+	@echo "$(GREEN)✓ All glossary checks passed$(NC)"
+
 # Quality targets
 lint: ## Run linting checks
 	@echo "$(BLUE)Running linters...$(NC)"
@@ -173,6 +216,7 @@ debug-env: ## Show test environment info
 	@echo "  Project: $(PROJECT_DIR)"
 	@echo "  Tests: $(TEST_DIR)"
 	@echo "  Coverage: $(COVERAGE_DIR)"
+	@echo "  Glossaries: $(GLOSSARY_DIR)"
 
 # CI targets
 .PHONY: ci-test
@@ -182,7 +226,7 @@ ci-test: ## Run tests in CI mode
 	@echo "$(GREEN)✓ CI tests complete$(NC)"
 
 .PHONY: ci-check
-ci-check: lint ci-test ## Run full CI check
+ci-check: lint ci-test glossary-check ## Run full CI check
 	@echo "$(GREEN)✓ CI check passed$(NC)"
 
 # Watch mode
@@ -196,10 +240,10 @@ watch: ## Watch for changes and run tests
 quick: test-unit coverage-report ## Quick: unit tests + coverage
 
 .PHONY: full
-full: check coverage-dashboard ## Full: lint + tests + dashboard
+full: check coverage-dashboard glossary-check ## Full: lint + tests + dashboard + glossary
 
 .PHONY: ci
 ci: ci-check coverage-dashboard ## CI: full checks + coverage
 
 # Phony declarations (prevent make from treating them as files)
-.PHONY: help test test-unit test-integration test-all test-verbose test-fast test-smoke test-watch test-coverage coverage-report coverage-dashboard coverage-show coverage-clean lint format check install install-dev clean clean-all quick full ci
+.PHONY: help test test-unit test-integration test-all test-verbose test-fast test-smoke test-watch test-coverage coverage-report coverage-dashboard coverage-show coverage-clean lint format check install install-dev clean clean-all quick full ci glossary-validate glossary-index glossary-report glossary-check
