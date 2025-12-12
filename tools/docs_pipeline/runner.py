@@ -1,7 +1,13 @@
+"""
+Documentation Pipeline Runner
+==============================
+
+Runs the documentation pipeline defined by YAML config files.
+Now uses direct library imports instead of subprocess calls for better performance.
+"""
 from __future__ import annotations
 
 import os
-import subprocess
 from pathlib import Path
 from typing import Any, Dict
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -10,6 +16,9 @@ import yaml
 
 from .config import PipelineConfig, WorkspaceConfig, DiagramConfig, DocumentConfig
 from tools.structurizr.structurizr_tools import export_workspace
+
+# Import PDF converters directly (no subprocess!)
+from tools.pdf.core import markdown_to_pdf, markdown_to_docx, markdown_to_html
 
 
 def _load_pipeline_config(path: Path) -> PipelineConfig:
@@ -80,54 +89,51 @@ def _load_pipeline_config(path: Path) -> PipelineConfig:
     return PipelineConfig(workspaces=workspaces)
 
 
-def _run_convert(
+def _convert_document(
     md_file: Path,
-    output: Path | None,
-    fmt: str | None,
+    output: Path,
+    fmt: str,
     profile: str | None,
     metadata: Dict[str, Any] | None = None,
 ) -> bool:
     """
-    Invoke convert_final.py CLI for a single document.
-
-    This keeps the docs pipeline thin and lets convert_final own all
-    conversion concerns (frontmatter, diagrams, CSS, etc.).
+    Convert a document using direct library call (no subprocess).
     
     Args:
         md_file: Input markdown file
         output: Output file path
         fmt: Output format (pdf, docx, html)
         profile: Document profile name
-        metadata: Metadata dict to pass as CLI arguments (overrides frontmatter)
-    """
-    script = Path(__file__).parent.parent / "pdf" / "convert_final.py"
-    cmd = ["python", str(script), str(md_file)]
-    if output is not None:
-        cmd.append(str(output))
-    if fmt:
-        cmd.extend(["--format", fmt])
-    if profile:
-        cmd.extend(["--profile", profile])
+        metadata: Metadata dict (overrides frontmatter)
     
-    # Add metadata arguments if provided
+    Returns:
+        True if conversion succeeded
+    """
+    # Build kwargs
+    kwargs = {
+        'profile': profile,
+        'verbose': True,
+    }
+    
+    # Add custom metadata if provided
     if metadata:
-        if metadata.get("title"):
-            cmd.extend(["--title", str(metadata["title"])])
-        if metadata.get("author"):
-            cmd.extend(["--author", str(metadata["author"])])
-        if metadata.get("organization"):
-            cmd.extend(["--organization", str(metadata["organization"])])
-        if metadata.get("date"):
-            cmd.extend(["--date", str(metadata["date"])])
-        if metadata.get("version"):
-            cmd.extend(["--doc-version", str(metadata["version"])])
-        if metadata.get("classification"):
-            cmd.extend(["--classification", str(metadata["classification"])])
-        if metadata.get("type"):
-            cmd.extend(["--doc-type", str(metadata["type"])])
-
-    result = subprocess.run(cmd, text=True)
-    return result.returncode == 0
+        kwargs['custom_metadata'] = metadata
+    
+    # Select converter based on format
+    fmt = fmt or 'pdf'
+    try:
+        if fmt == 'pdf':
+            return markdown_to_pdf(str(md_file), str(output), **kwargs)
+        elif fmt == 'docx':
+            return markdown_to_docx(str(md_file), str(output), **kwargs)
+        elif fmt == 'html':
+            return markdown_to_html(str(md_file), str(output), **kwargs)
+        else:
+            print(f"[ERROR] Unknown format: {fmt}")
+            return False
+    except Exception as e:
+        print(f"[ERROR] Conversion failed: {e}")
+        return False
 
 
 def run_pipeline(config_path: Path, dry_run: bool = False, parallel: bool = False) -> bool:
@@ -239,10 +245,10 @@ def run_pipeline(config_path: Path, dry_run: bool = False, parallel: bool = Fals
                             merged_metadata.update(doc.metadata)
                         
                         future = executor.submit(
-                            _run_convert,
+                            _convert_document,
                             md_file,
                             output,
-                            doc.format,
+                            doc.format or 'pdf',
                             doc.profile,
                             merged_metadata if merged_metadata else None,
                         )
@@ -278,10 +284,10 @@ def run_pipeline(config_path: Path, dry_run: bool = False, parallel: bool = Fals
                             print(f"      [DRY RUN] Metadata: {merged_metadata}")
                         ok = True
                     else:
-                        ok = _run_convert(
+                        ok = _convert_document(
                             md_file=md_file,
                             output=output,
-                            fmt=doc.format,
+                            fmt=doc.format or 'pdf',
                             profile=doc.profile,
                             metadata=merged_metadata if merged_metadata else None,
                         )
@@ -297,5 +303,3 @@ def run_pipeline(config_path: Path, dry_run: bool = False, parallel: bool = Fals
         print("[ERROR] Pipeline failed with errors")
 
     return all_ok
-
-

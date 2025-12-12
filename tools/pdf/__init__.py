@@ -1,21 +1,68 @@
-"""PDF generation tool for markdown documents with Mermaid diagrams."""
+"""
+PDF Generation Tool
+====================
 
-__version__ = "1.0.0"
+Convert Markdown documents to professional PDFs, DOCX, and HTML.
 
-# Expose main functions for programmatic use
-# Use lazy import ONLY to avoid RuntimeWarning when running as module
-# (python -m tools.pdf.convert_final)
-# Never import convert_final at module level to prevent the warning
-__all__ = ["markdown_to_pdf"]
+Library Usage:
+    from tools.pdf import markdown_to_pdf, markdown_to_docx, markdown_to_html
+    
+    # Simple conversion
+    markdown_to_pdf('input.md', 'output.pdf')
+    
+    # With options
+    markdown_to_pdf(
+        'input.md',
+        'output.pdf',
+        profile='tech-whitepaper',
+        renderer='playwright',
+        generate_cover=True,
+        generate_toc=True
+    )
 
-def __getattr__(name):
-    """Lazy import to avoid RuntimeWarning when running as module."""
-    if name == "markdown_to_pdf":
-        try:
-            from .convert_final import markdown_to_pdf
-            return markdown_to_pdf
-        except ImportError:
-            # CLI-only mode if dependencies not installed
-            raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+CLI Usage:
+    python -m tools.pdf.cli.main input.md output.pdf
+    python -m tools.pdf.cli.main input.md --profile tech-whitepaper --cover --toc
 
+Architecture:
+    tools/pdf/
+    ├── core/           # Library functions (markdown_to_pdf, etc.)
+    ├── cli/            # Command-line interface
+    ├── config/         # Style profiles
+    ├── pipeline.py     # Pipeline orchestration
+    └── renderers/      # PDF renderers (WeasyPrint, Playwright)
+"""
+
+__version__ = "2.1.0"
+
+# =============================================================================
+# PUBLIC API - Import from core module
+# =============================================================================
+
+from .core import (
+    # Converters
+    markdown_to_pdf,
+    markdown_to_docx,
+    markdown_to_html,
+    batch_convert,
+    # Utilities
+    extract_metadata,
+    get_cache_dir,
+    check_dependencies,
+    validate_markdown,
+)
+
+__all__ = [
+    # Version
+    '__version__',
+    # Core converters
+    'markdown_to_pdf',
+    'markdown_to_docx',
+    'markdown_to_html',
+    'batch_convert',
+    # Utilities
+    'extract_metadata',
+    'get_cache_dir',
+    'check_dependencies',
+    'validate_markdown',
+]

@@ -13,8 +13,8 @@ if exist "%PDF_DIR%\venv-pdf\Scripts\activate.bat" (
     call "%PDF_DIR%\venv-pdf\Scripts\activate.bat"
 )
 
-REM Call convert_final.py with all arguments
-python "%PDF_DIR%\convert_final.py" %*
+REM Call CLI main.py with all arguments
+python "%SCRIPT_DIR%main.py" %*
 
 endlocal
 
