@@ -3,7 +3,7 @@
 
 # Python Dependencies
 playwright>=1.45.0  # FAANG-grade PDF renderer (perfect SVG rendering including foreignObject, better CSS support)
-PyPDF2>=3.0.0      # PDF metadata embedding (latest stable: 3.0.1)
+pypdf>=3.0.0       # PDF metadata embedding (PyPDF2 successor, actively maintained)
 pyyaml>=6.0
 colorama>=0.4.6    # Optional: colored terminal output
 tqdm>=4.65.0       # Optional: progress bars for batch processing

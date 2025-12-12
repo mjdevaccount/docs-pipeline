@@ -9,14 +9,10 @@ from datetime import datetime
 from typing import List, Optional
 
 try:
-    from PyPDF2 import PdfReader, PdfWriter
+    from pypdf import PdfReader, PdfWriter
     PYPDF2_AVAILABLE = True
 except ImportError:
-    try:
-        from pypdf import PdfReader, PdfWriter
-        PYPDF2_AVAILABLE = True
-    except ImportError:
-        PYPDF2_AVAILABLE = False
+    PYPDF2_AVAILABLE = False
 
 try:
     from colorama import Fore, Style, init as colorama_init
@@ -64,12 +60,12 @@ async def extract_headings_from_page(page) -> List[dict]:
 
 def add_bookmarks_to_pdf(pdf_file: str, headings: List[dict], verbose: bool = False) -> bool:
     """
-    Add navigation bookmarks to PDF using PyPDF2/pypdf.
+    Add navigation bookmarks to PDF using pypdf.
     Creates hierarchical bookmark structure from headings.
     """
     if not PYPDF2_AVAILABLE:
         if verbose:
-            print(f"{WARN} PyPDF2/pypdf not installed, skipping bookmarks")
+            print(f"{WARN} pypdf not installed, skipping bookmarks")
         return False
     
     try:
@@ -143,11 +139,11 @@ def embed_metadata(
     verbose: bool = False
 ) -> bool:
     """
-    Embed metadata in PDF using PyPDF2.
+    Embed metadata in PDF using pypdf.
     """
     if not PYPDF2_AVAILABLE:
         if verbose:
-            print(f"{WARN} PyPDF2 not installed, skipping metadata embedding")
+            print(f"{WARN} pypdf not installed, skipping metadata embedding")
         return False
     
     try:
