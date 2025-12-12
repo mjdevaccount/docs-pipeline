@@ -1,4 +1,7 @@
 ---
+description: Python coding standards, type hints, docstrings, Pydantic models, Jinja2 templates, and error handling patterns
+filePatterns:
+  - "**/*.py"
 alwaysApply: false
 ---
 

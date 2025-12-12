@@ -1,4 +1,12 @@
 ---
+description: Testing standards, pytest fixtures, coverage requirements, and quality assurance patterns
+filePatterns:
+  - "tests/**/*.py"
+  - "**/test_*.py"
+  - "**/*_test.py"
+  - "**/conftest.py"
+  - "**/pytest.ini"
+  - "**/pyproject.toml"
 alwaysApply: false
 ---
 # Testing Standards & Quality Assurance

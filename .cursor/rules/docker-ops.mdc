@@ -1,3 +1,12 @@
+---
+description: Docker best practices, multi-stage builds, container operations, CI/CD integration, and registry operations
+filePatterns:
+  - "**/Dockerfile*"
+  - "**/docker-compose*.yml"
+  - "**/docker-compose*.yaml"
+  - "**/.dockerignore"
+alwaysApply: false
+---
 # Docker Operations & Build Optimization
 
 ## Dockerfile Best Practices

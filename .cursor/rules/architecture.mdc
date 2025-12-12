@@ -1,4 +1,12 @@
 ---
+description: System architecture, Docker stack, data flow, and core components of docs-pipeline
+filePatterns:
+  - "**/*.py"
+  - "**/Dockerfile*"
+  - "**/docker-compose*.yml"
+  - "**/docker-compose*.yaml"
+  - "**/pipeline*.yaml"
+  - "**/pipeline*.yml"
 alwaysApply: false
 ---
 

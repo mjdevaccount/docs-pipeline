@@ -1,4 +1,10 @@
 ---
+description: CLI commands, workflows, flags, exit codes, and common usage patterns for docs-pipeline
+filePatterns:
+  - "**/cli.py"
+  - "**/cli/**/*.py"
+  - "**/main.py"
+  - "**/*_cli*.py"
 alwaysApply: false
 ---
 # CLI Workflows & Commands

@@ -1,3 +1,11 @@
+---
+description: PDF generation CLI usage, caching system, performance optimization, and common patterns for tools.pdf
+filePatterns:
+  - "tools/pdf/**/*.py"
+  - "tools/pdf/**/*.md"
+  - "**/*.md"
+alwaysApply: false
+---
 # PDF Generation CLI & Caching
 
 ## Primary CLI Command
