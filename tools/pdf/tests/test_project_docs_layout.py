@@ -20,7 +20,7 @@ import yaml  # type: ignore
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from convert_final import markdown_to_html  # type: ignore
+from tools.pdf.core import markdown_to_html  # type: ignore
 from profiles import get_profile  # type: ignore
 from playwright_pdf.config import PdfGenerationConfig  # type: ignore
 from playwright_pdf.pipeline import generate_pdf  # type: ignore
@@ -292,7 +292,7 @@ async def _run_single_doc_test(doc_cfg: LayoutDocConfig) -> bool:
     # Extract metadata from markdown frontmatter
     import sys
     sys.path.insert(0, str(repo_root))
-    from tools.pdf.convert_final import extract_metadata
+    from tools.pdf.core import extract_metadata
     md_content = md_file.read_text(encoding='utf-8')
     metadata, _ = extract_metadata(md_content)
     

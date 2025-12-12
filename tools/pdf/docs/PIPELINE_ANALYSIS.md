@@ -406,7 +406,7 @@ def add_bookmarks(pdf_path, headings):
 ### 1. KaTeX Math Rendering
 
 ```python
-# Add to convert_final.py
+# Add to cli/main.py
 import subprocess
 import re
 

@@ -52,7 +52,7 @@ Works out-of-the-box with sensible defaults. Customize only what matters.
 | **Setup Time** | ⚡ 30 seconds (Docker) | ⚠️ 15-30 min (manual deps) | ⚠️ 30-60 min (complex config) | ⚠️ 20-30 min (plugins) |
 | **Mermaid Auto-Render** | ✅ Built-in, theme-matched | ❌ Manual preprocessing | ⚠️ Requires sphinx-mermaid | ⚠️ Requires plugin |
 | **Visual Profiles** | ✅ 4 production-ready | ❌ Write CSS from scratch | ❌ Complex LaTeX templates | ⚠️ HTML themes (not PDF) |
-| **Single Command** | ✅ `convert_final.py` | ⚠️ Multi-step shell pipeline | ❌ sphinx-build + config | ❌ mkdocs + pandoc chain |
+| **Single Command** | ✅ `python -m tools.pdf.cli.main` | ⚠️ Multi-step shell pipeline | ❌ sphinx-build + config | ❌ mkdocs + pandoc chain |
 | **PDF Quality** | ✅ 300 DPI print-ready | ✅ High quality | ✅ LaTeX-quality | ⚠️ Print CSS limitations |
 | **Web Interface** | ✅ Flask demo included | ❌ None | ❌ None | ✅ Live server (HTML only) |
 | **Metadata System** | ✅ CLI/YAML/Env/Frontmatter | ⚠️ Frontmatter only | ⚠️ conf.py + frontmatter | ⚠️ mkdocs.yml only |
@@ -80,10 +80,10 @@ Generate drastically different-looking PDFs from the **same Markdown** by changi
 
 ```bash
 # All commands use the same canonical invocation pattern
-python -m tools.pdf.convert_final spec.md output.pdf --profile tech-whitepaper   # Clean, technical
-python -m tools.pdf.convert_final spec.md output.pdf --profile dark-pro          # Modern, dark theme
-python -m tools.pdf.convert_final spec.md output.pdf --profile minimalist        # Spacious, elegant
-python -m tools.pdf.convert_final spec.md output.pdf --profile enterprise-blue   # Corporate-friendly
+python -m tools.pdf.cli.main spec.md output.pdf --profile tech-whitepaper   # Clean, technical
+python -m tools.pdf.cli.main spec.md output.pdf --profile dark-pro          # Modern, dark theme
+python -m tools.pdf.cli.main spec.md output.pdf --profile minimalist        # Spacious, elegant
+python -m tools.pdf.cli.main spec.md output.pdf --profile enterprise-blue   # Corporate-friendly
 ```
 
 <table>
@@ -231,7 +231,7 @@ playwright install chromium
 docker-compose up -d
 
 # Generate PDF via CLI inside container
-docker exec -it docs-pipeline-web python -m tools.pdf.convert_final \
+docker exec -it docs-pipeline-web python -m tools.pdf.cli.main \
     docs/examples/advanced-markdown-showcase.md \
     output/showcase.pdf \
     --profile tech-whitepaper
@@ -241,14 +241,14 @@ docker exec -it docs-pipeline-web python -m tools.pdf.convert_final \
 
 **Local Installation:**
 ```bash
-python -m tools.pdf.convert_final \
+python -m tools.pdf.cli.main \
     docs/examples/advanced-markdown-showcase.md \
     output/showcase.pdf \
     --profile dark-pro
 ```
 
-> 💡 **Canonical Command:** All examples use `python -m tools.pdf.convert_final` for consistency.  
-> You can also use `python tools/pdf/convert_final.py` directly.
+> 💡 **Canonical Command:** All examples use `python -m tools.pdf.cli.main` for consistency.  
+> This is the primary CLI entry point for PDF generation.
 
 ---
 
@@ -263,7 +263,7 @@ export USER_TITLE="Senior Software Engineer"
 export DOC_LOGO_PATH="$HOME/Documents/headshot.png"
 
 # Generate resume
-python -m tools.pdf.convert_final docs/examples/resume-template.md \
+python -m tools.pdf.cli.main docs/examples/resume-template.md \
     resume.pdf \
     --profile minimalist \
     --version "2024.12" \
@@ -273,7 +273,7 @@ python -m tools.pdf.convert_final docs/examples/resume-template.md \
 #### Create a Client Proposal
 
 ```bash
-python -m tools.pdf.convert_final proposal.md client-proposal.pdf \
+python -m tools.pdf.cli.main proposal.md client-proposal.pdf \
     --author "Your Name" \
     --organization "Your Company" \
     --classification "CONFIDENTIAL" \
@@ -436,9 +436,11 @@ docs-pipeline/
 │
 ├── 📦 tools/
 │   ├── pdf/                    # Core PDF Generation Engine
-│   │   ├── convert_final.py    # Main CLI entry point
-│   │   ├── cli/                # Command-line interface
-│   │   │   ├── main.py         # Full CLI implementation
+│   │   ├── cli/                # Command-line interface (PRIMARY)
+│   │   │   └── main.py         # CLI entry point
+│   │   ├── core/               # Library functions
+│   │   │   ├── converter.py    # markdown_to_pdf, etc.
+│   │   │   └── utils.py        # Utilities
 │   │   │   └── md2pdf.bat      # Windows batch file
 │   │   ├── config/             # Configuration management
 │   │   │   ├── profiles.py     # Visual profile system
@@ -602,7 +604,7 @@ Metadata can be set in three ways (priority order):
 
 1. **CLI Arguments** (highest priority)
    ```bash
-   python -m tools.pdf.convert_final doc.md output.pdf --author "John Doe" --version "2.0"
+   python -m tools.pdf.cli.main doc.md output.pdf --author "John Doe" --version "2.0"
    ```
 
 2. **YAML Frontmatter** (in markdown file)
@@ -684,7 +686,7 @@ Complete examples in each tool directory:
 
 ```bash
 # Generate resume
-python -m tools.pdf.convert_final docs/examples/resume-template.md resume.pdf \
+python -m tools.pdf.cli.main docs/examples/resume-template.md resume.pdf \
     --profile minimalist --version "2024.12"
 
 # Generate all example PDFs

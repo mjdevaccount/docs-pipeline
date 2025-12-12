@@ -7,7 +7,7 @@
 
 ### 1. ✅ Math Rendering (CRITICAL)
 **Status:** Implemented  
-**File:** `pdf-tools/convert_final.py`
+**File:** `pdf-tools/cli/main.py`
 
 **What Changed:**
 - Added `render_math_with_katex()` function to pre-render math before Pandoc
@@ -80,7 +80,7 @@ Automatically enabled for all PDFs generated with Playwright renderer.
 
 ### 4. ✅ SVG Optimization (MEDIUM)
 **Status:** Implemented  
-**File:** `pdf-tools/convert_final.py`
+**File:** `pdf-tools/cli/main.py`
 
 **What Changed:**
 - Added `optimize_svg_file()` function using SVGO
@@ -104,7 +104,7 @@ Automatically enabled for all SVG diagrams. Falls back silently if SVGO not inst
 
 ### 5. ⚠️ Parallel Diagram Rendering (MEDIUM)
 **Status:** Partially Implemented  
-**File:** `pdf-tools/convert_final.py`
+**File:** `pdf-tools/cli/main.py`
 
 **What Changed:**
 - Added `from concurrent.futures import ThreadPoolExecutor, as_completed` import
@@ -153,7 +153,7 @@ npm install -g svgo
 echo '$E = mc^2$ and $$\int_0^1 x^2 dx = \frac{1}{3}$$' > test-math.md
 
 # Generate PDF
-python pdf-tools/convert_final.py test-math.md test-math.pdf \
+python pdf-tools/cli/main.py test-math.md test-math.pdf \
   --renderer playwright \
   --css pdf-tools/custom.css.playwright \
   --generate-cover \
@@ -164,7 +164,7 @@ python pdf-tools/convert_final.py test-math.md test-math.pdf \
 
 ### Test Web Fonts:
 ```bash
-python pdf/convert_final.py docs/architecture-proposal.md output.pdf \
+python pdf/cli/main.py docs/architecture-proposal.md output.pdf \
   --renderer playwright \
   --css pdf-tools/custom.css.playwright \
   --generate-cover \
@@ -177,7 +177,7 @@ python pdf/convert_final.py docs/architecture-proposal.md output.pdf \
 ### Test PDF Bookmarks:
 ```bash
 # Generate PDF
-python pdf/convert_final.py docs/architecture-proposal.md output.pdf \
+python pdf/cli/main.py docs/architecture-proposal.md output.pdf \
   --renderer playwright \
   --generate-cover \
   --generate-toc \
@@ -193,7 +193,7 @@ python pdf/convert_final.py docs/architecture-proposal.md output.pdf \
 ```bash
 # Check SVG file sizes before/after
 # Look for "Optimized" messages in verbose output
-python pdf-tools/convert_final.py docs/your-file.md output.pdf --verbose
+python pdf-tools/cli/main.py docs/your-file.md output.pdf --verbose
 ```
 
 **Expected:** Smaller SVG files, faster rendering

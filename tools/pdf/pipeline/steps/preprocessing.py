@@ -144,20 +144,10 @@ class GlossaryExpansionStep(PipelineStep):
             return True
         
         try:
-            # Try to import from convert_final for backward compatibility
-            try:
-                from convert_final import expand_glossary
-                context.preprocessed_markdown = expand_glossary(
-                    context.preprocessed_markdown,
-                    str(glossary_file)
-                )
-            except ImportError:
-                # Inline implementation
-                context.preprocessed_markdown = self._expand_glossary(
-                    context.preprocessed_markdown,
-                    glossary_path
-                )
-            
+            context.preprocessed_markdown = self._expand_glossary(
+                context.preprocessed_markdown,
+                glossary_path
+            )
             self.log(f"Expanded glossary from {glossary_file}", context)
             return True
             

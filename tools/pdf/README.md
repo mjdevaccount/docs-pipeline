@@ -43,7 +43,7 @@ Final Output (.pdf or .docx)
 
 ## Technical Pipeline Details
 
-### Stage 1: Preprocessing (`convert_final.py`)
+### Stage 1: Preprocessing (`cli/main.py`)
 
 #### 1.1 YAML Frontmatter Extraction
 - **Function:** `extract_metadata(md_content)`
@@ -286,7 +286,7 @@ Final Output (.pdf or .docx)
 
 ```bash
 # Basic conversion
-convert_final.py input.md [output.pdf|output.docx]
+cli/main.py input.md [output.pdf|output.docx]
 
 # Format control
 --format pdf|docx              # Explicit format
@@ -390,7 +390,7 @@ workspaces:
 **External CSS File (Recommended):**
 ```bash
 # Use external CSS file
-python convert_final.py docs/report.md --css styles/custom.css
+python cli/main.py docs/report.md --css styles/custom.css
 ```
 
 Create `custom.css` with your styling:
@@ -418,7 +418,7 @@ body {
 /* Customize title page, headings, tables, etc. */
 ```
 
-**Default CSS:** If no `--css` is provided, the tool uses embedded professional styling. You can customize the default by editing `convert_final.py` (lines ~320-585), or better yet, extract it to `custom.css.example` and use external CSS.
+**Default CSS:** If no `--css` is provided, the tool uses embedded professional styling. You can customize the default by editing `cli/main.py` (lines ~320-585), or better yet, extract it to `custom.css.example` and use external CSS.
 
 **CSS Features Supported:**
 - Typography: Fonts, sizes, line-height
@@ -537,10 +537,10 @@ Create your own `pdf-mermaid-theme.json`:
 **Usage:**
 ```bash
 # Use default theme (auto-detected)
-python convert_final.py docs/report.md
+python cli/main.py docs/report.md
 
 # Use custom theme
-python convert_final.py docs/report.md --theme-config themes/corporate.json
+python cli/main.py docs/report.md --theme-config themes/corporate.json
 
 # In config file
 {
@@ -602,7 +602,7 @@ graph LR
 **Example:**
 ```bash
 # Fast batch conversion with caching and parallel processing
-python convert_final.py --config pdf-config.json --threads 4 --cache-diagrams
+python cli/main.py --config pdf-config.json --threads 4 --cache-diagrams
 ```
 
 ---
@@ -694,8 +694,8 @@ python convert_final.py --config pdf-config.json --threads 4 --cache-diagrams
 
 ```
 tools/pdf/
-├── convert_final.py              # CLI wrapper (465 lines)
-├── convert_final.py        # Core engine (636 lines)
+├── cli/main.py              # CLI wrapper (465 lines)
+├── cli/main.py        # Core engine (636 lines)
 ├── md2pdf.bat             # Windows batch wrapper
 ├── requirements-pdf.txt    # Python dependencies
 ├── README.md              # This file
@@ -725,10 +725,10 @@ md2pdf.bat --batch docs\*.md --format docx
 
 ```bash
 # From project root
-python tools/pdf/convert_final.py docs/report.md
+python tools/pdf/cli/main.py docs/report.md
 
 # With options
-python tools/pdf/convert_final.py docs/report.md --format docx --verbose
+python tools/pdf/cli/main.py docs/report.md --format docx --verbose
 ```
 
 ---
@@ -771,7 +771,7 @@ md2pdf.bat --help
    - Process multiple files concurrently using `ThreadPoolExecutor`
    - 2-4x speedup on multi-core systems
    - Progress bars with `tqdm` (optional dependency)
-   - Example: `python convert_final.py --batch *.md --threads 4`
+   - Example: `python cli/main.py --batch *.md --threads 4`
 
 2. **💾 Diagram Caching** (`--cache-diagrams`, enabled by default)
    - Hash-based cache (MD5) for rendered SVG/PNG diagrams
@@ -784,14 +784,14 @@ md2pdf.bat --help
    - Overrides default embedded CSS
    - Perfect for branded/seasonal styles
    - Non-programmers can update styles without code changes
-   - Example: `python convert_final.py docs/report.md --css styles/brand.css`
+   - Example: `python cli/main.py docs/report.md --css styles/brand.css`
 
 4. **✅ Markdown Validation** (`--lint`)
    - Validates YAML frontmatter syntax
    - Checks for recommended fields (author, date, version, etc.)
    - Detects mismatched code block delimiters
    - Warns about missing frontmatter
-   - Example: `python convert_final.py docs/report.md --lint`
+   - Example: `python cli/main.py docs/report.md --lint`
 
 5. **📋 Enhanced Metadata Mapping**
    - Supports additional fields: `department`, `review_status`, `doc_id`, `prepared_for`
@@ -821,26 +821,26 @@ md2pdf.bat --help
    - Syntax highlighting with customizable styles
    - Default: GitHub style (clean and readable)
    - Options: `pygments`, `tango`, `kate`, `monochrome`, etc.
-   - Example: `python convert_final.py docs/report.md --highlight-style tango`
+   - Example: `python cli/main.py docs/report.md --highlight-style tango`
 
 10. **🔗 Cross-References** (`--crossref-config`)
     - Automatic figure/table numbering
     - Reference syntax: `[@fig:label]` and `[@tbl:label]`
     - Requires: `pandoc-crossref` filter
-    - Example: `python convert_final.py docs/report.md --crossref-config crossref.yaml`
+    - Example: `python cli/main.py docs/report.md --crossref-config crossref.yaml`
 
 11. **📚 Glossary & Acronym Expansion** (`--glossary`)
     - Automatic acronym expansion (e.g., "API" → "Application Programming Interface (API)")
     - Glossary appendix generation
     - YAML-based configuration
-    - Example: `python convert_final.py docs/report.md --glossary glossary.yaml`
+    - Example: `python cli/main.py docs/report.md --glossary glossary.yaml`
 
 12. **🌐 HTML Output** (`--format html`)
     - Responsive HTML with navigation sidebar
     - MathJax for math rendering
     - Search-friendly structure
     - Custom CSS support
-    - Example: `python convert_final.py docs/report.md --format html`
+    - Example: `python cli/main.py docs/report.md --format html`
 
 13. **📊 Multiple Diagram Types**
     - **Mermaid:** Flowcharts, sequence diagrams, state diagrams (with professional theming)

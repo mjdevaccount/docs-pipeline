@@ -170,7 +170,7 @@ python -m cli \
 
 # Step 2: Generate PDF
 cd ../pdf
-python convert_final.py \
+python cli/main.py \
     ../polished.md \
     --profile project-docs \
     --generate-cover \

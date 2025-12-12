@@ -103,8 +103,8 @@
 
 ## 🔄 Updated Files
 
-- `convert_final.py` - Added all new features
-- `convert_final.py` - Updated CLI for new features
+- `cli/main.py` - Added all new features
+- `cli/main.py` - Updated CLI for new features
 - `README.md` - Comprehensive documentation updates
 - `pdf-config.json.example` - Updated with new options
 
@@ -128,22 +128,22 @@ Some features require additional tools (gracefully handled if missing):
 
 ```bash
 # Math support (automatic)
-python convert_final.py docs/report.md
+python cli/main.py docs/report.md
 
 # Code highlighting
-python convert_final.py docs/report.md --highlight-style tango
+python cli/main.py docs/report.md --highlight-style tango
 
 # Cross-references
-python convert_final.py docs/report.md --crossref-config crossref.yaml
+python cli/main.py docs/report.md --crossref-config crossref.yaml
 
 # Glossary expansion
-python convert_final.py docs/report.md --glossary glossary.yaml
+python cli/main.py docs/report.md --glossary glossary.yaml
 
 # HTML output
-python convert_final.py docs/report.md --format html
+python cli/main.py docs/report.md --format html
 
 # All features together
-python convert_final.py docs/report.md \
+python cli/main.py docs/report.md \
   --format pdf \
   --highlight-style github \
   --crossref-config crossref.yaml \

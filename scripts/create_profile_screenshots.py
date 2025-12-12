@@ -82,7 +82,7 @@ def main():
         pdf_suffix = '.pdf'
     else:
         print("ERROR: No PDFs found. Please generate PDFs first.")
-        print("Run: python -m tools.pdf.convert_final docs/examples/advanced-markdown-showcase.md output.pdf --profile <profile>")
+        print("Run: python -m tools.pdf.cli.main docs/examples/advanced-markdown-showcase.md output.pdf --profile <profile>")
         return 1
     
     print("Converting PDFs to images...")

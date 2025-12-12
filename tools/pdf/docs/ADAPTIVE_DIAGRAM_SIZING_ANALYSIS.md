@@ -82,7 +82,7 @@ if (next && (next.querySelector('svg') || next.querySelector('img[src$=".svg"]')
 
 **Impact**: Diagrams wrapped in `<figure><img src="diagram.svg"></figure>` might not be detected correctly.
 
-**Related**: See how Pandoc processes images in [`pdf-tools/convert_final.py`](pdf-tools/convert_final.py#L276-L280) - returns `![Diagram](diagram.svg)` which Pandoc converts to HTML.
+**Related**: See how Pandoc processes images in [`pdf-tools/cli/main.py`](pdf-tools/cli/main.py#L276-L280) - returns `![Diagram](diagram.svg)` which Pandoc converts to HTML.
 
 ---
 

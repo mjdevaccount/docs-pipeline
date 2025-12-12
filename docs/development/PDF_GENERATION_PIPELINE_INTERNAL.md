@@ -62,7 +62,7 @@ python -m tools.pdf.convert_final input.md output.pdf \
     --verbose
 ```
 
-**Function:** `tools/pdf/convert_final.py::markdown_to_pdf()`
+**Function:** `tools/pdf/cli/main.py::markdown_to_pdf()`
 
 **Called from:**
 - CLI: `python -m tools.pdf.convert_final` (canonical)

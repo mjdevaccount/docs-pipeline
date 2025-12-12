@@ -1,18 +1,30 @@
 #!/usr/bin/env python3
 """
-PDF Generation CLI
-==================
+PDF Generation CLI - Primary Entry Point
+=========================================
 
-Command-line interface for the PDF generation pipeline.
-This is the user-facing entry point for all CLI operations.
+This is THE command-line interface for the docs-pipeline PDF generation system.
 
-Usage:
+CLI Usage:
+    # Recommended (module invocation)
     python -m tools.pdf.cli.main input.md output.pdf
-    python tools/pdf/cli/main.py input.md --profile tech-whitepaper --cover --toc
     
-For library usage, import from core:
+    # Direct script
+    python tools/pdf/cli/main.py input.md output.pdf
+    
+    # With options
+    python -m tools.pdf.cli.main input.md --profile tech-whitepaper --cover --toc
+    
+    # Batch with parallel processing
+    python -m tools.pdf.cli.main --batch doc1.md doc2.md --threads 4
+    
+Library Usage:
     from tools.pdf.core import markdown_to_pdf
-    markdown_to_pdf('input.md', 'output.pdf')
+    markdown_to_pdf('input.md', 'output.pdf', profile='tech-whitepaper')
+
+Docker Usage:
+    docker-compose run --rm docs-pipeline-web \\
+        python -m tools.pdf.cli.main input.md output.pdf --profile tech-whitepaper
 """
 
 import sys
@@ -41,7 +53,7 @@ from core import (
 )
 from core.utils import resolve_output_path
 
-__version__ = "2.1.0"
+__version__ = "3.0.0"  # Major version bump - CLI is now primary entry point
 
 
 def load_config(config_file: str) -> dict:

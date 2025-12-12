@@ -10,7 +10,7 @@ mkdir -p docs/examples/generated
 # Example 1: SOLID Implementation
 if [ -f "docs/development/pdf-solid-implementation.md" ]; then
     echo "📄 Generating: SOLID Implementation Analysis..."
-    python -m tools.pdf.convert_final \
+    python -m tools.pdf.cli.main \
         docs/development/pdf-solid-implementation.md \
         docs/examples/generated/solid-implementation.pdf
     echo "   ✅ Generated: solid-implementation.pdf"
@@ -21,7 +21,7 @@ fi
 # Example 2: Structurizr Evaluation
 if [ -f "docs/development/structurizr-solid-evaluation.md" ]; then
     echo "📄 Generating: Structurizr Architecture Evaluation..."
-    python -m tools.pdf.convert_final \
+    python -m tools.pdf.cli.main \
         docs/development/structurizr-solid-evaluation.md \
         docs/examples/generated/structurizr-evaluation.pdf
     echo "   ✅ Generated: structurizr-evaluation.pdf"
@@ -32,7 +32,7 @@ fi
 # Example 3: PDF Setup Guide
 if [ -f "tools/pdf/docs/PDF_GENERATION_SETUP.md" ]; then
     echo "📄 Generating: PDF Generation Setup Guide..."
-    python -m tools.pdf.convert_final \
+    python -m tools.pdf.cli.main \
         tools/pdf/docs/PDF_GENERATION_SETUP.md \
         docs/examples/generated/pdf-setup-guide.pdf
     echo "   ✅ Generated: pdf-setup-guide.pdf"

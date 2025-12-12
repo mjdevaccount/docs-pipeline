@@ -66,11 +66,11 @@ diagram_rendering/
 
 ---
 
-## 🔄 Integration with `convert_final.py`
+## 🔄 Integration with `cli/main.py`
 
 ### Backward Compatible Implementation
 
-The refactored `convert_final.py`:
+The refactored `cli/main.py`:
 1. **Tries to import new modules** (`USE_NEW_ARCHITECTURE` flag)
 2. **Falls back to legacy** if modules unavailable
 3. **Zero breaking changes** - existing code still works
@@ -119,7 +119,7 @@ The refactored `convert_final.py`:
 [OK] DiagramOrchestrator initialized
   - Available renderers: MermaidRenderer, PlantUMLRenderer, GraphvizRenderer
 
-[TEST 3] Integration with convert_final.py
+[TEST 3] Integration with cli/main.py
 ----------------------------------------------------------------------
 [OK] New SOLID architecture is ACTIVE
 [OK] All 8 core functions available
@@ -251,7 +251,7 @@ tools/pdf/pipeline/
 14. `tools/pdf/diagram_rendering/orchestrator.py`
 
 ### Modified Files (1 file)
-1. `tools/pdf/convert_final.py` - Integrated new architecture with fallback
+1. `tools/pdf/cli/main.py` - Integrated new architecture with fallback
 
 ### Test Files (2 files)
 1. `tools/pdf/test_refactoring.py` - Comprehensive test suite

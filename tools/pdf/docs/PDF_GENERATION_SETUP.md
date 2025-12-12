@@ -12,10 +12,10 @@ cd pdf-tools
 pip install -r requirements-pdf.txt
 
 # 3. Check system dependencies
-python convert_final.py --check
+python cli/main.py --check
 
 # 4. Convert a document (paths relative to project root)
-python convert_final.py ../docs/report.md
+python cli/main.py ../docs/report.md
 ```
 
 ## System Dependencies
@@ -80,7 +80,7 @@ pacman -S mingw-w64-x86_64-gtk3
 choco install gtk-runtime
 ```
 
-**Note:** The `convert_final.py` script automatically adds MSYS2 GTK to PATH if installed.
+**Note:** The `cli/main.py` script automatically adds MSYS2 GTK to PATH if installed.
 
 ## Python Dependencies
 
@@ -110,11 +110,11 @@ md2pdf.bat docs\report.md output\report.pdf
 **Python Direct:**
 ```bash
 # From project root
-python pdf-tools/convert_final.py docs/report.md
+python pdf-tools/cli/main.py docs/report.md
 
 # From pdf-tools directory (paths relative to project root)
 cd pdf-tools
-python convert_final.py ../docs/report.md
+python cli/main.py ../docs/report.md
 ```
 
 #### Batch Conversion
@@ -128,11 +128,11 @@ md2pdf.bat --batch docs\*.md
 **Python Direct:**
 ```bash
 # From project root
-python pdf-tools/convert_final.py --batch docs/*.md
+python pdf-tools/cli/main.py --batch docs/*.md
 
 # From pdf-tools directory
 cd pdf-tools
-python convert_final.py --batch ../docs/*.md
+python cli/main.py --batch ../docs/*.md
 ```
 
 #### Configuration File
@@ -148,7 +148,7 @@ Create `pdf-config.json` (paths relative to project root):
 
 Then:
 ```bash
-python convert_final.py --config pdf-config.json
+python cli/main.py --config pdf-config.json
 ```
 
 ### Markdown Syntax
@@ -209,7 +209,7 @@ md2pdf.bat --logo assets\logo.png docs\report.md
 
 ```bash
 # Python direct
-python pdf-tools/convert_final.py --logo assets/logo.png docs/report.md
+python pdf-tools/cli/main.py --logo assets/logo.png docs/report.md
 ```
 
 ### Programmatic Usage
@@ -266,7 +266,7 @@ markdown_to_pdf('docs/report.md', 'output/report.pdf')
 ### PDF looks wrong / formatting issues
 - Check that Pandoc is latest version
 - Verify WeasyPrint version: `pip show weasyprint`
-- Review CSS in `convert_final.py` if custom styling needed
+- Review CSS in `cli/main.py` if custom styling needed
 
 ### Logo not appearing
 - Verify logo path: `docs/logo.png`
@@ -278,8 +278,8 @@ markdown_to_pdf('docs/report.md', 'output/report.pdf')
 ```
 .
 ├── pdf-tools/                # PDF generation tools directory
-│   ├── convert_final.py             # CLI wrapper script
-│   ├── convert_final.py      # Core conversion logic
+│   ├── cli/main.py             # CLI wrapper script
+│   ├── cli/main.py      # Core conversion logic
 │   ├── requirements-pdf.txt  # Python dependencies
 │   ├── PDF_GENERATION_SETUP.md  # This file
 │   ├── README.md             # Quick reference
@@ -292,14 +292,14 @@ markdown_to_pdf('docs/report.md', 'output/report.pdf')
 ## Advanced Configuration
 
 ### Custom CSS
-Modify the `custom_css` variable in `convert_final.py` to adjust:
+Modify the `custom_css` variable in `cli/main.py` to adjust:
 - Fonts and typography
 - Page margins and layout
 - Colors and styling
 - Header/footer content
 
 ### Custom Logo Path
-Edit `pdf-tools/convert_final.py` around line 150:
+Edit `pdf-tools/cli/main.py` around line 150:
 ```python
 logo_path = Path(__file__).parent.parent / 'docs' / 'logo.png'
 logo_path = logo_path.resolve()
@@ -352,7 +352,7 @@ for md_file in docs_dir.glob('*.md'):
 ## Support
 
 For issues or questions:
-1. Check dependencies: `python convert_final.py --check`
+1. Check dependencies: `python cli/main.py --check`
 2. Review console output for specific errors
 3. Verify all system dependencies are installed
 4. Check file paths and permissions

@@ -22,7 +22,7 @@ Your `convert_final` pipeline is **production-grade and modern** - it uses a ref
 User Input (CLI)
     ↑
     ↓
-convert_final.py (Thin wrapper)
+cli/main.py (Thin wrapper)
     ↑
     ↓
 pipeline/
@@ -56,7 +56,7 @@ diagram_rendering/
 - ✅ Pipeline pattern for composable steps
 - ✅ Caching infrastructure built-in
 - ✅ ~75% code reduction vs monolithic approach
-- ✅ Backward compatible wrapper (convert_final.py)
+- ✅ Backward compatible wrapper (cli/main.py)
 
 ---
 
@@ -321,13 +321,13 @@ class CacheStats:
 **Example Usage**:
 ```bash
 # Single file
-python convert_final.py doc.md
+python cli/main.py doc.md
 
 # Batch with parallelism
-python convert_final.py --batch doc1.md doc2.md doc3.md --threads 4
+python cli/main.py --batch doc1.md doc2.md doc3.md --threads 4
 
 # Config-driven
-python convert_final.py --config pdf-config.json
+python cli/main.py --config pdf-config.json
 ```
 
 **Missing**:

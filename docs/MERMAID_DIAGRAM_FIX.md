@@ -191,7 +191,7 @@ graph LR
 EOF
 
 # Convert to PDF with diagram rendering
-python convert_final.py test_diagram.md test_diagram.pdf \
+python cli/main.py test_diagram.md test_diagram.pdf \
     --renderer playwright \
     --profile tech-whitepaper \
     --verbose
@@ -203,7 +203,7 @@ python convert_final.py test_diagram.md test_diagram.pdf \
 
 ### Enable/Disable Diagrams
 ```python
-# In convert_final.py or config:
+# In cli/main.py or config:
 config = {
     'enable_diagrams': True,  # Default: enabled
     'use_cache': True,        # Cache rendered SVGs
@@ -318,7 +318,7 @@ npm install -g @mermaid-js/mermaid-cli
 **Debugging**:
 ```bash
 # Run with verbose logging
-python convert_final.py doc.md doc.pdf --verbose
+python cli/main.py doc.md doc.pdf --verbose
 
 # Check pipeline steps
 python -c "from pipeline import create_pdf_pipeline; p = create_pdf_pipeline(); print([s.get_name() for s in p.steps])"
@@ -346,7 +346,7 @@ print("✓ diagram_rendering module available")
 ### Configuration Files
 - `tools/pdf/pipeline/__init__.py` - Pipeline factory functions
 - `tools/pdf/pipeline/steps/__init__.py` - Step exports
-- `tools/pdf/convert_final.py` - CLI wrapper
+- `tools/pdf/cli/main.py` - CLI wrapper
 
 ---
 

@@ -46,7 +46,7 @@
 
 **Usage:**
 ```bash
-python convert_final.py doc.md --crossref-config pdf-tools/crossref-config-example.yaml
+python cli/main.py doc.md --crossref-config pdf-tools/crossref-config-example.yaml
 ```
 
 **Markdown Syntax:**
@@ -75,7 +75,7 @@ See Figure @fig:system-diagram for details.
 
 **Usage:**
 ```bash
-python convert_final.py doc.md --glossary pdf-tools/glossary-example.yaml
+python cli/main.py doc.md --glossary pdf-tools/glossary-example.yaml
 ```
 
 **Glossary YAML Format:**
@@ -135,7 +135,7 @@ $$
 
 **Usage:**
 ```bash
-python convert_final.py doc.md --highlight-style pygments
+python cli/main.py doc.md --highlight-style pygments
 ```
 
 **Available Styles:**
@@ -165,7 +165,7 @@ python convert_final.py doc.md --highlight-style pygments
 
 **Usage:**
 ```bash
-python convert_final.py doc.md --format html -o doc.html
+python cli/main.py doc.md --format html -o doc.html
 ```
 
 **Features:**
@@ -254,19 +254,19 @@ All major features are now **fully implemented**:
 
 ```bash
 # Basic conversion with math and code highlighting
-python convert_final.py doc.md
+python cli/main.py doc.md
 
 # With cross-references
-python convert_final.py doc.md --crossref-config crossref.yaml
+python cli/main.py doc.md --crossref-config crossref.yaml
 
 # With glossary expansion
-python convert_final.py doc.md --glossary glossary.yaml
+python cli/main.py doc.md --glossary glossary.yaml
 
 # HTML output with custom highlighting
-python convert_final.py doc.md --format html --highlight-style pygments
+python cli/main.py doc.md --format html --highlight-style pygments
 
 # All features combined
-python convert_final.py doc.md \
+python cli/main.py doc.md \
   --format pdf \
   --highlight-style github \
   --crossref-config crossref.yaml \
@@ -279,7 +279,7 @@ python convert_final.py doc.md \
 
 ### Math Support (Easiest)
 ```python
-# In convert_final.py, update Pandoc command:
+# In cli/main.py, update Pandoc command:
 '-f', 'markdown+pipe_tables+backtick_code_blocks+fenced_code_attributes+smart+tex_math_dollars+tex_math_double_backslash',
 ```
 

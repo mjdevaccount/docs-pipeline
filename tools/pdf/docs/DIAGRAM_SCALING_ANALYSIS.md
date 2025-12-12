@@ -275,7 +275,7 @@ page_threshold = 0.6 * pair['availableHeight']
 
 **Enable verbose mode:**
 ```bash
-python pdf-tools/convert_final.py \
+python pdf-tools/cli/main.py \
   docs/architecture-proposal.md \
   output.pdf \
   --renderer playwright \

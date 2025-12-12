@@ -44,7 +44,7 @@ python -m tools.prompts.cli \
     --verbose
 
 # Then generate PDF
-python tools/pdf/convert_final.py \
+python tools/pdf/cli/main.py \
     output/polished.md \
     --profile project-docs \
     --generate-cover \
@@ -167,7 +167,7 @@ python -m tools.prompts.cli \
     -c tools/prompts/pipelines/architecture-proposal.yaml
 
 # Step 2: Generate PDF
-python tools/pdf/convert_final.py \
+python tools/pdf/cli/main.py \
     polished.md \
     --profile project-docs \
     --generate-cover \

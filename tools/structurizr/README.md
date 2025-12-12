@@ -162,7 +162,7 @@ tools/structurizr/
 3. **Generate PDF**:
    ```bash
    cd tools/pdf
-   python convert_final.py ../../docs/architecture-diagrams.md
+   python cli/main.py ../../docs/architecture-diagrams.md
    ```
 
 ### With Git / Version Control

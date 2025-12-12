@@ -27,7 +27,7 @@ from playwright_pdf.config import CoverConfig  # type: ignore[import]
 from playwright_pdf.decorators.cover import inject_cover_page  # type: ignore[import]
 from playwright_pdf.decorators.toc import inject_toc  # type: ignore[import]
 
-from convert_final import markdown_to_html, extract_metadata  # type: ignore[import]
+from tools.pdf.core import markdown_to_html, extract_metadata  # type: ignore[import]
 
 
 async def run_project_docs_scaling_test() -> bool:

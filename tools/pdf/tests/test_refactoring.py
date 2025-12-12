@@ -5,7 +5,7 @@ Test script for refactored SOLID architecture.
 Tests:
 1. External tools module imports and initialization
 2. Diagram rendering module imports and initialization
-3. Basic functionality of key components
+3. Core module integration (replaces convert_final.py)
 """
 import sys
 from pathlib import Path
@@ -126,60 +126,73 @@ try:
 except Exception as e:
     print(f"[ERROR] DiagramOrchestrator error: {e}")
 
-# Test 3: Integration with convert_final.py
-print("\n[TEST 3] Integration with convert_final.py")
+# Test 3: Core Module Integration
+print("\n[TEST 3] Core Module Integration")
 print("-" * 70)
 
 try:
-    import convert_final
-    print("[OK] convert_final.py imports successfully")
+    from core import (
+        markdown_to_pdf,
+        markdown_to_docx,
+        markdown_to_html,
+        batch_convert,
+        extract_metadata,
+        check_dependencies,
+        validate_markdown,
+    )
+    print("[OK] core module imports successfully")
     
-    # Check if new architecture is detected
-    if hasattr(convert_final, 'USE_NEW_ARCHITECTURE'):
-        if convert_final.USE_NEW_ARCHITECTURE:
-            print("[OK] New SOLID architecture is ACTIVE")
-        else:
-            print("[WARN] New architecture detected but not active (fallback mode)")
-    else:
-        print("[WARN] USE_NEW_ARCHITECTURE flag not found")
-    
-    # Check that key functions exist
+    # Check that key functions exist and are callable
     functions_to_check = [
-        'extract_metadata',
-        '_validate_metadata',
-        'expand_glossary',
-        'render_math_with_katex',
-        'render_all_diagrams',
-        'markdown_to_pdf',
-        'markdown_to_docx',
-        'markdown_to_html'
+        ('extract_metadata', extract_metadata),
+        ('check_dependencies', check_dependencies),
+        ('validate_markdown', validate_markdown),
+        ('markdown_to_pdf', markdown_to_pdf),
+        ('markdown_to_docx', markdown_to_docx),
+        ('markdown_to_html', markdown_to_html),
+        ('batch_convert', batch_convert),
     ]
     
-    for func_name in functions_to_check:
-        if hasattr(convert_final, func_name):
-            print(f"  [OK] {func_name} available")
+    for func_name, func in functions_to_check:
+        if callable(func):
+            print(f"  [OK] {func_name} is callable")
         else:
-            print(f"  [ERROR] {func_name} MISSING")
+            print(f"  [ERROR] {func_name} is NOT callable")
             
 except ImportError as e:
-    print(f"[ERROR] convert_final.py import error: {e}")
+    print(f"[ERROR] core module import error: {e}")
 except Exception as e:
     print(f"[ERROR] Integration test error: {e}")
+
+# Test 4: CLI Module
+print("\n[TEST 4] CLI Module")
+print("-" * 70)
+
+try:
+    from cli import main, parallel_batch_convert, __version__
+    print(f"[OK] cli module imports successfully")
+    print(f"  - CLI version: {__version__}")
+    print(f"  - main() is callable: {callable(main)}")
+    print(f"  - parallel_batch_convert() is callable: {callable(parallel_batch_convert)}")
+except ImportError as e:
+    print(f"[ERROR] cli module import error: {e}")
+except Exception as e:
+    print(f"[ERROR] CLI test error: {e}")
 
 # Summary
 print("\n" + "=" * 70)
 print("TEST SUITE COMPLETE")
 print("=" * 70)
 print("\n[SUCCESS] All critical tests passed!")
-print("\nRefactoring Status:")
+print("\nArchitecture (v3.0):")
+print("  * CLI (cli/main.py): PRIMARY entry point")
+print("  * Core (core/): Library functions")
 print("  * External Tools Module: COMPLETE")
 print("  * Diagram Rendering Module: COMPLETE")
-print("  * convert_final.py Integration: COMPLETE")
 print("\nArchitecture Benefits:")
 print("  * Platform-independent executable resolution")
 print("  * Testable, mockable components")
 print("  * Open/Closed Principle compliance (easy to add new diagram types)")
 print("  * Single Responsibility (each class has one job)")
-print("  * Backward compatible (falls back to legacy if modules unavailable)")
+print("  * Clean separation: CLI vs Library")
 print("\n" + "=" * 70)
-

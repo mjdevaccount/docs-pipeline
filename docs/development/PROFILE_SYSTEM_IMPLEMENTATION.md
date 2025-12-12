@@ -39,7 +39,7 @@ Updated the profile system to include all 4 new profiles:
 - Backward compatible with legacy profiles
 - Extensible for custom profiles
 
-### 3. **Core Conversion Logic** (`tools/pdf/convert_final.py`)
+### 3. **Core Conversion Logic** (`tools/pdf/cli/main.py`)
 
 Enhanced `markdown_to_pdf()` to accept `profile` parameter:
 - Profile resolution before CSS loading
@@ -47,7 +47,7 @@ Enhanced `markdown_to_pdf()` to accept `profile` parameter:
 - Explicit CSS argument overrides profile
 - Graceful fallback if profile not found
 
-### 4. **CLI Integration** (`tools/pdf/convert_final.py`)
+### 4. **CLI Integration** (`tools/pdf/cli/main.py`)
 
 Updated CLI to support profile selection:
 - `--profile` argument for single-file mode
@@ -94,16 +94,16 @@ Comprehensive documentation created:
 
 ```bash
 # Tech Whitepaper (default engineering style)
-python tools/pdf/convert_final.py input.md --profile tech-whitepaper
+python tools/pdf/cli/main.py input.md --profile tech-whitepaper
 
 # Dark Pro (modern presentation style)
-python tools/pdf/convert_final.py input.md --profile dark-pro --renderer playwright
+python tools/pdf/cli/main.py input.md --profile dark-pro --renderer playwright
 
 # Minimalist (clean architecture docs)
-python tools/pdf/convert_final.py input.md --profile minimalist
+python tools/pdf/cli/main.py input.md --profile minimalist
 
 # Enterprise Blue (corporate business docs)
-python tools/pdf/convert_final.py input.md --profile enterprise-blue
+python tools/pdf/cli/main.py input.md --profile enterprise-blue
 ```
 
 ### Pipeline
@@ -195,8 +195,8 @@ Same content can now be presented in **4 completely different ways**:
 
 ### Modified:
 - `tools/pdf/profiles.py` (added 4 new profiles)
-- `tools/pdf/convert_final.py` (profile parameter support)
-- `tools/pdf/convert_final.py` (CLI profile support)
+- `tools/pdf/cli/main.py` (profile parameter support)
+- `tools/pdf/cli/main.py` (CLI profile support)
 - `web_demo.py` (profile selection in upload handler)
 - `templates/index.html` (profile dropdown UI)
 - `README.md` (profile system highlights)

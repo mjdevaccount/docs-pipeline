@@ -4,8 +4,12 @@ PDF Generation Tool
 
 Convert Markdown documents to professional PDFs, DOCX, and HTML.
 
+CLI Usage (Primary):
+    python -m tools.pdf.cli.main input.md output.pdf
+    python -m tools.pdf.cli.main input.md --profile tech-whitepaper --cover --toc
+    
 Library Usage:
-    from tools.pdf import markdown_to_pdf, markdown_to_docx, markdown_to_html
+    from tools.pdf import markdown_to_pdf
     
     # Simple conversion
     markdown_to_pdf('input.md', 'output.pdf')
@@ -20,20 +24,23 @@ Library Usage:
         generate_toc=True
     )
 
-CLI Usage:
-    python -m tools.pdf.cli.main input.md output.pdf
-    python -m tools.pdf.cli.main input.md --profile tech-whitepaper --cover --toc
+Docker Usage:
+    docker-compose run --rm docs-pipeline-web \\
+        python -m tools.pdf.cli.main input.md output.pdf
 
 Architecture:
     tools/pdf/
-    ├── core/           # Library functions (markdown_to_pdf, etc.)
-    ├── cli/            # Command-line interface
+    ├── cli/            # Command-line interface (PRIMARY ENTRY POINT)
+    │   └── main.py     # CLI with argparse, parallelism, batch processing
+    ├── core/           # Library functions
+    │   ├── converter.py  # markdown_to_pdf, markdown_to_docx, markdown_to_html
+    │   └── utils.py      # Utilities
     ├── config/         # Style profiles
     ├── pipeline.py     # Pipeline orchestration
     └── renderers/      # PDF renderers (WeasyPrint, Playwright)
 """
 
-__version__ = "2.1.0"
+__version__ = "3.0.0"
 
 # =============================================================================
 # PUBLIC API - Import from core module

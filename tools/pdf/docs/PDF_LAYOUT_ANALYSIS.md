@@ -141,7 +141,7 @@ This document identifies ALL files and code sections related to PDF generation, 
 
 ---
 
-### 2. `pdf-tools/convert_final.py` (1,183 lines)
+### 2. `pdf-tools/cli/main.py` (1,183 lines)
 **Markdown to PDF conversion orchestrator**
 
 #### **Metadata Extraction**
@@ -217,7 +217,7 @@ This document identifies ALL files and code sections related to PDF generation, 
 
 ---
 
-### 4. `pdf-tools/convert_final.py` (787 lines)
+### 4. `pdf-tools/cli/main.py` (787 lines)
 **CLI wrapper and entry point**
 
 #### **Metadata Handling**
@@ -260,7 +260,7 @@ This document identifies ALL files and code sections related to PDF generation, 
 #### **Current Implementation:**
 1. **`pdf_playwright.py` lines 494-497**: CSS `@page` margins (0.75in top/right/left, 1in bottom)
 2. **`custom.css.playwright` lines 20-23**: Same margins in external CSS
-3. **`convert_final.py` lines 699-701**: Different margins for WeasyPrint (25mm/15mm/20mm/15mm)
+3. **`cli/main.py` lines 699-701**: Different margins for WeasyPrint (25mm/15mm/20mm/15mm)
 4. **`pdf_playwright.py` lines 65-68**: Margin calculations for diagram scaling
 
 #### **Issues:**
@@ -288,10 +288,10 @@ This document identifies ALL files and code sections related to PDF generation, 
 ### **Metadata**
 
 #### **Current Implementation:**
-1. **`convert_final.py` lines 500-630**: YAML frontmatter extraction
+1. **`cli/main.py` lines 500-630**: YAML frontmatter extraction
 2. **`pdf_playwright.py` lines 951-998**: PDF metadata embedding (PyPDF2)
 3. **`pdf_playwright.py` lines 1038-1041**: Function parameters for metadata
-4. **`convert_final.py` lines 646-653**: Metadata display in CLI
+4. **`cli/main.py` lines 646-653**: Metadata display in CLI
 
 #### **Supported Fields:**
 - ✅ `title`, `author`, `organization`, `date`, `version`, `type`, `classification`
@@ -400,12 +400,12 @@ This document identifies ALL files and code sections related to PDF generation, 
    - Lines 69-470: Page break rules
    - Lines 375-394: Diagram page breaks
 
-3. **`pdf-tools/convert_final.py`**
+3. **`pdf-tools/cli/main.py`**
    - Lines 500-630: Metadata extraction
    - Lines 699-856: WeasyPrint page setup
 
 ### **Secondary Files:**
-4. **`pdf-tools/convert_final.py`**: CLI argument handling
+4. **`pdf-tools/cli/main.py`**: CLI argument handling
 5. **`pdf-tools/pdf-mermaid-theme.json`**: Diagram theming (affects layout)
 
 ---
@@ -417,7 +417,7 @@ This document identifies ALL files and code sections related to PDF generation, 
 1. **Page Margins** (currently hardcoded):
    - `pdf_playwright.py` line 496: `margin: 0.75in 0.75in 1in 0.75in`
    - `custom.css.playwright` line 22: Same margins
-   - `convert_final.py` line 700: `margin: 25mm 15mm 20mm 15mm` (different!)
+   - `cli/main.py` line 700: `margin: 25mm 15mm 20mm 15mm` (different!)
 
 2. **Header/Footer Font Sizes** (currently hardcoded):
    - `pdf_playwright.py` line 1166: `font-size: 9px`

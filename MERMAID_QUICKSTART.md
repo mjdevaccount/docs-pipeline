@@ -118,7 +118,7 @@ cat test_diagrams.md
 ### Option A: PDF (Recommended)
 
 ```bash
-python convert_final.py test_diagrams.md test_diagrams.pdf \
+python cli/main.py test_diagrams.md test_diagrams.pdf \
     --renderer playwright \
     --profile tech-whitepaper \
     --verbose
@@ -146,7 +146,7 @@ Converting test_diagrams.md to PDF...
 ### Option B: HTML
 
 ```bash
-python convert_final.py test_diagrams.md test_diagrams.html \
+python cli/main.py test_diagrams.md test_diagrams.html \
     --format html \
     --verbose
 ```
@@ -154,7 +154,7 @@ python convert_final.py test_diagrams.md test_diagrams.html \
 ### Option C: DOCX
 
 ```bash
-python convert_final.py test_diagrams.md test_diagrams.docx \
+python cli/main.py test_diagrams.md test_diagrams.docx \
     --format docx \
     --verbose
 ```
@@ -256,7 +256,7 @@ Total: 4/4 tests passed
 
 ```bash
 # Your streaming architecture spec
-python convert_final.py ../../path/to/streaming-architecture-spec.md \
+python cli/main.py ../../path/to/streaming-architecture-spec.md \
     output.pdf \
     --renderer playwright \
     --profile tech-whitepaper \
@@ -283,11 +283,11 @@ npm install -g @mermaid-js/mermaid-cli
 ### Issue: "No diagrams rendered"
 ```bash
 # Check if diagrams are enabled
-# In convert_final.py, ensure:
+# In cli/main.py, ensure:
 # config['enable_diagrams'] = True
 
 # Run with verbose output
-python convert_final.py test_diagrams.md test_diagrams.pdf --verbose
+python cli/main.py test_diagrams.md test_diagrams.pdf --verbose
 
 # Look for "DiagramRenderingStep" in output
 ```
@@ -295,12 +295,12 @@ python convert_final.py test_diagrams.md test_diagrams.pdf --verbose
 ### Issue: "PDF opens but diagrams are blank"
 ```bash
 # Try with weasyprint renderer
-python convert_final.py test_diagrams.md test_diagrams.pdf \
+python cli/main.py test_diagrams.md test_diagrams.pdf \
     --renderer weasyprint \
     --verbose
 
 # Or try HTML to verify diagrams render
-python convert_final.py test_diagrams.md test_diagrams.html --verbose
+python cli/main.py test_diagrams.md test_diagrams.html --verbose
 open test_diagrams.html
 ```
 
@@ -311,16 +311,16 @@ open test_diagrams.html
 ### Enable Caching
 ```bash
 # First run (slow, ~5s for 4 diagrams)
-python convert_final.py test_diagrams.md output1.pdf --verbose
+python cli/main.py test_diagrams.md output1.pdf --verbose
 
 # Second run (fast, ~1s, uses cache)
-python convert_final.py test_diagrams.md output2.pdf --verbose
+python cli/main.py test_diagrams.md output2.pdf --verbose
 ```
 
 ### Batch Processing
 ```bash
 # Convert multiple documents
-python convert_final.py \
+python cli/main.py \
     --batch doc1.md doc2.md doc3.md \
     --format pdf \
     --verbose
@@ -345,13 +345,13 @@ Now that diagrams are working:
 
 2. **Create architecture decision records with diagrams**
    ```bash
-   python convert_final.py adr/001-streaming-design.md adr/001.pdf \
+   python cli/main.py adr/001-streaming-design.md adr/001.pdf \
        --profile tech-whitepaper --verbose
    ```
 
 3. **Generate documentation suite**
    ```bash
-   python convert_final.py --batch \
+   python cli/main.py --batch \
        docs/architecture.md \
        docs/system-design.md \
        docs/data-pipeline.md \

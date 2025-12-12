@@ -10,7 +10,7 @@ The metadata customization feature is **well-implemented** in the core conversio
 
 ## ✅ What's Successfully Implemented
 
-### 1. Backend Support (`convert_final.py`) - **EXCELLENT**
+### 1. Backend Support (`cli/main.py`) - **EXCELLENT**
 
 **Status: ✅ FULLY WORKING**
 
@@ -41,7 +41,7 @@ The metadata customization feature is **well-implemented** in the core conversio
 - ✅ `classification`
 - ✅ `type`
 
-### 2. CLI Interface (`convert_final.py`) - **VERIFIED ✅**
+### 2. CLI Interface (`cli/main.py`) - **VERIFIED ✅**
 
 **Status: ✅ ALL ARGUMENTS PRESENT**
 
@@ -112,7 +112,7 @@ async def generate_pdf_from_html(
 **File:** `tools/docs_pipeline/runner.py`
 
 **Problem:**
-The pipeline runner (`_run_md2pdf` function, lines 78-100) calls `convert_final.py` as a subprocess but **doesn't extract or pass metadata** from YAML config:
+The pipeline runner (`_run_md2pdf` function, lines 78-100) calls `cli/main.py` as a subprocess but **doesn't extract or pass metadata** from YAML config:
 
 ```python
 def _run_md2pdf(
@@ -121,7 +121,7 @@ def _run_md2pdf(
     fmt: str | None,
     profile: str | None,
 ) -> bool:
-    script = Path(__file__).parent.parent / "pdf" / "convert_final.py"
+    script = Path(__file__).parent.parent / "pdf" / "cli/main.py"
     cmd = ["python", str(script), str(md_file)]
     if output is not None:
         cmd.append(str(output))
@@ -140,11 +140,11 @@ def _run_md2pdf(
 **Fix Required:**
 1. Update `DocumentConfig` to include `metadata` field
 2. Parse metadata from YAML in `_load_pipeline_config()`
-3. Pass metadata as CLI arguments to `convert_final.py`
+3. Pass metadata as CLI arguments to `cli/main.py`
 
 ### 2. **HIGH PRIORITY: Logo Path Environment Variable**
 
-**File:** `tools/pdf/convert_final.py`
+**File:** `tools/pdf/cli/main.py`
 
 **Current:** Logo path is hardcoded to `docs/logo.png` (line ~790)
 
@@ -186,8 +186,8 @@ if logo_path is None:
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Backend (`convert_final.py`) | ✅ 100% | Perfect implementation |
-| CLI (`convert_final.py`) | ✅ 100% | All args present, working |
+| Backend (`cli/main.py`) | ✅ 100% | Perfect implementation |
+| CLI (`cli/main.py`) | ✅ 100% | All args present, working |
 | Playwright (`pdf_playwright.py`) | ✅ 100% | Updated with new fields |
 | Web Demo | ✅ 100% | Form fields present, working |
 | YAML Pipeline Runner | ❌ 0% | **Doesn't pass metadata** |
@@ -203,7 +203,7 @@ if logo_path is None:
 
 1. **CLI Arguments:**
    ```bash
-   python tools/pdf/convert_final.py --help | grep -E "(author|organization|version)"
+   python tools/pdf/cli/main.py --help | grep -E "(author|organization|version)"
    # ✅ All arguments present
    ```
 
@@ -235,7 +235,7 @@ if logo_path is None:
 2. **Environment Variables:**
    ```bash
    export USER_NAME="Test User"
-   python tools/pdf/convert_final.py test.md
+   python tools/pdf/cli/main.py test.md
    # Should work, but needs verification
    ```
 
@@ -255,7 +255,7 @@ if logo_path is None:
 
 ### Priority 2: Logo Path Environment Variable (HIGH)
 
-**File:** `tools/pdf/convert_final.py`
+**File:** `tools/pdf/cli/main.py`
 
 **Estimated time:** 10 minutes
 
@@ -267,7 +267,7 @@ if logo_path is None:
 
 ### Priority 4: Metadata Validation (LOW)
 
-**File:** `tools/pdf/convert_final.py`
+**File:** `tools/pdf/cli/main.py`
 
 **Estimated time:** 15 minutes
 
@@ -277,16 +277,16 @@ if logo_path is None:
 
 ### ✅ Excellent Implementations
 
-1. **Metadata Merging Logic** (`convert_final.py:516-519`)
+1. **Metadata Merging Logic** (`cli/main.py:516-519`)
    - Clean, correct precedence: `custom_metadata` > `frontmatter` > `defaults`
    - Well-documented
 
-2. **Pandoc CSS Stripping** (`convert_final.py:641`)
+2. **Pandoc CSS Stripping** (`cli/main.py:641`)
    - Solves real CSS collision problem
    - Uses proper regex flags
    - Preserves inline styles
 
-3. **Environment Variable Support** (`convert_final.py:523-534`)
+3. **Environment Variable Support** (`cli/main.py:523-534`)
    - Sensible defaults
    - User-friendly for personal use
 

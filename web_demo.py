@@ -78,7 +78,7 @@ def upload_file():
         pdf_path = OUTPUT_FOLDER / pdf_filename
         
         # Import and run PDF conversion
-        from convert_final import markdown_to_pdf
+        from tools.pdf.core import markdown_to_pdf
         
         # Get renderer and profile from request
         # Default to playwright for Docker compatibility

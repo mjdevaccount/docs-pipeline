@@ -12,9 +12,9 @@
 
 ```
 tools/pdf/
-├── convert_final.py                  # 1,654 lines - main converter
+├── cli/main.py                  # 1,654 lines - main converter
 ├── convert_refactored.py            # Reference implementation
-├── convert_final.py                         # CLI wrapper
+├── cli/main.py                         # CLI wrapper
 ├── md2pdf.bat                        # Batch file
 ├── md_to_html_simple.py             # Example
 ├── md_to_html_with_diagrams.py     # Example
@@ -49,7 +49,7 @@ tools/pdf/
 
 ```
 tools/pdf/
-├── convert_final.py                 # Main converter (only core file)
+├── cli/main.py                 # Main converter (only core file)
 ├── README.md                        # Documentation
 ├── requirements-pdf.txt             # Dependencies
 ├── __init__.py                      # Package init
@@ -57,7 +57,7 @@ tools/pdf/
 │
 ├── 📁 cli/                          # Command-line interface
 │   ├── __init__.py
-│   ├── main.py                      # (was convert_final.py)
+│   ├── main.py                      # (was cli/main.py)
 │   └── md2pdf.bat
 │
 ├── 📁 config/                       # Configuration management
@@ -135,7 +135,7 @@ tools/pdf/
 
 | From | To | Purpose |
 |------|----|----|
-| `convert_final.py` | `cli/main.py` | CLI entry point |
+| `cli/main.py` | `cli/main.py` | CLI entry point |
 | `md2pdf.bat` | `cli/md2pdf.bat` | Windows helper |
 | `profiles.py` | `config/profiles.py` | Profile management |
 | `pdf-config.example.json` | `config/examples/` | Config example |
@@ -153,7 +153,7 @@ tools/pdf/
 
 ### 3. Updated Import Paths
 
-**convert_final.py:**
+**cli/main.py:**
 ```python
 # BEFORE
 from profiles import get_profile
@@ -217,9 +217,9 @@ REFACTORING TEST SUITE
 [OK] MermaidRenderer: svg, png formats
 [OK] DiagramOrchestrator: 3 renderers registered
 
-[TEST 3] Integration with convert_final.py
+[TEST 3] Integration with cli/main.py
 ----------------------------------------------------------------------
-[OK] convert_final.py imports successfully
+[OK] cli/main.py imports successfully
 [OK] New SOLID architecture is ACTIVE
 [OK] All 8 core functions available:
   - extract_metadata

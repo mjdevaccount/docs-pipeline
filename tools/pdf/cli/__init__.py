@@ -1,18 +1,18 @@
 """
-Command-Line Interface
-======================
+PDF Generation CLI - Primary Entry Point
+=========================================
 
-CLI tools for PDF generation from markdown files.
+This is THE command-line interface for PDF generation.
 
 Usage:
     python -m tools.pdf.cli.main input.md output.pdf
-    python tools/pdf/cli/main.py input.md --profile tech-whitepaper
+    python -m tools.pdf.cli.main input.md --profile tech-whitepaper --cover --toc
+    python -m tools.pdf.cli.main --batch doc1.md doc2.md --threads 4
     
-For backward compatibility, convert_final.py also works:
-    python tools/pdf/convert_final.py input.md output.pdf
+For library usage, import from core:
+    from tools.pdf.core import markdown_to_pdf
 """
 
 from .main import main, parallel_batch_convert, __version__
 
 __all__ = ['main', 'parallel_batch_convert', '__version__']
-
