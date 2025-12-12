@@ -1,14 +1,14 @@
 FROM python:3.11-slim
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     pandoc \
     curl \
     git \
     make \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g @mermaid-js/mermaid-cli \
+    && apt-get install -y --no-install-recommends nodejs \
+    && npm install -g @mermaid-js/mermaid-cli@11 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -21,8 +21,8 @@ COPY tools/pdf/requirements-pdf.txt ./requirements-pdf.txt
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir -r requirements-pdf.txt
 
-# Install Playwright and Chromium browser
-RUN pip install playwright>=1.40.0 \
+# Install Playwright and Chromium browser (>=1.45.0 for better CSS support)
+RUN pip install 'playwright>=1.45.0' \
     && playwright install --with-deps chromium
 
 # Copy application code
