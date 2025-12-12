@@ -1,14 +1,15 @@
 /**
  * Minimalist Profile - December 2025 Modernized
  * Clean, spacious design with maximum whitespace
- * Thin typography, subtle colors, no borders or boxes
+ * Thin typography, subtle colors, semantic callouts, syntax highlighting
  * 
  * IMPROVEMENTS:
  * - Modern fonts: Inter (body) + JetBrains Mono (code)
  * - Semantic CSS variables for easier maintenance
- * - Better typography: font ligatures, tabular figures
- * - Enhanced accessibility and spacing
- * - Minimalist aesthetic preserved
+ * - Syntax highlighting (muted colors)
+ * - Semantic callout boxes (note, tip, warning, danger, info)
+ * - Enhanced typography with ligatures and tabular figures
+ * - Minimalist aesthetic preserved throughout
  */
 
 /* ============================================================================
@@ -39,10 +40,10 @@
     --color-border-subtle: #dee2e6;         /* Lighter border */
     
     /* Status colors - Muted for minimal design */
-    --color-success: #059669;               /* Green (rare use) */
-    --color-warning: #d97706;               /* Amber (rare use) */
-    --color-error: #dc2626;                 /* Red (rare use) */
-    --color-info: #0284c7;                  /* Blue (rare use) */
+    --color-success: #059669;               /* Green */
+    --color-warning: #d97706;               /* Amber */
+    --color-error: #dc2626;                 /* Red */
+    --color-info: #0284c7;                  /* Blue */
     
     /* Component colors */
     --color-code-bg: #f8f9fa;               /* Light gray */
@@ -52,6 +53,36 @@
     --color-blockquote-border: #cbd5e0;     /* Light gray border */
     --color-blockquote-bg: #f8f9fa;         /* Light gray bg */
     --color-blockquote-text: #2c3e50;       /* Medium dark */
+    
+    /* Syntax highlighting - Muted for minimalist aesthetic */
+    --syntax-keyword: #5a6c7d;              /* Muted blue-gray */
+    --syntax-string: #4a5f3f;               /* Muted green */
+    --syntax-comment: #7a8692;              /* Muted gray-blue */
+    --syntax-number: #6b5a47;               /* Muted brown */
+    --syntax-function: #5a6c7d;             /* Muted blue-gray */
+    --syntax-tag: #6b4444;                  /* Muted red-gray */
+    --syntax-attr: #6b5a7d;                 /* Muted purple-gray */
+    
+    /* Callout colors - Minimal palette */
+    --callout-note-bg: #f0f4f8;             /* Very subtle blue */
+    --callout-note-border: #9ca3af;         /* Neutral gray */
+    --callout-note-text: #374151;           /* Dark gray */
+    
+    --callout-tip-bg: #f0fdf4;              /* Very subtle green */
+    --callout-tip-border: #9ca3af;          /* Neutral gray */
+    --callout-tip-text: #374151;            /* Dark gray */
+    
+    --callout-warning-bg: #fffbeb;          /* Very subtle amber */
+    --callout-warning-border: #9ca3af;      /* Neutral gray */
+    --callout-warning-text: #374151;        /* Dark gray */
+    
+    --callout-danger-bg: #fef2f2;           /* Very subtle red */
+    --callout-danger-border: #9ca3af;       /* Neutral gray */
+    --callout-danger-text: #374151;         /* Dark gray */
+    
+    --callout-info-bg: #ecfdf5;             /* Very subtle teal */
+    --callout-info-border: #9ca3af;         /* Neutral gray */
+    --callout-info-text: #374151;           /* Dark gray */
 }
 
 /* ============================================================================
@@ -163,7 +194,7 @@ p {
     padding: 0;
     width: 100%;
     max-width: none;
-    text-align: left;
+    text-align: left;  /* Accessibility */
     orphans: 3;
     widows: 3;
     font-weight: 400;
@@ -206,6 +237,7 @@ pre {
     margin-left: 0;
     margin-right: 0;
     overflow-x: auto;
+    border-left: 2px solid var(--color-border-subtle);
     border-radius: 2px;
     box-sizing: border-box;
     width: 100%;
@@ -221,6 +253,15 @@ pre code {
     /* Enable ligatures in code blocks */
     font-variant-ligatures: common-ligatures contextual;
 }
+
+/* Syntax highlighting - Muted colors for minimalist aesthetic */
+code.keyword { color: var(--syntax-keyword); font-weight: 600; }
+code.string { color: var(--syntax-string); }
+code.comment { color: var(--syntax-comment); font-style: italic; }
+code.number { color: var(--syntax-number); }
+code.function { color: var(--syntax-function); font-weight: 500; }
+code.tag { color: var(--syntax-tag); }
+code.attr { color: var(--syntax-attr); }
 
 /* ============================================================================
    LISTS
@@ -331,6 +372,118 @@ blockquote > :first-child {
 }
 
 blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================================
+   CALLOUT BOXES (Minimal admonitions - very subtle)
+   ========================================================================== */
+
+.callout, .note, .tip, .warning, .danger, .info,
+div.note, div.tip, div.warning, div.danger, div.info {
+    border-left: 2px solid;
+    border-radius: 2px;
+    padding: 1em 1.25em;
+    margin: 2em 0;
+    page-break-inside: avoid;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    font-weight: 400;
+}
+
+/* Note */
+.note, div.note {
+    border-left-color: #9ca3af;
+    background: var(--callout-note-bg);
+    color: var(--callout-note-text);
+}
+
+.note h4, .note h5, div.note h4, div.note h5 {
+    margin-top: 0;
+    color: var(--callout-note-text);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+/* Tip */
+.tip, div.tip {
+    border-left-color: #9ca3af;
+    background: var(--callout-tip-bg);
+    color: var(--callout-tip-text);
+}
+
+.tip h4, .tip h5, div.tip h4, div.tip h5 {
+    margin-top: 0;
+    color: var(--callout-tip-text);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+/* Warning */
+.warning, div.warning {
+    border-left-color: #9ca3af;
+    background: var(--callout-warning-bg);
+    color: var(--callout-warning-text);
+}
+
+.warning h4, .warning h5, div.warning h4, div.warning h5 {
+    margin-top: 0;
+    color: var(--callout-warning-text);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+/* Danger */
+.danger, div.danger {
+    border-left-color: #9ca3af;
+    background: var(--callout-danger-bg);
+    color: var(--callout-danger-text);
+}
+
+.danger h4, .danger h5, div.danger h4, div.danger h5 {
+    margin-top: 0;
+    color: var(--callout-danger-text);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+/* Info */
+.info, div.info {
+    border-left-color: #9ca3af;
+    background: var(--callout-info-bg);
+    color: var(--callout-info-text);
+}
+
+.info h4, .info h5, div.info h4, div.info h5 {
+    margin-top: 0;
+    color: var(--callout-info-text);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+.callout p, .note p, .tip p, .warning p, .danger p, .info p,
+div.callout p, div.note p, div.tip p, div.warning p, div.danger p, div.info p {
+    margin: 0.5em 0;
+}
+
+.callout > :first-child, .note > :first-child, .tip > :first-child, .warning > :first-child, .danger > :first-child, .info > :first-child,
+div.callout > :first-child, div.note > :first-child, div.tip > :first-child, div.warning > :first-child, div.danger > :first-child, div.info > :first-child {
+    margin-top: 0;
+}
+
+.callout > :last-child, .note > :last-child, .tip > :last-child, .warning > :last-child, .danger > :last-child, .info > :last-child,
+div.callout > :last-child, div.note > :last-child, div.tip > :last-child, div.warning > :last-child, div.danger > :last-child, div.info > :last-child {
     margin-bottom: 0;
 }
 
