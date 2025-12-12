@@ -1,10 +1,119 @@
 /**
- * Tech Whitepaper Profile
+ * Tech Whitepaper Profile - December 2025 Modernized
  * Clean, professional engineering documentation style
- * Blue accents, generous margins, clear hierarchy
+ * Modern typography, semantic colors, dark mode support
+ * 
+ * IMPROVEMENTS:
+ * - Modern fonts: Inter (body) + JetBrains Mono (code)
+ * - Semantic CSS variables for easier maintenance
+ * - Automatic dark mode support
+ * - GitHub-inspired table styling
+ * - Better accessibility and contrast
  */
 
-/* Page setup */
+/* ============================================================================
+   IMPORTS & VARIABLES
+   ========================================================================== */
+
+/* Import modern fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* Semantic color system - Light mode (default) */
+:root {
+    /* Primary brand colors */
+    --color-primary: #2563eb;              /* Blue-600 */
+    --color-primary-light: #dbeafe;        /* Blue-100 */
+    --color-primary-dark: #1e40af;         /* Blue-800 */
+    --color-primary-muted: #0369a1;        /* Blue-700 (for h3/h4) */
+    
+    /* Text colors */
+    --color-text-primary: #1f2937;         /* Gray-800 */
+    --color-text-secondary: #6b7280;       /* Gray-500 */
+    --color-text-muted: #9ca3af;           /* Gray-400 */
+    
+    /* Background & borders */
+    --color-bg-subtle: #f3f4f6;             /* Gray-100 */
+    --color-border: #e5e7eb;               /* Gray-200 */
+    --color-border-subtle: #f0f0f0;        /* Gray-100 (for tables) */
+    
+    /* Status colors */
+    --color-success: #059669;               /* Green-600 */
+    --color-warning: #d97706;               /* Amber-600 */
+    --color-error: #dc2626;                 /* Red-600 */
+    --color-info: #0284c7;                  /* Cyan-600 */
+    
+    /* Specific component colors (maintain existing aesthetic) */
+    --color-code-bg: #f3f4f6;               /* Gray-100 */
+    --color-code-text: #1f2937;             /* Gray-800 */
+    --color-pre-bg: #1a202c;                /* Slate-900 */
+    --color-pre-text: #e2e8f0;              /* Slate-100 */
+    --color-blockquote-border: #2563eb;     /* Blue-600 */
+    --color-blockquote-bg: #eff6ff;         /* Blue-50 */
+    --color-blockquote-text: #1e40af;       /* Blue-800 */
+    
+    /* Typography scales */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    
+    /* Spacing scale */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+}
+
+/* Dark mode color overrides */
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Dark mode primary colors */
+        --color-primary: #60a5fa;               /* Blue-400 */
+        --color-primary-light: #1e3a8a;        /* Blue-900 */
+        --color-primary-dark: #3b82f6;         /* Blue-500 */
+        --color-primary-muted: #93c5fd;        /* Blue-300 */
+        
+        /* Dark mode text colors */
+        --color-text-primary: #f3f4f6;          /* Gray-100 */
+        --color-text-secondary: #d1d5db;       /* Gray-300 */
+        --color-text-muted: #9ca3af;           /* Gray-400 */
+        
+        /* Dark mode backgrounds */
+        --color-bg-subtle: #1f2937;             /* Gray-800 */
+        --color-border: #374151;                /* Gray-700 */
+        --color-border-subtle: #2d3748;        /* Gray-700 */
+        
+        /* Dark mode status colors (muted for dark bg) */
+        --color-success: #10b981;               /* Emerald-500 */
+        --color-warning: #f59e0b;               /* Amber-500 */
+        --color-error: #ef4444;                 /* Red-500 */
+        --color-info: #06b6d4;                  /* Cyan-500 */
+        
+        /* Dark mode component colors */
+        --color-code-bg: #111827;               /* Gray-900 */
+        --color-code-text: #f3f4f6;             /* Gray-100 */
+        --color-pre-bg: #0f172a;                /* Slate-950 */
+        --color-pre-text: #e2e8f0;              /* Slate-100 */
+        --color-blockquote-border: #60a5fa;     /* Blue-400 */
+        --color-blockquote-bg: #0c2d48;         /* Blue-950 */
+        --color-blockquote-text: #93c5fd;       /* Blue-300 */
+    }
+    
+    /* Dark mode body adjustments */
+    body {
+        background: #111827;                    /* Gray-900 */
+        color: var(--color-text-primary);
+    }
+}
+
+/* ============================================================================
+   PAGE SETUP
+   ========================================================================== */
+
 @page {
     size: A4;
     margin: 2.5cm 2cm 2cm 2cm;
@@ -14,18 +123,25 @@
     margin-top: 1cm;
 }
 
-/* Base typography */
+/* ============================================================================
+   BASE TYPOGRAPHY
+   ========================================================================== */
+
 body {
-    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    /* Modern fonts with fallbacks */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 11pt;
     line-height: 1.7;
-    color: #1a202c;
+    color: var(--color-text-primary);
     background: #ffffff;
     margin: 0;
     padding: 0;
     width: 100%;
     max-width: none;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Enable font ligatures for better typography */
+    font-feature-settings: 'liga' 1, 'calt' 1;
 }
 
 /* Reset any Pandoc wrapper divs that might constrain width */
@@ -38,10 +154,13 @@ body > section,
     max-width: none;
 }
 
-/* Headings - Blue accent color */
+/* ============================================================================
+   HEADINGS
+   ========================================================================== */
+
 h1, h2, h3, h4, h5, h6 {
-    font-weight: 700;
-    color: #2b6cb0;
+    font-weight: 600;  /* Adjusted for Inter's different weight curve */
+    color: var(--color-primary);
     margin-top: 1.5em;
     margin-bottom: 0.5em;
     margin-left: 0;
@@ -50,12 +169,13 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     max-width: none;
     line-height: 1.3;
+    letter-spacing: -0.01em;  /* Tighter spacing for modern look */
     /* page-break rules removed - handled by layout.css */
 }
 
 h1 {
     font-size: 2.2rem;
-    border-bottom: 3px solid #e2e8f0;
+    border-bottom: 3px solid var(--color-border);
     padding-bottom: 0.4em;
     margin-top: 0.5em;
     page-break-before: auto;
@@ -63,21 +183,34 @@ h1 {
 
 h2 {
     font-size: 1.6rem;
-    border-bottom: 2px solid #edf2f7;
+    border-bottom: 2px solid var(--color-border);
     padding-bottom: 0.3em;
 }
 
 h3 {
     font-size: 1.3rem;
-    color: #3182ce;
+    color: var(--color-primary-muted);
 }
 
 h4 {
     font-size: 1.1rem;
-    color: #4299e1;
+    color: var(--color-primary-muted);
 }
 
-/* Paragraphs */
+h5 {
+    font-size: 1rem;
+    color: var(--color-primary-muted);
+}
+
+h6 {
+    font-size: 0.95rem;
+    color: var(--color-primary-muted);
+}
+
+/* ============================================================================
+   PARAGRAPHS & INLINE TEXT
+   ========================================================================== */
+
 p {
     margin: 0.5em 0 1em 0;
     margin-left: 0;
@@ -92,119 +225,201 @@ p {
 
 /* Links */
 a {
-    color: #3182ce;
+    color: var(--color-primary);
     text-decoration: none;
     font-weight: 500;
+    transition: color 0.2s ease;
 }
 
 a:hover {
+    color: var(--color-primary-dark);
     text-decoration: underline;
 }
 
-/* Code - Light gray boxes */
+/* ============================================================================
+   CODE & PREFORMATTED TEXT
+   ========================================================================== */
+
 code {
-    font-family: 'Fira Code', 'SF Mono', Menlo, Monaco, 'Courier New', monospace;
+    /* Modern monospace font */
+    font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
     font-size: 0.88em;
-    background: #edf2f7;
-    color: #2d3748;
+    background: var(--color-code-bg);
+    color: var(--color-code-text);
     padding: 0.2em 0.4em;
     border-radius: 3px;
-    border: 1px solid #cbd5e0;
+    border: 1px solid var(--color-border);
+    /* Enable tabular figures for better code alignment */
+    font-variant-numeric: tabular-nums;
 }
 
 pre {
-    background: #1a202c;
-    border-left: 4px solid #3182ce;
-    padding: 1em 1.2em;
-    margin: 1.2em 0;
-    border-radius: 6px;
+    background: var(--color-pre-bg);
+    border-left: 4px solid var(--color-primary);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-primary);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin: 1.5em 0;
     overflow-x: auto;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     /* page-break rules removed - handled by layout.css */
 }
 
 pre code {
     background: transparent;
-    color: #e2e8f0;
+    color: var(--color-pre-text);
     padding: 0;
     border: none;
-    font-size: 0.9em;
+    font-size: 0.875rem;
     line-height: 1.6;
+    /* Enable ligatures in code blocks */
+    font-variant-ligatures: common-ligatures contextual;
 }
 
-/* Lists */
+/* ============================================================================
+   LISTS
+   ========================================================================== */
+
 ul, ol {
-    margin: 0.8em 0;
+    margin: 1rem 0;
     margin-left: 0;
     margin-right: 0;
-    padding-left: 2em;
+    padding-left: 1.75rem;
     padding-right: 0;
     width: 100%;
     max-width: none;
 }
 
 li {
-    margin: 0.4em 0;
+    margin: 0.5rem 0;
     line-height: 1.6;
 }
 
-/* Tables */
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+/* Modern list markers */
+ul {
+    list-style-type: '▹';  /* Modern bullet point */
+}
+
+/* Marker styling */
+li::marker {
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
+/* ============================================================================
+   TABLES (Modernized GitHub-inspired styling)
+   ========================================================================== */
+
 table {
-    border-collapse: collapse;
     width: 100%;
-    max-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.925rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    overflow: hidden;  /* Ensure rounded corners work */
     margin: 1.5em 0;
     margin-left: 0;
     margin-right: 0;
-    font-size: 0.95em;
     /* page-break rules removed - handled by layout.css */
 }
 
-th, td {
-    border: 1px solid #cbd5e0;
-    padding: 0.8em 1em;
-    text-align: left;
+thead {
+    background: var(--color-bg-subtle);
+    font-weight: 600;
 }
 
 th {
-    background: #edf2f7;
-    color: #2d3748;
-    font-weight: 700;
-    border-bottom: 2px solid #3182ce;
+    padding: 0.875rem 1rem;
+    text-align: left;
+    color: var(--color-text-primary);
+    border-bottom: 2px solid var(--color-border);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    font-weight: 600;
 }
 
-tr:nth-child(even) {
-    background: #f7fafc;
+td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
 }
 
-/* Blockquotes - Blue accent */
+/* Remove bottom border from last row */
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Hover effect for rows (improves readability) */
+tbody tr:hover {
+    background: var(--color-bg-subtle);
+}
+
+/* Optional: Subtle striping for better readability */
+tbody tr:nth-child(odd) {
+    background: rgba(0, 0, 0, 0.015);
+}
+
+@media (prefers-color-scheme: dark) {
+    tbody tr:nth-child(odd) {
+        background: rgba(255, 255, 255, 0.02);
+    }
+}
+
+/* ============================================================================
+   BLOCKQUOTES
+   ========================================================================== */
+
 blockquote {
-    border-left: 4px solid #3182ce;
-    background: #ebf8ff;
-    padding: 1em 1.5em;
-    margin: 1.2em 0;
+    border-left: 4px solid var(--color-blockquote-border);
+    background: var(--color-blockquote-bg);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5em 0;
     margin-left: 0;
     margin-right: 0;
     width: 100%;
     max-width: none;
     font-style: italic;
-    color: #2c5282;
-    border-radius: 4px;
+    color: var(--color-blockquote-text);
+    border-radius: 0 0.25rem 0.25rem 0;
     box-sizing: border-box;
+    line-height: 1.6;
 }
 
 blockquote p {
-    margin: 0.3em 0;
+    margin: 0.5rem 0;
 }
 
-/* Horizontal rules */
+blockquote > :first-child {
+    margin-top: 0;
+}
+
+blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================================
+   HORIZONTAL RULES
+   ========================================================================== */
+
 hr {
     border: none;
-    border-top: 2px solid #e2e8f0;
+    border-top: 2px solid var(--color-border);
     margin: 2em 0;
 }
 
-/* Images and diagrams */
+/* ============================================================================
+   IMAGES & DIAGRAMS
+   ========================================================================== */
+
 img, svg {
     max-width: 100%;
     height: auto;
@@ -221,26 +436,29 @@ figure {
 
 figcaption {
     font-size: 0.9em;
-    color: #718096;
+    color: var(--color-text-muted);
     margin-top: 0.5em;
     font-style: italic;
 }
 
-/* Table of Contents */
+/* ============================================================================
+   TABLE OF CONTENTS
+   ========================================================================== */
+
 nav#TOC, #TOC {
-    background: #f7fafc;
+    background: var(--color-bg-subtle);
     padding: 1.5em;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
+    border: 2px solid var(--color-border);
+    border-radius: 0.5rem;
     margin: 2em 0;
     page-break-after: always;
 }
 
 nav#TOC h2, #TOC h2 {
     font-size: 1.5rem;
-    color: #2b6cb0;
+    color: var(--color-primary);
     margin-top: 0;
-    border-bottom: 2px solid #3182ce;
+    border-bottom: 2px solid var(--color-border);
     padding-bottom: 0.5em;
 }
 
@@ -255,63 +473,104 @@ nav#TOC li, #TOC li {
 }
 
 nav#TOC a, #TOC a {
-    color: #2b6cb0;
+    color: var(--color-primary);
     text-decoration: none;
+    transition: color 0.2s ease;
 }
 
 nav#TOC a:hover, #TOC a:hover {
+    color: var(--color-primary-dark);
     text-decoration: underline;
 }
 
-/* Cover page - Tech whitepaper styling */
+/* ============================================================================
+   COVER PAGE STYLING
+   ========================================================================== */
+
 .cover-title {
-    color: #2b6cb0;
+    color: var(--color-primary);
 }
 
 .cover-subtitle {
-    color: #4a5568;
+    color: var(--color-text-secondary);
 }
 
 .cover-metadata {
-    color: #718096;
+    color: var(--color-text-muted);
 }
 
 .cover-version {
-    color: #a0aec0;
+    color: var(--color-text-muted);
 }
 
 .cover-classification {
-    color: #c05621;
-    background: #fff3e0;
+    color: var(--color-warning);
+    background: rgba(217, 119, 6, 0.1);
     padding: 8px 16px;
     border-radius: 4px;
+    border: 1px solid var(--color-warning);
 }
 
-/* TOC - Tech whitepaper styling */
-.toc-title {
-    color: #2b6cb0;
-    border-bottom: 2px solid #e2e8f0;
+/* ============================================================================
+   CALLOUT BOXES (Admonitions) - For future use
+   ========================================================================== */
+
+/* Support for Pandoc div syntax */
+div.note, div.info, div.tip {
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    border-left: 4px solid var(--color-primary);
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(37, 99, 235, 0.05) 100%);
+    color: var(--color-primary-dark);
+    margin: 1.5rem 0;
+    page-break-inside: avoid;
 }
 
-.toc-link {
-    color: #2b6cb0;
+div.warning {
+    border-left-color: var(--color-warning);
+    background: linear-gradient(135deg, #fef3c7 0%, rgba(217, 119, 6, 0.05) 100%);
+    color: #854d0e;
 }
 
-.toc-link:hover {
-    color: #3182ce;
+div.success {
+    border-left-color: var(--color-success);
+    background: linear-gradient(135deg, #d1fae5 0%, rgba(5, 150, 105, 0.05) 100%);
+    color: #065f46;
 }
 
-/* Print-specific adjustments */
+div.error {
+    border-left-color: var(--color-error);
+    background: linear-gradient(135deg, #fee2e2 0%, rgba(220, 38, 38, 0.05) 100%);
+    color: #7f1d1d;
+}
+
+div.note h4, div.info h4, div.tip h4, div.warning h4, div.success h4, div.error h4 {
+    margin-top: 0;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+/* ============================================================================
+   PRINT-SPECIFIC ADJUSTMENTS
+   ========================================================================== */
+
 @media print {
     body {
         background: white;
+        color: black;
     }
     
     a {
-        color: #2b6cb0;
+        color: var(--color-primary);
         text-decoration: none;
     }
     
-    /* Page break rules removed - handled by layout.css */
+    /* Prevent background colors in print (save ink) */
+    pre, blockquote, table thead {
+        background: white;
+    }
+    
+    /* Page break rules handled by layout.css */
 }
-
