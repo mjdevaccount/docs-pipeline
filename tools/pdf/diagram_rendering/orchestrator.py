@@ -26,6 +26,7 @@ class DiagramOrchestrator:
     3. Process markdown content to find and render all diagrams
     4. Replace diagram code blocks with image references
     5. Coordinate caching across all renderers
+    6. Track cache performance metrics
     
     Follows Open/Closed Principle:
     - Add new diagram types by registering new renderer
@@ -118,6 +119,8 @@ class DiagramOrchestrator:
         """
         Render a single diagram using appropriate renderer.
         
+        Tracks cache hits/misses in cache.stats.
+        
         Args:
             diagram_code: Diagram source code
             output_file: Output file path
@@ -136,7 +139,19 @@ class DiagramOrchestrator:
                 error_message=f"No renderer found for diagram (hint: {format_hint})"
             )
         
-        return renderer.render(diagram_code, output_file, output_format, **options)
+        # Try to get from cache first
+        if self.cache.get_and_copy(diagram_code, output_file, output_format, options):
+            # Cache hit - metrics already tracked in get_and_copy()
+            return RenderResult(success=True)
+        
+        # Cache miss - render new
+        result = renderer.render(diagram_code, output_file, output_format, **options)
+        
+        # Track cache miss if successful
+        if result.success and output_file.exists():
+            self.cache.record_miss(output_file)
+        
+        return result
     
     def process_markdown(
         self,
@@ -218,4 +233,12 @@ class DiagramOrchestrator:
             'total_bytes': total_bytes,
             'total_mb': round(total_bytes / (1024 * 1024), 2)
         }
-
+    
+    def get_cache_metrics_report(self) -> str:
+        """
+        Get formatted cache metrics report.
+        
+        Returns:
+            Human-readable cache report
+        """
+        return self.cache.stats.report()
