@@ -9,6 +9,7 @@
  * - Automatic dark mode support
  * - GitHub-inspired table styling
  * - Better accessibility and contrast
+ * - Full-width layout (no right-side truncation)
  */
 
 /* ============================================================================
@@ -214,6 +215,7 @@ h6 {
 p {
     margin: 0.5em 0 1em 0;
     margin-left: 0;
+    margin-right: 0;
     padding: 0;
     width: 100%;
     max-width: none;
@@ -260,9 +262,13 @@ pre {
     border-radius: 0.5rem;
     padding: 1.25rem;
     margin: 1.5em 0;
+    margin-left: 0;
+    margin-right: 0;
     overflow-x: auto;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
     /* page-break rules removed - handled by layout.css */
 }
 
@@ -284,6 +290,7 @@ pre code {
 ul, ol {
     margin: 1rem 0;
     margin-left: 0;
+    margin-right: 0;
     padding-left: 1.75rem;
     width: 100%;
     max-width: none;
@@ -317,6 +324,7 @@ li::marker {
 
 table {
     width: 100%;
+    max-width: 100%;
     border-collapse: separate;
     border-spacing: 0;
     font-size: 0.925rem;
@@ -325,6 +333,7 @@ table {
     overflow: hidden;  /* Ensure rounded corners work */
     margin: 1.5em 0;
     margin-left: 0;
+    margin-right: 0;
     box-sizing: border-box;
     /* page-break rules removed - handled by layout.css */
 }
@@ -382,6 +391,7 @@ blockquote {
     padding: 1.25rem 1.5rem;
     margin: 1.5em 0;
     margin-left: 0;
+    margin-right: 0;
     width: 100%;
     max-width: none;
     font-style: italic;
