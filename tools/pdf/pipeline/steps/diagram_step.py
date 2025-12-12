@@ -1,6 +1,6 @@
 """
-Diagram rendering pipeline step - NOW WITH FULL MERMAID SUPPORT
-Proper integration of DiagramOrchestrator for markdown diagram embedding.
+Diagram rendering pipeline step - FULL MERMAID SUPPORT
+Proper integration of MermaidRenderer for markdown diagram embedding.
 """
 from pathlib import Path
 import re
@@ -18,9 +18,15 @@ class DiagramRenderingStep(PipelineStep):
     
     This step:
     1. Finds all ```mermaid code blocks
-    2. Renders each to SVG using MermaidRenderer
-    3. Embeds SVG directly in markdown (not just references)
+    2. Renders each to SVG using MermaidRenderer (mmdc CLI)
+    3. Embeds SVG directly in markdown (replaces code blocks)
     4. Supports caching and profile-specific theming
+    
+    Features:
+    - Works with or without diagram_rendering module
+    - Fallback to subprocess mermaid-cli if available
+    - Profile-aware theme selection
+    - Verbose logging for debugging
     """
     
     def get_name(self) -> str:
@@ -68,8 +74,96 @@ class DiagramRenderingStep(PipelineStep):
         """
         Find all mermaid code blocks and render them to embedded SVG.
         
+        Strategy:
+        1. Find all ```mermaid blocks
+        2. For each block, render to SVG file
+        3. Replace code block with embedded SVG HTML
+        4. Return modified markdown
+        
         Returns:
             (modified_markdown, rendered_count)
+        """
+        
+        # Extract all mermaid blocks
+        diagram_blocks = self._extract_mermaid_blocks(markdown_content)
+        
+        if not diagram_blocks:
+            self.log("No valid Mermaid code blocks found", context)
+            return markdown_content, 0
+        
+        self.log(f"Found {len(diagram_blocks)} Mermaid diagram blocks", context)
+        
+        # Process each diagram block
+        rendered_count = 0
+        result = markdown_content
+        
+        # Process in reverse order to maintain position indices
+        for idx, (start, end, diagram_code) in enumerate(reversed(diagram_blocks)):
+            actual_idx = len(diagram_blocks) - 1 - idx
+            
+            # Render this diagram
+            svg_content = self._render_single_diagram(
+                diagram_code, actual_idx, context
+            )
+            
+            if svg_content:
+                # Wrap SVG in div
+                svg_wrapper = f'''<div class="diagram-container" style="display: flex; justify-content: center; margin: 1.5em 0;">
+{svg_content}
+</div>'''
+                
+                # Replace code block with SVG
+                result = result[:start] + svg_wrapper + result[end:]
+                rendered_count += 1
+                self.log(f"  ✓ Diagram {actual_idx + 1}: Rendered to SVG", context)
+            else:
+                self.log(f"  ✗ Diagram {actual_idx + 1}: Render failed, keeping code block", context)
+        
+        return result, rendered_count
+    
+    def _extract_mermaid_blocks(self, content: str) -> list:
+        """
+        Extract all ```mermaid code blocks from markdown.
+        
+        Returns:
+            List of (start_pos, end_pos, code) tuples
+        """
+        blocks = []
+        pattern = r'```mermaid\s*\n(.*?)\n```'
+        
+        for match in re.finditer(pattern, content, re.DOTALL):
+            code = match.group(1).strip()
+            if code:  # Only include non-empty blocks
+                blocks.append((
+                    match.start(),
+                    match.end(),
+                    code
+                ))
+        
+        return blocks
+    
+    def _render_single_diagram(self, diagram_code: str, idx: int, context: PipelineContext) -> str:
+        """
+        Render a single Mermaid diagram to SVG.
+        
+        Returns SVG content as string, or None if render failed.
+        """
+        svg_file = context.work_dir / f"diagram_{idx:03d}.svg"
+        
+        try:
+            # Try using diagram_rendering module first
+            return self._render_with_module(diagram_code, svg_file, context)
+        except Exception as e:
+            self.log(f"    Module render failed: {e}, trying subprocess...", context)
+            try:
+                return self._render_with_subprocess(diagram_code, svg_file, context)
+            except Exception as e2:
+                self.log(f"    Subprocess render failed: {e2}", context)
+                return None
+    
+    def _render_with_module(self, code: str, svg_file: Path, context: PipelineContext) -> str:
+        """
+        Render using diagram_rendering.MermaidRenderer module.
         """
         from diagram_rendering import MermaidRenderer, DiagramCache, DiagramFormat
         
@@ -77,76 +171,76 @@ class DiagramRenderingStep(PipelineStep):
         cache_dir = context.get_config('cache_dir')
         use_cache = context.get_config('use_cache', True)
         theme_config = context.get_config('theme_config')
-        profile = context.get_config('profile')  # For profile-specific theming
+        profile = context.get_config('profile')
         
         cache = DiagramCache(cache_dir) if use_cache and cache_dir else None
-        renderer = MermaidRenderer(cache=cache, theme_config=Path(theme_config) if theme_config else None)
+        renderer = MermaidRenderer(
+            cache=cache,
+            theme_config=Path(theme_config) if theme_config else None
+        )
         
-        # Extract mermaid blocks with their positions
-        pattern = r'```mermaid\s*\n(.*?)\n```'
-        matches = list(re.finditer(pattern, markdown_content, re.DOTALL))
+        # Render
+        result = renderer.render(
+            code,
+            svg_file,
+            format=DiagramFormat.SVG,
+            theme=self._get_theme_for_profile(profile),
+            background='transparent'
+        )
         
-        if not matches:
-            return markdown_content, 0
+        if not result.success:
+            raise Exception(f"MermaidRenderer failed: {result.error_message}")
         
-        self.log(f"Found {len(matches)} Mermaid diagram blocks", context)
+        # Read and return SVG content
+        with open(svg_file, 'r', encoding='utf-8') as f:
+            return f.read()
+    
+    def _render_with_subprocess(self, code: str, svg_file: Path, context: PipelineContext) -> str:
+        """
+        Render using mermaid-cli (mmdc) subprocess as fallback.
+        """
+        import subprocess
+        import tempfile
         
-        # Render diagrams (reverse order to maintain positions)
-        rendered_count = 0
-        offset = 0  # Track position shifts as we replace text
+        # Write diagram code to temp file
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.mmd', delete=False) as f:
+            f.write(code)
+            mmd_file = Path(f.name)
         
-        for match_idx, match in enumerate(matches):
-            diagram_code = match.group(1).strip()
+        try:
+            # Call mermaid-cli
+            profile = context.get_config('profile')
+            theme = self._get_theme_for_profile(profile)
             
-            # Validate diagram
-            if not renderer.validate(diagram_code):
-                self.log(f"  ⚠️  Diagram {match_idx + 1}: Invalid Mermaid syntax, skipping", context)
-                continue
+            cmd = [
+                'mmdc',
+                '--input', str(mmd_file),
+                '--output', str(svg_file),
+                '--theme', theme,
+                '--backgroundColor', 'transparent'
+            ]
             
-            # Render to SVG
-            svg_file = context.work_dir / f"diagram_{match_idx:03d}.svg"
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
             
-            try:
-                result = renderer.render(
-                    diagram_code,
-                    svg_file,
-                    format=DiagramFormat.SVG,
-                    theme=self._get_theme_for_profile(profile),
-                    background='transparent'
-                )
-                
-                if not result.success:
-                    self.log(f"  ⚠️  Diagram {match_idx + 1}: Render failed ({result.error_message})", context)
-                    continue
-                
-                # Read SVG content
-                with open(svg_file, 'r', encoding='utf-8') as f:
-                    svg_content = f.read()
-                
-                # Wrap SVG in a div with styling
-                svg_wrapper = f'''<div class="diagram-container" style="display: flex; justify-content: center; margin: 1.5em 0;">
-{svg_content}
-</div>'''
-                
-                # Replace the code block with embedded SVG
-                start_pos = match.start() + offset
-                end_pos = match.end() + offset
-                
-                before = markdown_content[:start_pos]
-                after = markdown_content[end_pos:]
-                markdown_content = before + svg_wrapper + after
-                
-                # Update offset for next match
-                offset += len(svg_wrapper) - (end_pos - start_pos)
-                rendered_count += 1
-                
-                self.log(f"  ✓ Diagram {match_idx + 1}: Rendered to SVG ({svg_file.name})", context)
-                
-            except Exception as e:
-                self.log(f"  ✗ Diagram {match_idx + 1}: Exception - {e}", context)
-                continue
+            if result.returncode != 0:
+                raise Exception(f"mmdc failed: {result.stderr}")
+            
+            if not svg_file.exists():
+                raise Exception(f"SVG file not created: {svg_file}")
+            
+            # Read and return SVG content
+            with open(svg_file, 'r', encoding='utf-8') as f:
+                return f.read()
         
-        return markdown_content, rendered_count
+        finally:
+            # Cleanup temp file
+            if mmd_file.exists():
+                mmd_file.unlink()
     
     def _get_theme_for_profile(self, profile: str = None) -> str:
         """
