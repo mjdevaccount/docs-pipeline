@@ -110,8 +110,7 @@ tools/pdf/
 │
 ├── 📁 playwright_pdf/               # Playwright sub-package
 ├── 📁 docs/                         # Documentation
-├── 📁 output/                       # Generated files
-└── 📁 legacy/                       # For future archiving
+└── 📁 output/                       # Generated files
 ```
 
 **Benefits:** Clear organization, easy navigation, professional structure
@@ -129,8 +128,7 @@ tools/pdf/
 │   └── examples/          # NEW
 ├── renderers/              # NEW
 ├── examples/               # NEW
-├── styles/examples/        # NEW
-└── legacy/                 # NEW
+└── styles/examples/        # NEW
 ```
 
 ### 2. Moved Files (20 files relocated)
@@ -275,7 +273,6 @@ REFACTORING TEST SUITE
 ### 4. **Scalability**
 - Room to grow without clutter
 - Clear places for future additions
-- Legacy folder for deprecations
 
 ### 5. **Discoverability**
 - No more hunting for config files
@@ -335,7 +332,6 @@ The new structure makes these easier:
 - Add new renderers → `renderers/`
 - Add new profiles → `config/examples/`
 - Add new themes → `styles/`
-- Archive old versions → `legacy/`
 
 ---
 
