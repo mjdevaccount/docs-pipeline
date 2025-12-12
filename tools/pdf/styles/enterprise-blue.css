@@ -1,14 +1,15 @@
 /**
  * Enterprise Blue Profile - December 2025 Modernized
- * Corporate-friendly, professional styling
- * Modern blue and gray color scheme, structured layout
+ * Professional, corporate-focused design
+ * Semantic colors, syntax highlighting, modern typography
  * 
  * IMPROVEMENTS:
  * - Modern fonts: Inter (body) + JetBrains Mono (code)
  * - Semantic CSS variables for easier maintenance
  * - GitHub-inspired table styling
+ * - Syntax highlighting for code blocks
+ * - Semantic callout boxes (note, tip, warning, danger, info)
  * - Better accessibility and contrast
- * - Professional shadows and spacing
  */
 
 /* ============================================================================
@@ -19,52 +20,97 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-/* Semantic color system - Corporate blue palette */
+/* Semantic color system - Light mode with corporate blue */
 :root {
     /* Primary colors - Corporate blue */
-    --color-primary: #0066cc;               /* Corporate Blue */
-    --color-primary-light: #4d94ff;         /* Lighter Blue */
-    --color-primary-dark: #003d7a;          /* Darker Blue */
-    --color-primary-muted: #0052a3;         /* Muted Blue */
+    --color-primary: #0066cc;               /* Corporate blue */
+    --color-primary-light: #4d94ff;         /* Light blue */
+    --color-primary-dark: #003d99;          /* Dark blue */
+    --color-primary-muted: #004db3;         /* Muted blue */
     
-    /* Text colors - Corporate standards */
-    --color-text-primary: #1f2937;          /* Dark Gray */
-    --color-text-secondary: #4a5568;        /* Medium Gray */
-    --color-text-muted: #6b7280;            /* Light Gray */
+    /* Text colors */
+    --color-text-primary: #1f2937;          /* Gray-800 */
+    --color-text-secondary: #4b5563;        /* Gray-600 */
+    --color-text-muted: #9ca3af;            /* Gray-400 */
     
     /* Background & borders */
-    --color-bg-subtle: #f0f4f8;             /* Very Light Blue */
-    --color-bg-surface: #ffffff;            /* White */
-    --color-border: #d1dce5;                /* Blue-gray border */
-    --color-border-subtle: #e1e8ed;         /* Subtle border */
+    --color-bg-subtle: #f0f5fc;             /* Light blue-gray */
+    --color-border: #c2d0e0;                /* Blue-tinted gray */
+    --color-border-subtle: #d9e3f0;         /* Light blue-gray border */
     
     /* Status colors */
-    --color-success: #059669;               /* Green */
-    --color-warning: #d97706;               /* Amber */
-    --color-error: #dc2626;                 /* Red */
-    --color-info: #0284c7;                  /* Blue */
+    --color-success: #0d6d3b;               /* Dark green */
+    --color-warning: #b45309;               /* Amber-700 */
+    --color-error: #b91c1c;                 /* Red-700 */
+    --color-info: #0369a1;                  /* Cyan-700 */
     
     /* Component colors */
-    --color-code-bg: #e6f2ff;               /* Light Blue */
-    --color-code-text: #003366;             /* Dark Blue */
-    --color-pre-bg: #f5f8fa;                /* Very Light Blue */
-    --color-pre-text: #1f2937;              /* Dark Gray */
-    --color-blockquote-border: #0066cc;     /* Corporate Blue */
-    --color-blockquote-bg: #f0f7ff;         /* Very Light Blue */
-    --color-blockquote-text: #003d7a;       /* Dark Blue */
+    --color-code-bg: #f0f5fc;               /* Light blue-gray */
+    --color-code-text: #1f2937;             /* Gray-800 */
+    --color-pre-bg: #1e3a5f;                /* Navy blue */
+    --color-pre-text: #e5e7eb;              /* Gray-100 */
+    --color-blockquote-border: #0066cc;     /* Corporate blue */
+    --color-blockquote-bg: #e6f2ff;         /* Very light blue */
+    --color-blockquote-text: #003d99;       /* Dark blue */
+    
+    /* Syntax highlighting colors */
+    --syntax-keyword: #d946ef;              /* Purple */
+    --syntax-string: #0d6d3b;               /* Dark green */
+    --syntax-comment: #6366f1;              /* Indigo */
+    --syntax-number: #b45309;               /* Amber */
+    --syntax-function: #0369a1;             /* Cyan */
+    --syntax-tag: #b91c1c;                  /* Red */
+    --syntax-attr: #7c3aed;                 /* Purple */
+    
+    /* Callout colors */
+    --callout-note-bg: #e6f2ff;             /* Light blue */
+    --callout-note-border: #0066cc;         /* Corporate blue */
+    --callout-note-text: #003d99;           /* Dark blue */
+    
+    --callout-tip-bg: #f0fdf4;              /* Very light green */
+    --callout-tip-border: #0d6d3b;          /* Dark green */
+    --callout-tip-text: #15803d;            /* Green */
+    
+    --callout-warning-bg: #fffbeb;          /* Very light amber */
+    --callout-warning-border: #b45309;      /* Amber */
+    --callout-warning-text: #92400e;        /* Amber-dark */
+    
+    --callout-danger-bg: #fef2f2;           /* Very light red */
+    --callout-danger-border: #b91c1c;       /* Red */
+    --callout-danger-text: #7f1d1d;         /* Dark red */
+    
+    --callout-info-bg: #ecfdf5;             /* Very light teal */
+    --callout-info-border: #0891b2;         /* Teal */
+    --callout-info-text: #134e4a;           /* Dark teal */
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Dark mode overrides */
+        --color-primary: #60a5fa;               /* Blue-400 */
+        --color-text-primary: #f3f4f6;          /* Gray-100 */
+        --color-text-secondary: #d1d5db;        /* Gray-300 */
+        --color-text-muted: #9ca3af;            /* Gray-400 */
+        --color-bg-subtle: #1f3a5f;             /* Dark blue */
+        --color-border: #334155;                /* Slate-700 */
+        --color-code-bg: #0f172a;               /* Slate-900 */
+        --color-code-text: #e5e7eb;             /* Gray-100 */
+        --color-pre-bg: #020617;                /* Slate-950 */
+        --color-pre-text: #e2e8f0;              /* Slate-100 */
+    }
 }
 
 /* ============================================================================
-   PAGE SETUP - Margins: 2.5cm top/bottom, 2.2cm left/right
+   PAGE SETUP - Margins: 2.5cm top, 2cm left/right, 2cm bottom
    ========================================================================== */
 
 @page {
     size: A4;
-    margin: 2.5cm 2.2cm 2.5cm 2.2cm;
+    margin: 2.5cm 2cm 2cm 2cm;
 }
 
 @page:first {
-    margin-top: 1.5cm;
+    margin-top: 1cm;
 }
 
 /* ============================================================================
@@ -75,9 +121,9 @@ body {
     /* Modern fonts with fallbacks */
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 11pt;
-    line-height: 1.65;
-    color: var(--color-text-secondary);
-    background: var(--color-bg-surface);
+    line-height: 1.7;
+    color: var(--color-text-primary);
+    background: #ffffff;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -104,54 +150,49 @@ body > section,
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
-    color: var(--color-primary-dark);
-    margin-top: 1.4em;
+    color: var(--color-primary);
+    margin-top: 1.5em;
     margin-bottom: 0.5em;
     margin-left: 0;
     margin-right: 0;
     padding: 0;
     width: 100%;
     max-width: none;
-    line-height: 1.35;
+    line-height: 1.3;
     letter-spacing: -0.01em;
 }
 
 h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     border-bottom: 3px solid var(--color-primary);
     padding-bottom: 0.4em;
     margin-top: 0.5em;
-    page-break-before: auto;
-    background: linear-gradient(to right, var(--color-bg-subtle) 0%, transparent 100%);
-    padding: 0.5em 0 0.5em 0.5em;
-    margin-left: -0.5em;
 }
 
 h2 {
-    font-size: 1.5rem;
-    color: var(--color-primary);
-    border-bottom: 2px solid #b3d9ff;
+    font-size: 1.6rem;
+    border-bottom: 2px solid var(--color-border);
     padding-bottom: 0.3em;
 }
 
 h3 {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     color: var(--color-primary-muted);
 }
 
 h4 {
     font-size: 1.1rem;
-    color: var(--color-primary-light);
+    color: var(--color-primary-muted);
 }
 
 h5 {
     font-size: 1rem;
-    color: var(--color-primary-dark);
+    color: var(--color-primary-muted);
 }
 
 h6 {
     font-size: 0.95rem;
-    color: var(--color-primary-dark);
+    color: var(--color-primary-muted);
 }
 
 /* ============================================================================
@@ -165,13 +206,12 @@ p {
     padding: 0;
     width: 100%;
     max-width: none;
-    color: var(--color-text-secondary);
-    text-align: left;
+    text-align: left;  /* Accessibility fix: no justify */
     orphans: 3;
     widows: 3;
 }
 
-/* Links - Corporate blue */
+/* Links */
 a {
     color: var(--color-primary);
     text-decoration: none;
@@ -212,7 +252,7 @@ pre {
     margin-left: 0;
     margin-right: 0;
     overflow-x: auto;
-    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.08);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     width: 100%;
     max-width: none;
@@ -229,6 +269,15 @@ pre code {
     font-variant-ligatures: common-ligatures contextual;
 }
 
+/* Syntax highlighting */
+code.keyword { color: var(--syntax-keyword); font-weight: 600; }
+code.string { color: var(--syntax-string); }
+code.comment { color: var(--syntax-comment); font-style: italic; }
+code.number { color: var(--syntax-number); }
+code.function { color: var(--syntax-function); font-weight: 500; }
+code.tag { color: var(--syntax-tag); }
+code.attr { color: var(--syntax-attr); }
+
 /* ============================================================================
    LISTS
    ========================================================================== */
@@ -244,8 +293,7 @@ ul, ol {
 
 li {
     margin: 0.5rem 0;
-    line-height: 1.65;
-    color: var(--color-text-secondary);
+    line-height: 1.6;
 }
 
 /* Nested lists */
@@ -284,15 +332,15 @@ table {
 }
 
 thead {
-    background: linear-gradient(to bottom, var(--color-primary-dark) 0%, var(--color-primary-muted) 100%);
+    background: var(--color-bg-subtle);
     font-weight: 600;
 }
 
 th {
     padding: 0.875rem 1rem;
     text-align: left;
-    color: #ffffff;
-    border-bottom: 2px solid var(--color-primary-dark);
+    color: var(--color-text-primary);
+    border-bottom: 2px solid var(--color-primary);
     font-size: 0.875rem;
     text-transform: uppercase;
     letter-spacing: 0.025em;
@@ -317,7 +365,13 @@ tbody tr:hover {
 
 /* Subtle striping */
 tbody tr:nth-child(odd) {
-    background: rgba(0, 102, 204, 0.02);
+    background: rgba(0, 0, 0, 0.015);
+}
+
+@media (prefers-color-scheme: dark) {
+    tbody tr:nth-child(odd) {
+        background: rgba(255, 255, 255, 0.02);
+    }
 }
 
 /* ============================================================================
@@ -338,7 +392,6 @@ blockquote {
     border-radius: 0 0.25rem 0.25rem 0;
     box-sizing: border-box;
     line-height: 1.6;
-    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.05);
 }
 
 blockquote p {
@@ -350,6 +403,112 @@ blockquote > :first-child {
 }
 
 blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================================
+   CALLOUT BOXES (Semantic admonitions)
+   ========================================================================== */
+
+.callout, .note, .tip, .warning, .danger, .info,
+div.note, div.tip, div.warning, div.danger, div.info {
+    border-left: 4px solid;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    page-break-inside: avoid;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+}
+
+/* Note */
+.note, div.note {
+    border-left-color: var(--callout-note-border);
+    background: var(--callout-note-bg);
+    color: var(--callout-note-text);
+}
+
+.note h4, .note h5, div.note h4, div.note h5 {
+    margin-top: 0;
+    color: var(--callout-note-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Tip */
+.tip, div.tip {
+    border-left-color: var(--callout-tip-border);
+    background: var(--callout-tip-bg);
+    color: var(--callout-tip-text);
+}
+
+.tip h4, .tip h5, div.tip h4, div.tip h5 {
+    margin-top: 0;
+    color: var(--callout-tip-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Warning */
+.warning, div.warning {
+    border-left-color: var(--callout-warning-border);
+    background: var(--callout-warning-bg);
+    color: var(--callout-warning-text);
+}
+
+.warning h4, .warning h5, div.warning h4, div.warning h5 {
+    margin-top: 0;
+    color: var(--callout-warning-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Danger */
+.danger, div.danger {
+    border-left-color: var(--callout-danger-border);
+    background: var(--callout-danger-bg);
+    color: var(--callout-danger-text);
+}
+
+.danger h4, .danger h5, div.danger h4, div.danger h5 {
+    margin-top: 0;
+    color: var(--callout-danger-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Info */
+.info, div.info {
+    border-left-color: var(--callout-info-border);
+    background: var(--callout-info-bg);
+    color: var(--callout-info-text);
+}
+
+.info h4, .info h5, div.info h4, div.info h5 {
+    margin-top: 0;
+    color: var(--callout-info-border);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.callout p, .note p, .tip p, .warning p, .danger p, .info p,
+div.callout p, div.note p, div.tip p, div.warning p, div.danger p, div.info p {
+    margin: 0.5rem 0;
+}
+
+.callout > :first-child, .note > :first-child, .tip > :first-child, .warning > :first-child, .danger > :first-child, .info > :first-child,
+div.callout > :first-child, div.note > :first-child, div.tip > :first-child, div.warning > :first-child, div.danger > :first-child, div.info > :first-child {
+    margin-top: 0;
+}
+
+.callout > :last-child, .note > :last-child, .tip > :last-child, .warning > :last-child, .danger > :last-child, .info > :last-child,
+div.callout > :last-child, div.note > :last-child, div.tip > :last-child, div.warning > :last-child, div.danger > :last-child, div.info > :last-child {
     margin-bottom: 0;
 }
 
@@ -372,10 +531,6 @@ img, svg {
     height: auto;
     display: block;
     margin: 1.5em auto;
-    border: 1px solid var(--color-border);
-    padding: 0.5em;
-    background: var(--color-bg-surface);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 figure {
@@ -395,23 +550,20 @@ figcaption {
    ========================================================================== */
 
 nav#TOC, #TOC {
-    background: linear-gradient(to bottom, var(--color-bg-subtle) 0%, var(--color-bg-surface) 100%);
-    padding: 1.5em 2em;
+    background: var(--color-bg-subtle);
+    padding: 1.5em;
     border: 2px solid var(--color-primary);
     border-radius: 0.5rem;
     margin: 2em 0;
     page-break-after: always;
-    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.1);
 }
 
 nav#TOC h2, #TOC h2 {
     font-size: 1.5rem;
-    color: var(--color-primary-dark);
+    color: var(--color-primary);
     margin-top: 0;
-    border-bottom: 2px solid var(--color-primary);
+    border-bottom: 2px solid var(--color-border);
     padding-bottom: 0.5em;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
 }
 
 nav#TOC ul, #TOC ul {
@@ -425,14 +577,13 @@ nav#TOC li, #TOC li {
 }
 
 nav#TOC a, #TOC a {
-    color: var(--color-primary-dark);
+    color: var(--color-primary);
     text-decoration: none;
-    font-weight: 500;
     transition: color 0.2s ease;
 }
 
 nav#TOC a:hover, #TOC a:hover {
-    color: var(--color-primary);
+    color: var(--color-primary-dark);
     text-decoration: underline;
 }
 
@@ -440,50 +591,28 @@ nav#TOC a:hover, #TOC a:hover {
    COVER PAGE STYLING
    ========================================================================== */
 
-.cover-page-wrapper {
-    background: var(--color-bg-surface);
-    color: var(--color-text-secondary);
-}
-
 .cover-title {
-    color: var(--color-primary-dark) !important;
+    color: var(--color-primary);
 }
 
 .cover-subtitle {
-    color: var(--color-primary-light) !important;
+    color: var(--color-text-secondary);
 }
 
 .cover-metadata {
-    color: var(--color-text-muted) !important;
+    color: var(--color-text-muted);
 }
 
 .cover-version {
-    color: var(--color-text-muted) !important;
+    color: var(--color-text-muted);
 }
 
 .cover-classification {
-    color: #721c24 !important;
-    background: #f8d7da;
+    color: var(--color-error);
+    background: rgba(185, 28, 28, 0.1);
     padding: 8px 16px;
     border-radius: 4px;
-    border: 1px solid #f5c6cb;
-}
-
-/* ============================================================================
-   TOC STYLING
-   ========================================================================== */
-
-.toc-title {
-    color: var(--color-primary-dark) !important;
-    border-bottom: 2px solid var(--color-primary) !important;
-}
-
-.toc-link {
-    color: var(--color-primary-dark) !important;
-}
-
-.toc-link:hover {
-    color: var(--color-primary) !important;
+    border: 1px solid var(--color-error);
 }
 
 /* ============================================================================
@@ -493,6 +622,7 @@ nav#TOC a:hover, #TOC a:hover {
 @media print {
     body {
         background: white;
+        color: var(--color-text-primary);
     }
     
     a {
@@ -500,8 +630,7 @@ nav#TOC a:hover, #TOC a:hover {
         text-decoration: none;
     }
     
-    th {
-        background: var(--color-primary-dark);
-        color: white;
+    pre, blockquote, table thead {
+        background: var(--color-bg-subtle);
     }
 }
