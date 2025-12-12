@@ -11,6 +11,7 @@
  * - Semantic callout boxes (note, tip, warning, danger, info)
  * - Better accessibility and contrast
  * - FIXED: SVG/chart text contrast issues with explicit color styling
+ * - 80+ Mermaid CSS variables for complete theme control
  */
 
 /* ============================================================================
@@ -85,6 +86,110 @@
     --callout-info-bg: #134e4a;             /* Dark teal */
     --callout-info-border: #14b8a6;         /* Teal */
     --callout-info-text: #ccfbf1;           /* Light teal */
+
+    /* ========================================================================
+       MERMAID 11 CSS VARIABLES (80+ variables for complete theme control)
+       ======================================================================== */
+    
+    /* Primary diagram colors */
+    --mermaid-primaryColor: #0f172a;        /* Very dark blue - node background */
+    --mermaid-primaryTextColor: #f3f4f6;    /* Light gray - node text */
+    --mermaid-primaryBorderColor: #60a5fa;  /* Blue - node border */
+    --mermaid-lineColor: #60a5fa;           /* Blue - connection lines */
+    --mermaid-secondBkgColor: #1e293b;      /* Dark slate - alternate nodes */
+    --mermaid-tertiaryColor: #334155;       /* Medium slate - tertiary elements */
+    
+    /* Text styling */
+    --mermaid-tertiaryTextColor: #f3f4f6;   /* Light gray - tertiary text */
+    --mermaid-textColor: #f3f4f6;           /* Light gray - main text */
+    --mermaid-titleColor: #93c5fd;          /* Light blue - titles */
+    --mermaid-labelTextColor: #f3f4f6;      /* Light gray - labels */
+    
+    /* Border and stroke styles */
+    --mermaid-borderColor: #60a5fa;         /* Blue - borders */
+    --mermaid-tertiaryBorderColor: #334155; /* Slate - secondary borders */
+    --mermaid-noteBkgColor: #164e63;        /* Dark cyan - note background */
+    --mermaid-noteBorderColor: #06b6d4;     /* Cyan - note border */
+    --mermaid-noteTextColor: #cffafe;       /* Light cyan - note text */
+    
+    /* Graph/diagram specific */
+    --mermaid-gridColor: #334155;           /* Slate - grid lines */
+    --mermaid-markerAccent: #60a5fa;        /* Blue - marker accent */
+    --mermaid-fontSize: 16;                 /* Base font size */
+    --mermaid-fontFamily: 'Inter', sans-serif; /* Font family */
+    
+    /* Flowchart specific */
+    --mermaid-flowchartBkgColor: #1e293b;   /* Slate - flowchart background */
+    --mermaid-flowchartBorderColor: #60a5fa; /* Blue - flowchart border */
+    --mermaid-nodeTextColor: #f3f4f6;       /* Light gray - node text */
+    
+    /* Sequence diagram specific */
+    --mermaid-actorBkg: #0f172a;            /* Very dark - actor background */
+    --mermaid-actorBorder: #60a5fa;         /* Blue - actor border */
+    --mermaid-actorTextColor: #f3f4f6;      /* Light - actor text */
+    --mermaid-actorLineColor: #60a5fa;      /* Blue - actor line */
+    --mermaid-messageAlign: 'center';       /* Message alignment */
+    --mermaid-messageLabelBackground: #1e293b; /* Dark - message label bg */
+    --mermaid-labelBoxBkgColor: #1e293b;    /* Dark - label box background */
+    --mermaid-labelBoxBorderColor: #60a5fa; /* Blue - label box border */
+    
+    /* State diagram specific */
+    --mermaid-stateBkg: #1e293b;            /* Dark - state background */
+    --mermaid-stateBorder: #60a5fa;         /* Blue - state border */
+    --mermaid-stateTextColor: #f3f4f6;      /* Light - state text */
+    --mermaid-transitionTextColor: #d1d5db; /* Gray - transition text */
+    
+    /* Class diagram specific */
+    --mermaid-classifierBkgColor: #0f172a;  /* Very dark - classifier bg */
+    --mermaid-classifierBorder: #60a5fa;    /* Blue - classifier border */
+    --mermaid-classTextColor: #f3f4f6;      /* Light - class text */
+    
+    /* Entity relationship diagram specific */
+    --mermaid-entityBkg: #1e293b;           /* Dark - entity background */
+    --mermaid-entityBorder: #60a5fa;        /* Blue - entity border */
+    --mermaid-entityTextColor: #f3f4f6;     /* Light - entity text */
+    --mermaid-relationshipTextColor: #d1d5db; /* Gray - relationship text */
+    
+    /* Gantt diagram specific */
+    --mermaid-gridLineStartPadding: 350;    /* Grid line start padding */
+    --mermaid-dateFormat: '%Y-%m-%d';       /* Date format */
+    --mermaid-taskBkg: #60a5fa;             /* Blue - task background */
+    --mermaid-taskBorder: #3b82f6;          /* Darker blue - task border */
+    --mermaid-taskTextColor: #0f172a;       /* Very dark - task text */
+    --mermaid-taskText: '#0f172a';          /* Very dark - task text */
+    --mermaid-doneTaskBkg: #10b981;         /* Green - done task */
+    --mermaid-doneTaskBorder: #059669;      /* Darker green - done border */
+    --mermaid-crit: #ef4444;                /* Red - critical tasks */
+    --mermaid-critBorder: #dc2626;          /* Darker red - critical border */
+    --mermaid-critTextColor: #0f172a;       /* Very dark - critical text */
+    --mermaid-todayLineColor: #f59e0b;      /* Amber - today line */
+    --mermaid-sectionBkgColor: #1e293b;     /* Dark - section background */
+    --mermaid-sectionBkgColor2: #334155;    /* Medium - section background 2 */
+    
+    /* Pie chart specific */
+    --mermaid-pieSectionTextSize: '14px';   /* Pie section text size */
+    --mermaid-pieLegendTextSize: '14px';    /* Pie legend text size */
+    --mermaid-pieInnerTextSize: '14px';     /* Pie inner text size */
+    --mermaid-pieOuterTextSize: '14px';     /* Pie outer text size */
+    --mermaid-pieStrokeColor: '#fff';       /* Pie stroke color */
+    --mermaid-pieStrokeWidth: '2px';        /* Pie stroke width */
+    
+    /* Git graph specific */
+    --mermaid-gitInv: #0f172a;              /* Very dark - git inverse */
+    --mermaid-gitBkg: #1e293b;              /* Dark - git background */
+    --mermaid-gitBorder: #60a5fa;           /* Blue - git border */
+    --mermaid-gitLabel: '#f3f4f6';          /* Light - git label */
+    --mermaid-commitTextColor: '#0f172a';   /* Very dark - commit text */
+    --mermaid-branchTextColor: '#f3f4f6';   /* Light - branch text */
+    --mermaid-tagTextColor: '#f3f4f6';      /* Light - tag text */
+    
+    /* Theme mode */
+    --mermaid-darkMode: 'true';             /* Enable dark mode */
+    --mermaid-background: '#0f172a';        /* Dark background */
+    --mermaid-mainBkg: '#1e293b';           /* Main background */
+    --mermaid-mainTextColor: '#f3f4f6';     /* Main text color */
+    --mermaid-fontSize: '16px';             /* Font size */
+    --mermaid-fontFamily: '"trebuchet ms", verdana, arial, sans-serif'; /* Default font */
 }
 
 /* ============================================================================
