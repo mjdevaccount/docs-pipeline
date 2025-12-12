@@ -12,6 +12,7 @@ from typing import Optional, List
 class CoverConfig:
     """Cover page configuration"""
     title: Optional[str] = None
+    subtitle: Optional[str] = None
     author: Optional[str] = None
     organization: Optional[str] = None
     date: Optional[str] = None
@@ -38,6 +39,7 @@ class PdfGenerationConfig:
     
     # Document metadata
     title: Optional[str] = None
+    subtitle: Optional[str] = None
     author: Optional[str] = None
     organization: Optional[str] = None
     date: Optional[str] = None
@@ -67,11 +69,15 @@ class PdfGenerationConfig:
     # Page format (A4, Letter, Legal, or custom dimensions)
     page_format: str = 'A4'  # Options: 'A4', 'Letter', 'Legal', or custom like '8.5in 11in'
     
+    # Profile name for theme detection (e.g., 'dark-pro', 'enterprise-blue')
+    profile: Optional[str] = None
+    
     @property
     def cover(self) -> CoverConfig:
         """Get cover page configuration"""
         return CoverConfig(
             title=self.title,
+            subtitle=self.subtitle,
             author=self.author,
             organization=self.organization,
             date=self.date,

@@ -7,6 +7,7 @@ from pathlib import Path
 from datetime import datetime
 from playwright.async_api import Page
 from ..config import CoverConfig
+from ..utils import filter_placeholder
 
 try:
     from colorama import Fore, Style, init as colorama_init
@@ -37,6 +38,12 @@ async def inject_cover_page(page: Page, config: CoverConfig, verbose: bool = Fal
         classification = getattr(config, 'classification', None) or ''
         version = getattr(config, 'version', None) or ''
         
+        # Filter out placeholder values using shared utility
+        title = filter_placeholder(config.title, 'Documentation')
+        organization = filter_placeholder(config.organization, '')
+        author = filter_placeholder(config.author, '')
+        subtitle = filter_placeholder(getattr(config, 'subtitle', None), '')
+        
         # Build classification badge if present
         classification_html = ''
         if classification:
@@ -53,11 +60,22 @@ async def inject_cover_page(page: Page, config: CoverConfig, verbose: bool = Fal
             if parts:
                 version_type_html = f'<div class="cover-version" style="font-size: 11pt; margin-top: 20px;">{" | ".join(parts)}</div>'
         
-        # Use fixed height that fills the page (A4 height minus margins = ~10in)
-        # Note: Removed inline color styles to respect profile CSS (dark/light themes)
+        # Build organization/subtitle section - prefer subtitle, fall back to organization
+        org_html = ''
+        subtitle_text = subtitle or organization
+        if subtitle_text:
+            org_html = f'<div class="cover-subtitle" style="font-size: 18pt; margin: 0 0 40px 0;">{subtitle_text}</div>'
+        
+        # Build author section
+        author_html = ''
+        if author:
+            author_html = f'{author}<br/>'
+        
+        # Use page-break-after in style to force page break
         cover_html = f"""
             <div class="cover-page-wrapper" style="
-                height: 10in;
+                height: 100vh;
+                min-height: 10in;
                 padding: 2in 40px;
                 margin-bottom: 0;
                 display: flex;
@@ -66,17 +84,17 @@ async def inject_cover_page(page: Page, config: CoverConfig, verbose: bool = Fal
                 align-items: center;
                 text-align: center;
                 box-sizing: border-box;
+                page-break-after: always;
+                break-after: page;
             ">
                 {logo_html}
                 {classification_html}
                 <h1 class="cover-title" style="font-size: 36pt; margin: 0 0 20px 0; font-weight: 600; line-height: 1.2;">
-                    {config.title or 'Architecture Documentation'}
+                    {title}
                 </h1>
-                <div class="cover-subtitle" style="font-size: 18pt; margin: 0 0 40px 0;">
-                    {config.organization or 'Engineering Team'}
-                </div>
+                {org_html}
                 <div class="cover-metadata" style="font-size: 14pt; margin: 0; line-height: 1.6;">
-                    {config.author or ''}<br/>
+                    {author_html}
                     {config.date or datetime.now().strftime('%B %d, %Y')}
                 </div>
                 {version_type_html}

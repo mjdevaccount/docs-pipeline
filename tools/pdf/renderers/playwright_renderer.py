@@ -58,7 +58,7 @@ async def html_to_pdf_playwright(html_file, pdf_file, options=None, verbose=Fals
 
 
 async def generate_pdf_from_html(
-    html_file, pdf_file, title=None, author=None,
+    html_file, pdf_file, title=None, subtitle=None, author=None,
     organization=None, date=None, logo_path=None,
     generate_toc=False, generate_cover=False,
     watermark=None, css_file=None, page_format='A4', verbose=False,
@@ -72,6 +72,7 @@ async def generate_pdf_from_html(
         html_file=Path(html_file),
         pdf_file=Path(pdf_file),
         title=title,
+        subtitle=subtitle,
         author=author,
         organization=organization,
         date=date,

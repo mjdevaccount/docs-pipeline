@@ -53,15 +53,18 @@ async def measure_page_dimensions(
     Returns:
         PageMeasurements with actual measured values
     """
-    # Parse margin values from config (e.g., '0.75in' -> pixels)
+    # Parse margin values from config (e.g., '0.75in' or '2cm' -> pixels)
     def parse_margin(value: str) -> float:
         """Convert margin string to pixels at 96dpi"""
+        value = str(value).strip()
         if value.endswith('in'):
             return float(value[:-2]) * 96
-        elif value.endswith('px'):
-            return float(value[:-2])
+        elif value.endswith('cm'):
+            return float(value[:-2]) * 37.795275591  # cm to px at 96dpi (96/2.54)
         elif value.endswith('mm'):
             return float(value[:-2]) * 3.779527559  # mm to px at 96dpi
+        elif value.endswith('px'):
+            return float(value[:-2])
         else:
             return float(value) * 96  # Assume inches
     
@@ -136,8 +139,11 @@ async def measure_page_dimensions(
         parts = page_format.replace('x', ' ').replace('X', ' ').split()
         if len(parts) >= 2:
             def parse_dim(dim: str) -> float:
+                dim = str(dim).strip()
                 if dim.endswith('in'):
                     return float(dim[:-2]) * 96
+                elif dim.endswith('cm'):
+                    return float(dim[:-2]) * 37.795275591
                 elif dim.endswith('mm'):
                     return float(dim[:-2]) * 3.779527559
                 elif dim.endswith('px'):

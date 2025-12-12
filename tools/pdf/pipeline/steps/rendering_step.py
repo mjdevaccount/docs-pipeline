@@ -89,6 +89,7 @@ class PdfRenderingStep(PipelineStep):
                     generate_cover=context.get_config('generate_cover', False),
                     watermark=context.get_config('watermark'),
                     title=context.metadata.get('title'),
+                    subtitle=context.metadata.get('subtitle'),
                     author=context.metadata.get('author'),
                     organization=context.metadata.get('organization'),
                     date=context.metadata.get('date'),
@@ -96,7 +97,8 @@ class PdfRenderingStep(PipelineStep):
                     doc_type=context.metadata.get('type'),
                     classification=context.metadata.get('classification'),
                     logo_path=Path(context.get_config('logo_path')) if context.get_config('logo_path') else None,
-                    verbose=context.verbose
+                    verbose=context.verbose,
+                    profile=profile_name  # Pass profile for theme detection
                 )
                 
                 success = pdf_renderer.render(config)

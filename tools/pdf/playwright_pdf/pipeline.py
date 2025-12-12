@@ -14,10 +14,11 @@ from .styles import inject_fonts, inject_pagination_css, inject_custom_css
 from .decorators.cover import inject_cover_page
 from .decorators.toc import inject_toc
 from .decorators.watermark import add_watermark
-from .pdf_renderer import render_pdf, build_header_footer
+from .pdf_renderer import render_pdf, build_header_footer, DEFAULT_MARGINS
 from .postprocess import extract_headings_from_page, add_bookmarks_to_pdf, embed_metadata
 from .config import PdfGenerationConfig
 from .page_measurements import measure_page_dimensions
+from .utils import extract_margins_from_css, detect_dark_mode
 
 try:
     from colorama import Fore, Style, init as colorama_init
@@ -170,21 +171,30 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
             
             # Phase 2.5: Measure actual page dimensions BEFORE analysis
             # Build header/footer templates to measure their actual heights
+            
+            # Detect dark mode using shared utility
+            profile_name = getattr(config, 'profile', None)
+            is_dark_mode = detect_dark_mode(profile_name, config.css_file)
+            
             header_html, footer_html = build_header_footer(
                 title=config.title,
                 organization=config.organization,
                 author=config.author,
-                date=config.date
+                date=config.date,
+                dark_mode=is_dark_mode
             )
             
-            # Get margin config from PDF renderer (must match render_pdf defaults)
-            # Read from render_pdf to ensure consistency
-            margin_config = {
-                'top': '0.75in',
-                'right': '0.75in',
-                'bottom': '1in',  # Bottom margin is 1in per render_pdf defaults
-                'left': '0.75in'
-            }
+            # Extract margins from profile CSS file, or use defaults
+            margin_config = None
+            if config.css_file:
+                margin_config = extract_margins_from_css(config.css_file)
+                if margin_config and config.verbose:
+                    print(f"{INFO} Using margins from CSS: {margin_config}")
+            
+            if margin_config is None:
+                margin_config = DEFAULT_MARGINS.copy()
+                if config.verbose:
+                    print(f"{INFO} Using default margins: {margin_config}")
             
             # Measure actual page dimensions (header/footer heights, margins, etc.)
             page_measurements = await measure_page_dimensions(

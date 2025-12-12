@@ -60,6 +60,7 @@ class RenderConfig:
     
     # Metadata (used for cover page, headers, bookmarks)
     title: Optional[str] = None
+    subtitle: Optional[str] = None
     author: Optional[str] = None
     organization: Optional[str] = None
     date: Optional[str] = None
@@ -70,6 +71,9 @@ class RenderConfig:
     # Additional options
     logo_path: Optional[Path] = None
     custom_options: Dict[str, Any] = field(default_factory=dict)
+    
+    # Profile name for theme detection (e.g., 'dark-pro', 'enterprise-blue')
+    profile: Optional[str] = None
     
     def __post_init__(self):
         """Convert string paths to Path objects"""

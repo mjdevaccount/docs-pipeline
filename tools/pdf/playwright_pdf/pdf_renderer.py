@@ -7,6 +7,7 @@ Single responsibility: call page.pdf with proper options.
 from pathlib import Path
 from typing import Optional
 from playwright.async_api import Page
+from .utils import filter_placeholder, is_placeholder
 
 try:
     from colorama import Fore, Style, init as colorama_init
@@ -16,6 +17,15 @@ try:
 except ImportError:
     OK = "[OK]"
     ERR = "[ERROR]"
+
+
+# Default margins (used only if CSS extraction fails)
+DEFAULT_MARGINS = {
+    'top': '2cm',
+    'right': '1.8cm',
+    'bottom': '2cm',
+    'left': '1.8cm'
+}
 
 
 async def render_pdf(
@@ -35,39 +45,34 @@ async def render_pdf(
         pdf_file: Output PDF path
         header_html: HTML template for header
         footer_html: HTML template for footer
+        margin_config: Margin configuration (extracted from CSS or defaults)
+        page_format: Page format (A4, Letter, etc.)
         verbose: Verbose output
     
     Returns:
         bool: True if PDF was created successfully
     """
-    # Use provided margin config or default
+    # Use provided margin config or defaults
     if margin_config is None:
-        margin_config = {
-            'top': '0.75in',
-            'right': '0.75in',
-            'bottom': '1in',  # Bottom margin is 1in (more space for footer)
-            'left': '0.75in'
-        }
+        margin_config = DEFAULT_MARGINS.copy()
     
     # Handle page format - Playwright supports 'A4', 'Letter', 'Legal', or custom
     if page_format in ['A4', 'Letter', 'Legal']:
         format_option = page_format
     else:
-        # Custom size - parse and use as width/height tuple in inches
-        # Format: "8.5in 11in" or "8.5x11"
         format_option = 'A4'  # Fallback
         if verbose:
             print(f"[WARN] Custom page format '{page_format}' not fully supported, using A4")
     
-    # Let CSS @page rules control margins (margin_config kept for measurement only)
-    # Passing margin to page.pdf() overrides CSS, so we omit it
+    # Playwright requires margins when using display_header_footer
+    # Headers/footers render in the margin space
     options = {
         'format': format_option,
         'print_background': True,
         'display_header_footer': True,
         'header_template': header_html,
-        'footer_template': footer_html
-        # margin intentionally omitted - CSS @page { margin: ... } now controls it
+        'footer_template': footer_html,
+        'margin': margin_config
     }
     
     try:
@@ -92,25 +97,48 @@ async def render_pdf(
 
 
 def build_header_footer(title: str = None, organization: str = None, 
-                        author: str = None, date: str = None) -> tuple[str, str]:
+                        author: str = None, date: str = None,
+                        dark_mode: bool = False) -> tuple[str, str]:
     """
     Build header and footer HTML templates.
+    
+    Args:
+        title: Document title
+        organization: Organization name
+        author: Author name
+        date: Date string
+        dark_mode: Use dark theme styling
     
     Returns:
         tuple: (header_html, footer_html)
     """
+    # Filter placeholder values using shared utility
+    title = filter_placeholder(title, None)
+    organization = filter_placeholder(organization, None)
+    author = filter_placeholder(author, None)
+    
+    # Theme-aware colors
+    if dark_mode:
+        text_color = '#94a3b8'   # Slate-400
+        border_color = '#334155' # Slate-700
+        accent_color = '#64748b' # Slate-500
+        bg_color = '#0f172a'     # Dark navy
+    else:
+        text_color = '#374151'   # Gray-700
+        border_color = '#e5e7eb' # Gray-200
+        accent_color = '#6b7280' # Gray-500
+        bg_color = '#ffffff'     # White
+    
     # Build header template
     header_parts = []
     if title:
         header_parts.append(f'<span style="font-weight: 600;">{title}</span>')
     if organization:
-        header_parts.append(f'<span style="color: #666; font-size: 8px;">{organization}</span>')
+        header_parts.append(f'<span style="font-size: 8px;">{organization}</span>')
     
-    header_template = f'''
-        <div style="font-size: 9px; width: 100%; text-align: center; padding-top: 10px; border-bottom: 1px solid #ddd;">
-            {' | '.join(header_parts) if header_parts else ''}
-        </div>
-    '''
+    header_content = ' | '.join(header_parts) if header_parts else '&nbsp;'
+    
+    header_template = f'''<div style="font-size: 9px; width: 100%; text-align: center; padding: 8px 20px; background-color: {bg_color}; color: {text_color}; border-bottom: 1px solid {border_color}; -webkit-print-color-adjust: exact; print-color-adjust: exact;">{header_content}</div>'''
     
     # Build footer template
     footer_parts = []
@@ -119,14 +147,8 @@ def build_header_footer(title: str = None, organization: str = None,
     if date:
         footer_parts.append(date)
     
-    footer_template = f'''
-        <div style="font-size: 9px; width: 100%; text-align: center; padding-bottom: 10px;">
-            {' | '.join(footer_parts) if footer_parts else ''}
-            <span style="margin-left: 20px; color: #666;">
-                Page <span class="pageNumber"></span> of <span class="totalPages"></span>
-            </span>
-        </div>
-    '''
+    footer_left = ' | '.join(footer_parts) if footer_parts else ''
+    
+    footer_template = f'''<div style="font-size: 9px; width: 100%; text-align: center; padding: 8px 20px; background-color: {bg_color}; color: {text_color}; -webkit-print-color-adjust: exact; print-color-adjust: exact;">{footer_left}<span style="margin-left: 20px; color: {accent_color};">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></div>'''
     
     return header_template, footer_template
-

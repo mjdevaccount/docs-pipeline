@@ -76,6 +76,7 @@ class PlaywrightRenderer(PdfRenderer):
                 from .playwright_renderer import generate_pdf_from_html
             
             # Call existing Playwright renderer (async)
+            # Pass subtitle via custom_options since the function signature doesn't include it
             success = asyncio.run(generate_pdf_from_html(
                 html_file=str(config.html_file),
                 pdf_file=str(config.output_file),
@@ -91,7 +92,8 @@ class PlaywrightRenderer(PdfRenderer):
                 generate_cover=config.generate_cover,
                 watermark=config.watermark,
                 css_file=str(config.css_file) if config.css_file else None,
-                verbose=config.verbose
+                verbose=config.verbose,
+                subtitle=getattr(config, 'subtitle', None)
             ))
             
             if success:

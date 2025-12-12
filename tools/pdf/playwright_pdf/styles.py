@@ -28,20 +28,19 @@ def _load_adaptive_pagination_css() -> str:
     duplicated between Python and CSS, and makes it easy to tweak
     pagination behavior without touching code.
     """
-    # styles.py lives in tools/pdf/playwright_pdf; layout.css sits one level up.
-    layout_css_path = Path(__file__).parent.parent / "layout.css"
+    # styles.py lives in tools/pdf/playwright_pdf; layout.css is in tools/pdf/styles/
+    layout_css_path = Path(__file__).parent.parent / "styles" / "layout.css"
     if layout_css_path.exists():
         return layout_css_path.read_text(encoding="utf-8")
 
-    # Fallback: minimal safe defaults if the file is missing.
+    # Fallback: minimal pagination utilities ONLY - do NOT override @page or body
+    # Profile CSS (dark-pro, etc) controls page margins, backgrounds, and body styles
     return """
-    @page {
-        margin: 0;
-    }
-    body {
-        margin: 0;
-        padding: 0;
-    }
+    /* Pagination utilities - do not override profile styles */
+    .page-break { page-break-before: always; break-before: page; }
+    .avoid-break-inside { page-break-inside: avoid; break-inside: avoid-page; }
+    .cover-page-wrapper { page-break-after: always; break-after: page; }
+    .toc-wrapper { page-break-after: always; break-after: page; }
     """
 
 
