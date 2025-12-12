@@ -158,9 +158,23 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
                     }
                 """)
             
+            # Extract margins from profile CSS file BEFORE cover/TOC injection
+            # These margins are needed for full-bleed elements like cover page
+            margin_config = None
+            if config.css_file:
+                margin_config = extract_margins_from_css(config.css_file)
+                if margin_config and config.verbose:
+                    print(f"{INFO} Using margins from CSS: {margin_config}")
+            
+            if margin_config is None:
+                margin_config = DEFAULT_MARGINS.copy()
+                if config.verbose:
+                    print(f"{INFO} Using default margins: {margin_config}")
+            
             # Generate cover page if requested (inserts at beginning)
+            # Pass margin_config so cover page can use correct negative margins
             if config.generate_cover:
-                await inject_cover_page(page, config.cover, verbose=config.verbose)
+                await inject_cover_page(page, config.cover, verbose=config.verbose, margin_config=margin_config)
             
             # Generate TOC if requested (inserts after cover page)
             if config.generate_toc:
@@ -183,18 +197,6 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
                 date=config.date,
                 dark_mode=is_dark_mode
             )
-            
-            # Extract margins from profile CSS file, or use defaults
-            margin_config = None
-            if config.css_file:
-                margin_config = extract_margins_from_css(config.css_file)
-                if margin_config and config.verbose:
-                    print(f"{INFO} Using margins from CSS: {margin_config}")
-            
-            if margin_config is None:
-                margin_config = DEFAULT_MARGINS.copy()
-                if config.verbose:
-                    print(f"{INFO} Using default margins: {margin_config}")
             
             # Measure actual page dimensions (header/footer heights, margins, etc.)
             page_measurements = await measure_page_dimensions(
