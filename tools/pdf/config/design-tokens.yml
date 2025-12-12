@@ -275,6 +275,23 @@ themes:
       commit_text_color: "#0f172a"     # Very dark - commit text
       branch_text_color: "#f3f4f6"     # Light - branch text
       tag_text_color: "#f3f4f6"        # Light - tag text
+      
+      # Custom classDef variables for architecture diagrams
+      # Maps to existing colors for consistency
+      config_fill: "#164e63"           # Dark cyan (like note_bkg_color)
+      config_stroke: "#06b6d4"         # Cyan (like note_border_color)
+      core_fill: "#0f172a"             # Very dark blue (like primary_color)
+      core_stroke: "#60a5fa"           # Blue (like primary_border_color)
+      stream_fill: "#1e293b"           # Dark slate (like second_bkg_color)
+      stream_stroke: "#60a5fa"         # Blue (like line_color)
+      storage_fill: "#334155"          # Medium slate (like tertiary_color)
+      storage_stroke: "#60a5fa"        # Blue (like border_color)
+      output_fill: "#1e293b"           # Dark slate (like flowchart_bkg_color)
+      output_stroke: "#60a5fa"         # Blue (like flowchart_border_color)
+      topic_fill: "#334155"            # Medium slate
+      topic_stroke: "#60a5fa"          # Blue
+      highlight_fill: "#0f172a"        # Very dark blue
+      highlight_stroke: "#60a5fa"      # Blue
   
   # ========================================================================
   # ENTERPRISE BLUE - Corporate-friendly, conservative styling
@@ -412,6 +429,21 @@ themes:
       commit_text_color: "#ffffff"
       branch_text_color: "#1e293b"
       tag_text_color: "#1e293b"
+      # Custom classDef variables
+      config_fill: "#ecf0ff"           # Light blue (note_bkg)
+      config_stroke: "#2563eb"         # Blue (note_border)
+      core_fill: "#ffffff"             # White (primary_color)
+      core_stroke: "#2563eb"           # Blue (primary_border)
+      stream_fill: "#f8fafc"           # Light slate (second_bkg)
+      stream_stroke: "#2563eb"         # Blue (line_color)
+      storage_fill: "#e2e8f0"          # Light slate (tertiary)
+      storage_stroke: "#2563eb"        # Blue (border)
+      output_fill: "#f8fafc"           # Light slate (flowchart_bkg)
+      output_stroke: "#2563eb"         # Blue (flowchart_border)
+      topic_fill: "#e2e8f0"            # Light slate
+      topic_stroke: "#2563eb"          # Blue
+      highlight_fill: "#ffffff"        # White
+      highlight_stroke: "#2563eb"      # Blue
   
   # ========================================================================
   # TECH WHITEPAPER - Professional engineering documentation
@@ -548,6 +580,21 @@ themes:
       commit_text_color: "#ffffff"
       branch_text_color: "#0f172a"
       tag_text_color: "#0f172a"
+      # Custom classDef variables
+      config_fill: "#ecfdfd"           # Light cyan
+      config_stroke: "#0369a1"         # Cyan
+      core_fill: "#ffffff"             # White
+      core_stroke: "#0369a1"           # Cyan
+      stream_fill: "#f8fafc"           # Light slate
+      stream_stroke: "#0369a1"         # Cyan
+      storage_fill: "#e2e8f0"          # Light slate
+      storage_stroke: "#0369a1"        # Cyan
+      output_fill: "#f8fafc"           # Light slate
+      output_stroke: "#0369a1"         # Cyan
+      topic_fill: "#e2e8f0"            # Light slate
+      topic_stroke: "#0369a1"          # Cyan
+      highlight_fill: "#ffffff"        # White
+      highlight_stroke: "#0369a1"      # Cyan
   
   # ========================================================================
   # MINIMALIST - Clean, spacious design with maximum whitespace
@@ -684,6 +731,21 @@ themes:
       commit_text_color: "#ffffff"
       branch_text_color: "#1f2937"
       tag_text_color: "#1f2937"
+      # Custom classDef variables
+      config_fill: "#f5f3ff"           # Light indigo
+      config_stroke: "#6366f1"         # Indigo
+      core_fill: "#ffffff"             # White
+      core_stroke: "#6366f1"           # Indigo
+      stream_fill: "#f9fafb"           # Light gray
+      stream_stroke: "#6366f1"         # Indigo
+      storage_fill: "#f3f4f6"          # Light gray
+      storage_stroke: "#6366f1"        # Indigo
+      output_fill: "#f9fafb"           # Light gray
+      output_stroke: "#6366f1"         # Indigo
+      topic_fill: "#f3f4f6"            # Light gray
+      topic_stroke: "#6366f1"          # Indigo
+      highlight_fill: "#ffffff"        # White
+      highlight_stroke: "#6366f1"      # Indigo
   
   # ========================================================================
   # PLAYWRIGHT - Playwright branding
@@ -820,3 +882,18 @@ themes:
       commit_text_color: "#ffffff"
       branch_text_color: "#0f172a"
       tag_text_color: "#0f172a"
+      # Custom classDef variables
+      config_fill: "#f0fdfa"           # Light teal
+      config_stroke: "#2dd4bf"         # Teal
+      core_fill: "#ffffff"             # White
+      core_stroke: "#2dd4bf"           # Teal
+      stream_fill: "#f8fafc"           # Light slate
+      stream_stroke: "#2dd4bf"         # Teal
+      storage_fill: "#e2e8f0"          # Light slate
+      storage_stroke: "#2dd4bf"        # Teal
+      output_fill: "#f8fafc"           # Light slate
+      output_stroke: "#2dd4bf"         # Teal
+      topic_fill: "#e2e8f0"            # Light slate
+      topic_stroke: "#2dd4bf"          # Teal
+      highlight_fill: "#ffffff"        # White
+      highlight_stroke: "#2dd4bf"      # Teal
