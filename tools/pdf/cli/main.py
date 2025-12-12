@@ -52,8 +52,26 @@ from core import (
     validate_markdown,
 )
 from core.utils import resolve_output_path
+from diagram_rendering import DiagramOrchestrator
 
 __version__ = "3.0.0"  # Major version bump - CLI is now primary entry point
+
+
+# Global reference to diagram orchestrator for metrics reporting
+_diagram_orchestrator: Optional[DiagramOrchestrator] = None
+
+
+def set_diagram_orchestrator(orchestrator: DiagramOrchestrator):
+    """Set global reference to diagram orchestrator for metrics reporting."""
+    global _diagram_orchestrator
+    _diagram_orchestrator = orchestrator
+
+
+def report_cache_metrics(verbose: bool = False):
+    """Report cache metrics if verbose and orchestrator is available."""
+    global _diagram_orchestrator
+    if verbose and _diagram_orchestrator:
+        print(_diagram_orchestrator.get_cache_metrics_report())
 
 
 def load_config(config_file: str) -> dict:
@@ -186,6 +204,14 @@ Examples:
   # Convert single file to PDF
   python -m tools.pdf.cli.main document.md document.pdf
   
+  # Show cache metrics
+  python -m tools.pdf.cli.main document.md output.pdf --verbose
+  # Output includes:
+  #   [INFO] Cache Performance Report
+  #     Hit Ratio: 75.0% (3/4)
+  #     Time Saved: 2340ms
+  #     Size Reduction: 42.1%
+  
   # Use Playwright renderer with cover page and TOC
   python -m tools.pdf.cli.main document.md --renderer playwright --cover --toc
   
@@ -200,6 +226,12 @@ Examples:
   
   # Override metadata from command line
   python -m tools.pdf.cli.main doc.md --title "My Report" --author "Jane Doe"
+
+Cache Metrics:
+  Use --verbose flag to see cache performance:
+  - Hit Ratio: percentage of diagrams served from cache
+  - Time Saved: milliseconds saved by caching
+  - Size Reduction: percentage size reduction from caching
 
 Config File Format (JSON):
   {
@@ -263,7 +295,7 @@ Config File Format (JSON):
     parser.add_argument('--check', action='store_true', help='Check dependencies and exit')
     parser.add_argument('--lint', action='store_true', help='Validate Markdown before conversion')
     parser.add_argument('--log', help='Log file path for CI/automation')
-    parser.add_argument('--verbose', '-v', action='store_true', help='Verbose output')
+    parser.add_argument('--verbose', '-v', action='store_true', help='Verbose output with cache metrics')
     parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     
     args = parser.parse_args()
@@ -290,27 +322,31 @@ Config File Format (JSON):
         # Build file tasks
         file_tasks = []
         for item in files:
-            if isinstance(item, dict):
-                input_file = item['input']
-                output_format = item.get('format', args.format)
-                output_file = item.get('output', str(Path(input_file).with_suffix(f'.{output_format}')))
-            else:
-                input_file = item
-                output_format = args.format
-                output_file = str(Path(input_file).with_suffix(f'.{output_format}'))
-            
-            output_file = resolve_output_path(output_file, output_dir)
-            
-            if args.lint:
-                is_valid, issues = validate_markdown(input_file, args.verbose)
-                if not is_valid:
-                    print(f"[ERROR] Validation failed for {input_file}:")
-                    for issue in issues:
-                        print(f"  - {issue}")
-                    continue
-            
-            kwargs = build_kwargs(args, item if isinstance(item, dict) else None)
-            file_tasks.append((input_file, output_file, output_format, kwargs))
+            try:
+                if isinstance(item, dict):
+                    input_file = item['input']
+                    output_format = item.get('format', args.format)
+                    output_file = item.get('output', str(Path(input_file).with_suffix(f'.{output_format}')))
+                else:
+                    input_file = item
+                    output_format = args.format
+                    output_file = str(Path(input_file).with_suffix(f'.{output_format}'))
+                
+                output_file = resolve_output_path(output_file, output_dir)
+                
+                if args.lint:
+                    is_valid, issues = validate_markdown(input_file, args.verbose)
+                    if not is_valid:
+                        print(f"[ERROR] Validation failed for {input_file}:")
+                        for issue in issues:
+                            print(f"  - {issue}")
+                        continue
+                
+                kwargs = build_kwargs(args, item if isinstance(item, dict) else None)
+                file_tasks.append((input_file, output_file, output_format, kwargs))
+                
+            except Exception as e:
+                print(f"[ERROR] Error preparing {input_file}: {e}")
         
         if threads > 1 and len(file_tasks) > 1:
             results = parallel_batch_convert(file_tasks, threads, args.verbose)
@@ -323,6 +359,8 @@ Config File Format (JSON):
                     results[input_file] = success
                     if success:
                         print(f"[OK] Generated: {output_file}")
+                        # Report cache metrics if verbose
+                        report_cache_metrics(args.verbose)
                 except Exception as e:
                     results[input_file] = False
                     print(f"[ERROR] Failed: {input_file} -> {e}")
@@ -369,6 +407,8 @@ Config File Format (JSON):
                     results[input_file] = success
                     if success:
                         print(f"[OK] Generated: {output_file}")
+                        # Report cache metrics if verbose
+                        report_cache_metrics(args.verbose)
                 except Exception as e:
                     results[input_file] = False
                     print(f"[ERROR] Failed: {input_file} -> {e}")
@@ -433,6 +473,8 @@ Config File Format (JSON):
         
         if success:
             print(f"[OK] Created: {output_file}")
+            # Report cache metrics if verbose
+            report_cache_metrics(args.verbose)
         sys.exit(0 if success else 1)
         
     except Exception as e:
@@ -445,4 +487,3 @@ Config File Format (JSON):
 
 if __name__ == "__main__":
     main()
-
