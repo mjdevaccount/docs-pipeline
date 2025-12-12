@@ -21,8 +21,6 @@ Architecture modules in use:
 - metadata: DocumentMetadata extraction, validation, merging
 - renderers: RendererFactory with Strategy pattern (WeasyPrint/Playwright)
 - pipeline: Pipeline orchestrator with composable steps
-
-Legacy implementation preserved in: convert_final_legacy.py
 """
 import sys
 import os
@@ -30,36 +28,29 @@ from pathlib import Path
 from typing import Optional, Dict, Any, List
 import warnings
 
+# Suppress RuntimeWarning about module import order when running as -m tools.pdf.convert_final
+# This warning is emitted by Python's runpy module before this code executes.
+# It occurs because __init__.py may trigger imports that load this module into sys.modules
+# before runpy executes it. This is harmless - the module works correctly.
+# 
+# To suppress: python -W ignore::RuntimeWarning -m tools.pdf.convert_final ...
+# Or set: PYTHONWARNINGS=ignore::RuntimeWarning
+warnings.filterwarnings('ignore', message='.*found in sys.modules after import of package.*', 
+                        category=RuntimeWarning)
+
 # Add module path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
-# Ensure pipeline module is available
-try:
-    from pipeline import (
-        process_document,
-        create_pdf_pipeline,
-        create_docx_pipeline,
-        create_html_pipeline,
-        PipelineContext,
-        OutputFormat,
-        PipelineConfig
-    )
-    PIPELINE_AVAILABLE = True
-except ImportError as e:
-    PIPELINE_AVAILABLE = False
-    _pipeline_import_error = str(e)
-
-
-def _check_pipeline_or_fallback(func_name: str):
-    """Check if pipeline is available, warn if falling back to legacy."""
-    if not PIPELINE_AVAILABLE:
-        warnings.warn(
-            f"Pipeline module not available ({_pipeline_import_error}). "
-            f"Falling back to legacy implementation for {func_name}().",
-            ImportWarning
-        )
-        return False
-    return True
+# Import pipeline module (required)
+from pipeline import (
+    process_document,
+    create_pdf_pipeline,
+    create_docx_pipeline,
+    create_html_pipeline,
+    PipelineContext,
+    OutputFormat,
+    PipelineConfig
+)
 
 
 def markdown_to_pdf(
@@ -110,17 +101,6 @@ def markdown_to_pdf(
     Returns:
         True if conversion succeeded, False otherwise
     """
-    if not _check_pipeline_or_fallback('markdown_to_pdf'):
-        from convert_final_legacy import markdown_to_pdf as legacy_pdf
-        return legacy_pdf(
-            md_file, output_pdf, logo_path=logo_path, css_file=css_file,
-            cache_dir=cache_dir, use_cache=use_cache, theme_config=theme_config,
-            highlight_style=highlight_style, crossref_config=crossref_config,
-            glossary_file=glossary_file, renderer=renderer, generate_toc=generate_toc,
-            generate_cover=generate_cover, watermark=watermark, verbose=verbose,
-            profile=profile, custom_metadata=custom_metadata
-        )
-    
     # Build config dictionary for pipeline
     config = {
         'logo_path': logo_path,
@@ -204,15 +184,6 @@ def markdown_to_docx(
     Returns:
         True if conversion succeeded, False otherwise
     """
-    if not _check_pipeline_or_fallback('markdown_to_docx'):
-        from convert_final_legacy import markdown_to_docx as legacy_docx
-        return legacy_docx(
-            md_file, output_docx, logo_path=logo_path, reference_docx=reference_docx,
-            cache_dir=cache_dir, use_cache=use_cache, theme_config=theme_config,
-            highlight_style=highlight_style, crossref_config=crossref_config,
-            glossary_file=glossary_file
-        )
-    
     config = {
         'reference_docx': reference_docx,
         'cache_dir': cache_dir,
@@ -280,15 +251,6 @@ def markdown_to_html(
     Returns:
         True if conversion succeeded, False otherwise
     """
-    if not _check_pipeline_or_fallback('markdown_to_html'):
-        from convert_final_legacy import markdown_to_html as legacy_html
-        return legacy_html(
-            md_file, output_html, cache_dir=cache_dir, use_cache=use_cache,
-            theme_config=theme_config, highlight_style=highlight_style,
-            crossref_config=crossref_config, glossary_file=glossary_file,
-            css_file=css_file
-        )
-    
     config = {
         'cache_dir': cache_dir,
         'use_cache': use_cache,
@@ -324,7 +286,7 @@ def markdown_to_html(
 
 
 # =============================================================================
-# LEGACY HELPER FUNCTIONS (kept for backward compatibility)
+# HELPER FUNCTIONS
 # =============================================================================
 
 def get_cache_dir(cache_location: Optional[str] = None) -> Path:
@@ -488,6 +450,12 @@ def main():
     Usage:
         python convert_final.py input.md [output.pdf]
         python convert_final.py --batch file1.md file2.md --format pdf
+        python -m tools.pdf.convert_final input.md output.pdf
+        
+    Note: When running as a module (python -m tools.pdf.convert_final), you may see:
+        RuntimeWarning: 'tools.pdf.convert_final' found in sys.modules...
+    This is harmless and can be suppressed with:
+        PYTHONWARNINGS=ignore::RuntimeWarning python -m tools.pdf.convert_final ...
     """
     import argparse
     
@@ -569,7 +537,7 @@ Examples:
     if not args.input:
         parser.print_help()
         print("\n[INFO] No input file specified.")
-        print("[INFO] For legacy batch mode, use: python convert_final_legacy.py")
+        print("[INFO] Batch mode: use --batch flag with multiple files")
         sys.exit(0)
     
     # Determine output file
