@@ -12,6 +12,7 @@ Features:
 - Theme caching and reuse
 - Live theme updates without re-rendering
 - Statistics tracking (theme application, customization)
+- HTML injection for proper theme application in PDF rendering
 
 Usage:
     from tools.pdf.diagram_rendering.mermaid_themes import MermaidThemeGenerator
@@ -19,6 +20,7 @@ Usage:
     generator = MermaidThemeGenerator()
     theme_config = generator.get_theme('tech-whitepaper')
     theme_json = generator.generate_theme_json('dark-pro')
+    html_with_theme = generator.inject_theme_into_html(html, 'dark-pro')
 """
 
 from dataclasses import dataclass, field
@@ -74,6 +76,7 @@ class ThemingStatistics:
     custom_themes: int = 0
     cache_hits: int = 0
     total_diagrams_themed: int = 0
+    html_injections: int = 0
     
     def report(self) -> str:
         """Generate statistics report."""
@@ -84,13 +87,14 @@ class ThemingStatistics:
        Custom Themes: {self.custom_themes}
        Cache Hits: {self.cache_hits}
        Total Diagrams Themed: {self.total_diagrams_themed}
+       HTML Injections: {self.html_injections}
 """
 
 
 class MermaidThemeGenerator:
     """Generate and manage Mermaid diagram themes."""
     
-    # Profile-specific color schemes
+    # Profile-specific color schemes (DECEMBER 2025 MODERNIZED)
     PROFILE_COLORS: Dict[str, ColorScheme] = {
         'tech-whitepaper': ColorScheme(
             primary='#2563eb',      # Blue-600
@@ -107,18 +111,19 @@ class MermaidThemeGenerator:
             info='#06b6d4'          # Cyan-500
         ),
         'dark-pro': ColorScheme(
-            primary='#60a5fa',      # Blue-400
-            secondary='#94a3b8',    # Slate-400
-            tertiary='#374151',     # Gray-700
-            text_primary='#f3f4f6', # Gray-100
-            text_secondary='#d1d5db', # Gray-300
-            background='#1f2937',   # Gray-800
-            border='#4b5563',       # Gray-600
-            accent='#34d399',       # Emerald-400
-            success='#6ee7b7',      # Emerald-300
-            error='#f87171',        # Red-400
-            warning='#fbbf24',      # Amber-400
-            info='#22d3ee'          # Cyan-300
+            # CORRECTED: Updated to match December 2025 CSS dark-pro profile
+            primary='#60a5fa',          # Blue-400 (bright for dark bg)
+            secondary='#94a3b8',        # Slate-400
+            tertiary='#374151',         # Gray-700 (dark boxes)
+            text_primary='#f3f4f6',     # Gray-100 (bright text)
+            text_secondary='#d1d5db',   # Gray-300 (secondary text)
+            background='#0f172a',       # Slate-950 (very dark page bg)
+            border='#334155',           # Slate-700 (dark borders)
+            accent='#34d399',           # Emerald-400
+            success='#6ee7b7',          # Emerald-300
+            error='#f87171',            # Red-400
+            warning='#fbbf24',          # Amber-400
+            info='#22d3ee'              # Cyan-300
         ),
         'enterprise-blue': ColorScheme(
             primary='#1e40af',      # Blue-800
@@ -186,23 +191,27 @@ class MermaidThemeGenerator:
         if not config:
             return json.dumps({})
         
-        # Mermaid theme structure
+        # Mermaid theme structure - CRITICAL: text colors must be set properly
         theme_config = {
             'primaryColor': config.colors.background,
             'primaryTextColor': config.colors.text_primary,
             'primaryBorderColor': config.colors.border,
             'secondBkgColor': config.colors.secondary,
+            'secondTextColor': config.colors.text_primary,
+            'secondBorderColor': config.colors.border,
             'tertiaryColor': config.colors.tertiary,
-            'tertiaryTextColor': config.colors.text_primary,
+            'tertiaryTextColor': config.colors.text_primary,  # CRITICAL FIX
             'tertiaryBorderColor': config.colors.border,
             'notBkgColor': config.colors.accent,
             'notBorderColor': config.colors.border,
+            'notTextColor': config.colors.text_primary,  # CRITICAL FIX
             'lineColor': config.colors.primary,
             'textColor': config.colors.text_primary,
             'mainTokenBackground': config.colors.background,
             'mainTokenBorder': config.colors.border,
             'clusterBkg': config.colors.tertiary,
             'clusterBorder': config.colors.border,
+            'clusterTextColor': config.colors.text_primary,  # CRITICAL FIX
             'defaultLinkColor': config.colors.primary,
             'titleColor': config.colors.text_primary,
             'edgeLabelBackground': {
@@ -230,12 +239,17 @@ class MermaidThemeGenerator:
             'flowchart': {
                 'diagramMarginX': 50,
                 'diagramMarginY': 10,
-                'htmlLabels': True
+                'htmlLabels': True,
+                'nodeSpacing': 50,
+                'rankSpacing': 50
             },
             'sequence': {
                 'diagramMarginX': 50,
                 'diagramMarginY': 10,
-                'actorMargin': 50
+                'actorMargin': 50,
+                'width': 150,
+                'height': 65,
+                'boxMargin': 10
             },
             'gantt': {
                 'fontSize': 12,
@@ -243,6 +257,10 @@ class MermaidThemeGenerator:
             },
             'class': {
                 'arrowMarkerAbsolute': True
+            },
+            'state': {
+                'dividerMargin': 3,
+                'sizeUnit': 5
             }
         }
         
@@ -253,24 +271,44 @@ class MermaidThemeGenerator:
         config = self.generate_theme_config(profile)
         return json.dumps(config)
     
-    def apply_theme_to_mermaid_html(self, html: str, profile: str) -> str:
-        """Apply theme to Mermaid diagram HTML."""
+    def inject_theme_into_html(self, html: str, profile: str) -> str:
+        """Inject Mermaid theme configuration directly into HTML.
+        
+        This is CRITICAL for PDF rendering - ensures theme is applied
+        before Mermaid renders the diagrams.
+        """
         config = self.generate_theme_config(profile)
         
-        # Inject configuration into HTML
+        # Create Mermaid config script with proper theme injection
         config_script = f"""
         <script>
-            window.mermaid = {json.dumps(config)};
+            // Mermaid theme injection for {profile} profile
+            if (typeof mermaid === 'undefined') {{
+                window.mermaid = window.mermaid || {{}};  
+            }}
+            window.mermaid = {json.dumps(config, indent=2)};
+            if (typeof mermaid !== 'undefined' && mermaid.initialize) {{
+                mermaid.initialize({json.dumps(config, indent=2)});
+            }}
         </script>
         """
         
-        self.stats.themes_applied += 1
+        self.stats.html_injections += 1
         
-        # Insert before mermaid script
-        if '<script' in html:
-            return html.replace('<script', config_script + '<script', 1)
-        else:
+        # Insert before any mermaid script or at end of head
+        if '<head>' in html and '</head>' in html:
+            # Insert in head if it exists
+            return html.replace('</head>', config_script + '</head>', 1)
+        elif '<script' in html:
+            # Insert before first script
             return config_script + html
+        else:
+            # Append to body
+            return html + config_script
+    
+    def apply_theme_to_mermaid_html(self, html: str, profile: str) -> str:
+        """Apply theme to Mermaid diagram HTML (deprecated - use inject_theme_into_html)."""
+        return self.inject_theme_into_html(html, profile)
     
     def create_custom_theme(self, name: str, colors: Dict[str, str]) -> MermaidThemeConfig:
         """Create custom theme from color dict."""
@@ -302,8 +340,8 @@ class MermaidThemeGenerator:
     def get_all_profiles(self) -> Dict[str, str]:
         """Get all available profiles."""
         return {
-            'tech-whitepaper': 'Technical, professional, clean',
-            'dark-pro': 'Dark mode, modern, high contrast',
+            'tech-whitepaper': 'Technical, professional, clean (light mode)',
+            'dark-pro': 'Dark mode, modern, high contrast (DECEMBER 2025)',
             'enterprise-blue': 'Corporate, professional, conservative',
             'minimalist': 'Minimal, elegant, content-focused'
         }
