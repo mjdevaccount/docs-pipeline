@@ -34,7 +34,7 @@ def markdown_to_pdf(
     highlight_style: Optional[str] = None,
     crossref_config: Optional[str] = None,
     glossary_file: Optional[str] = None,
-    renderer: str = 'weasyprint',
+    renderer: str = 'playwright',
     generate_toc: bool = False,
     generate_cover: bool = False,
     watermark: Optional[str] = None,
@@ -56,7 +56,7 @@ def markdown_to_pdf(
         highlight_style: Code highlighting style
         crossref_config: Pandoc-crossref config
         glossary_file: Glossary YAML file
-        renderer: PDF renderer ('weasyprint' or 'playwright')
+        renderer: PDF renderer ('playwright' - only renderer available)
         generate_toc: Generate table of contents
         generate_cover: Generate cover page
         watermark: Watermark text

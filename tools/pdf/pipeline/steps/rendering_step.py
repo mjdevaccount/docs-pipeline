@@ -42,13 +42,11 @@ class PdfRenderingStep(PipelineStep):
                 
                 renderer_name = context.get_config('renderer', 'playwright')
                 
-                # Get renderer with fallback
+                # Get Playwright renderer (only renderer available)
                 renderer_type = RendererType(renderer_name)
-                pdf_renderer = RendererFactory.get_renderer_with_fallback(
-                    preferred=renderer_type,
-                    fallback=RendererType.WEASYPRINT,
-                    verbose=context.verbose
-                )
+                pdf_renderer = RendererFactory.get_renderer(renderer_type)
+                if not pdf_renderer.is_available():
+                    raise PipelineError("Playwright renderer not available. Install with: pip install playwright && playwright install chromium")
                 
                 # Handle profile - load CSS from profile if no explicit css_file provided
                 css_file = context.get_config('css_file')
@@ -110,64 +108,17 @@ class PdfRenderingStep(PipelineStep):
                     raise PipelineError("PDF rendering returned failure")
                 
             except ImportError:
-                # Fallback to legacy rendering
-                self.log("Using legacy PDF rendering", context)
-                return self._legacy_render(context)
+                # No fallback - Playwright is required
+                raise PipelineError(
+                    "Playwright renderer not available. "
+                    "Install with: pip install playwright && playwright install chromium"
+                )
             
         except PipelineError:
             raise
         except Exception as e:
             raise PipelineError(f"PDF rendering failed: {e}")
     
-    def _legacy_render(self, context: PipelineContext) -> bool:
-        """Fallback to WeasyPrint direct call"""
-        try:
-            from weasyprint import HTML, CSS
-            
-            html = HTML(filename=str(context.html_file))
-            
-            # Handle profile - load CSS from profile if no explicit css_file provided
-            css_file = context.get_config('css_file')
-            if not css_file:
-                profile_name = context.get_config('profile')
-                if profile_name:
-                    try:
-                        import sys
-                        from pathlib import Path
-                        # Add tools/pdf directory to path for imports
-                        pdf_tools_dir = Path(__file__).parent.parent.parent
-                        if str(pdf_tools_dir) not in sys.path:
-                            sys.path.insert(0, str(pdf_tools_dir))
-                        from config.profiles import get_profile
-                        profile = get_profile(profile_name)
-                        if profile and profile.css:
-                            css_file = profile.css
-                            # Profile CSS paths are already relative to repo root, resolve them
-                            css_path = Path(css_file)
-                            if not css_path.is_absolute():
-                                # Go up from tools/pdf to repo root, then use the path
-                                repo_root = pdf_tools_dir.parent.parent
-                                css_file = str(repo_root / css_path)
-                            else:
-                                css_file = str(css_path)
-                            self.log(f"Using CSS from profile '{profile_name}': {css_file}", context)
-                    except (ImportError, Exception) as e:
-                        if context.verbose:
-                            self.log(f"Profile loading failed: {e}", context)
-                        pass  # Profile system not available
-            
-            if css_file and Path(css_file).exists():
-                stylesheets = [CSS(filename=str(css_file))]
-            else:
-                stylesheets = None
-            
-            html.write_pdf(str(context.output_file), stylesheets=stylesheets)
-            
-            self.log(f"Created {context.output_file} (WeasyPrint legacy)", context)
-            return True
-            
-        except Exception as e:
-            raise PipelineError(f"Legacy PDF rendering failed: {e}")
 
 
 class DocxRenderingStep(PipelineStep):

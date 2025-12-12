@@ -429,8 +429,8 @@ Config File Format (JSON):
                        help='Parallel threads for batch processing (default: 1)')
     
     # PDF options
-    parser.add_argument('--renderer', default='weasyprint', choices=['weasyprint', 'playwright'],
-                       help='PDF renderer (default: weasyprint)')
+    parser.add_argument('--renderer', default='playwright', choices=['playwright'],
+                       help='PDF renderer (default: playwright)')
     parser.add_argument('--cover', '--generate-cover', action='store_true',
                        help='Generate cover page')
     parser.add_argument('--toc', '--generate-toc', action='store_true',
