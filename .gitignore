@@ -29,6 +29,7 @@ test-env/
 
 # IDEs
 .cursor/
+!.cursor/rules/
 .vscode/
 .idea/
 *.swp
