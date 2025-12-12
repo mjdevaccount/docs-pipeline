@@ -21,8 +21,11 @@ CLI Usage:
     # With glossary highlighting
     python -m tools.pdf.cli.main input.md --glossary glossary.yaml
     
+    # Export to markdown
+    python -m tools.pdf.cli.main input.md output.md --format markdown
+    
 Library Usage:
-    from tools.pdf.core import markdown_to_pdf
+    from tools.pdf.core import markdown_to_pdf, MarkdownExporter
     markdown_to_pdf('input.md', 'output.pdf', profile='tech-whitepaper')
 
 Glossary Features:
@@ -31,6 +34,13 @@ Glossary Features:
     
     # Generate glossary index
     python -m tools.pdf.cli.glossary_commands index glossary.yaml --output glossary.md
+
+Markdown Export:
+    # Export with formatting and metadata
+    python -m tools.pdf.cli.main document.md output.md --format markdown
+    
+    # Export with table of contents
+    python -m tools.pdf.cli.main document.md output.md --format markdown --toc
 
 Docker Usage:
     docker-compose run --rm docs-pipeline-web \\
@@ -60,12 +70,14 @@ from core import (
     markdown_to_html,
     check_dependencies,
     validate_markdown,
+    MarkdownExporter,
+    MarkdownMetadata,
 )
 from core.utils import resolve_output_path
 from core.glossary_processor import GlossaryProcessor
 from diagram_rendering import DiagramOrchestrator
 
-__version__ = "3.1.0"  # Bumped for glossary integration
+__version__ = "3.2.0"  # Bumped for markdown export support
 
 
 # Global reference to diagram orchestrator for metrics reporting
@@ -127,6 +139,75 @@ def apply_glossary(content: str, glossary_file: Optional[Path], verbose: bool = 
         return content
 
 
+def export_to_markdown(
+    input_file: str,
+    output_file: str,
+    include_toc: bool = False,
+    extract_metadata: bool = True,
+    glossary_file: Optional[str] = None,
+    verbose: bool = False
+) -> bool:
+    """
+    Export document to markdown format.
+    
+    Args:
+        input_file: Input markdown file
+        output_file: Output markdown file
+        include_toc: Generate table of contents
+        extract_metadata: Extract document metadata
+        glossary_file: Optional glossary file for highlighting
+        verbose: Verbose output
+    
+    Returns:
+        True if successful
+    """
+    try:
+        # Read input
+        input_path = Path(input_file)
+        if not input_path.exists():
+            print(f"[ERROR] Input file not found: {input_file}")
+            return False
+        
+        content = input_path.read_text(encoding='utf-8')
+        
+        # Apply glossary if specified
+        if glossary_file:
+            content = apply_glossary(content, Path(glossary_file), verbose)
+        
+        # Export to markdown
+        exporter = MarkdownExporter()
+        md_content, metadata = exporter.html_to_markdown(
+            content,
+            include_toc=include_toc,
+            extract_metadata=extract_metadata
+        )
+        
+        # Write output
+        output_path = Path(output_file)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        if verbose:
+            print(f"[INFO] Exporting to markdown: {output_file}")
+            print(exporter.stats.report())
+        
+        exporter.export_to_file(
+            md_content,
+            output_path,
+            metadata=metadata,
+            include_toc=include_toc,
+            verbose=verbose
+        )
+        
+        return True
+    
+    except Exception as e:
+        print(f"[ERROR] Export failed: {e}")
+        if verbose:
+            import traceback
+            traceback.print_exc()
+        return False
+
+
 def load_config(config_file: str) -> dict:
     """Load configuration from JSON file."""
     with open(config_file, 'r', encoding='utf-8') as f:
@@ -164,7 +245,8 @@ def parallel_batch_convert(
             format_map = {
                 'pdf': markdown_to_pdf,
                 'docx': markdown_to_docx,
-                'html': markdown_to_html
+                'html': markdown_to_html,
+                'markdown': lambda i, o, **kw: export_to_markdown(i, o, **kw)
             }
             converter = format_map[output_format]
             success = converter(input_file, output_file, **kwargs)
@@ -194,7 +276,7 @@ def parallel_batch_convert(
     return results
 
 
-def build_kwargs(args, item_overrides: Optional[Dict] = None) -> Dict[str, Any]:
+def build_kwargs(args, item_overrides: Optional[Dict] = None, include_markdown_opts: bool = False) -> Dict[str, Any]:
     """Build kwargs dict from CLI args with optional item-level overrides."""
     # Build custom metadata from CLI args
     custom_metadata = {}
@@ -226,7 +308,13 @@ def build_kwargs(args, item_overrides: Optional[Dict] = None) -> Dict[str, Any]:
         'custom_metadata': custom_metadata if custom_metadata else None
     }
     
-    if args.format == 'pdf':
+    # Add markdown-specific options
+    if include_markdown_opts:
+        kwargs.update({
+            'include_toc': args.toc,
+            'extract_metadata': True
+        })
+    elif args.format == 'pdf':
         kwargs.update({
             'renderer': args.renderer,
             'generate_cover': args.cover,
@@ -250,12 +338,15 @@ def build_kwargs(args, item_overrides: Optional[Dict] = None) -> Dict[str, Any]:
 def main():
     """CLI entry point."""
     parser = argparse.ArgumentParser(
-        description='Convert Markdown to PDF/DOCX/HTML with advanced features',
+        description='Convert Markdown to PDF/DOCX/HTML/Markdown with advanced features',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   # Convert single file to PDF
   python -m tools.pdf.cli.main document.md document.pdf
+  
+  # Export to markdown with formatting
+  python -m tools.pdf.cli.main document.md output.md --format markdown --toc
   
   # Show cache metrics and glossary statistics
   python -m tools.pdf.cli.main document.md output.pdf --verbose
@@ -263,14 +354,14 @@ Examples:
   #   [INFO] Cache Performance Report
   #     Hit Ratio: 75.0% (3/4)
   #     Time Saved: 2340ms
-  #     Size Reduction: 42.1%
   #   [INFO] Glossary Processing Report
-  #     Total Terms: 250
   #     Terms Found: 45
-  #     Total Occurrences: 156
   
   # Use glossary to highlight terms
   python -m tools.pdf.cli.main document.md --glossary glossary.yaml
+  
+  # Export to markdown with glossary
+  python -m tools.pdf.cli.main document.md output.md --format markdown --glossary glossary.yaml
   
   # Use Playwright renderer with cover page, TOC, and glossary
   python -m tools.pdf.cli.main document.md --renderer playwright --cover --toc --glossary glossary.yaml
@@ -286,6 +377,21 @@ Examples:
   
   # Override metadata from command line
   python -m tools.pdf.cli.main doc.md --title "My Report" --author "Jane Doe"
+
+Output Formats:
+  - pdf (default) - Professional PDF with cover, TOC, custom styling
+  - docx - Word document with formatting preserved
+  - html - Web-ready HTML
+  - markdown - Processed markdown with optional frontmatter and TOC
+
+Markdown Format:
+  Export documents to markdown for archival, sharing, or re-processing.
+  Preserves:
+  - Document structure (headings, lists, tables)
+  - Code blocks with syntax highlighting
+  - Images and links
+  - Optional metadata in YAML frontmatter
+  - Optional table of contents
 
 Glossary Features:
   Use --glossary flag to highlight terminology in documents:
@@ -309,7 +415,7 @@ Config File Format (JSON):
   {
     "files": [
       {"input": "doc1.md", "output": "doc1.pdf", "profile": "tech-whitepaper"},
-      {"input": "doc2.md", "format": "docx", "glossary": "glossary.yaml"}
+      {"input": "doc2.md", "format": "markdown", "glossary": "glossary.yaml"}
     ],
     "glossary": "glossary.yaml",
     "profile": "default",
@@ -326,7 +432,7 @@ Config File Format (JSON):
     # Batch mode
     parser.add_argument('--batch', nargs='+', metavar='FILE', help='Batch convert multiple files')
     parser.add_argument('--config', help='JSON config file for batch conversion')
-    parser.add_argument('--format', default='pdf', choices=['pdf', 'docx', 'html'],
+    parser.add_argument('--format', default='pdf', choices=['pdf', 'docx', 'html', 'markdown'],
                        help='Output format (default: pdf)')
     parser.add_argument('--output-dir', help='Output directory for all generated files')
     parser.add_argument('--threads', type=int, default=1, 
@@ -385,6 +491,43 @@ Config File Format (JSON):
     if args.check:
         sys.exit(0 if check_dependencies() else 1)
     
+    # Markdown-specific handling
+    if args.format == 'markdown':
+        if not args.input:
+            parser.print_help()
+            print("\n[INFO] No input file specified.")
+            sys.exit(0)
+        
+        input_path = Path(args.input)
+        if not input_path.exists():
+            print(f"[ERROR] Input file not found: {args.input}")
+            sys.exit(1)
+        
+        if args.output:
+            output_file = args.output
+        else:
+            output_file = str(input_path.with_suffix('.md'))
+        
+        output_file = resolve_output_path(output_file, args.output_dir)
+        
+        print(f"\nExporting {args.input} to {output_file}...")
+        if args.toc:
+            print(f"  Table of contents: enabled")
+        if args.glossary:
+            print(f"  Glossary: {args.glossary}")
+        
+        success = export_to_markdown(
+            args.input,
+            output_file,
+            include_toc=args.toc,
+            glossary_file=args.glossary,
+            verbose=args.verbose
+        )
+        
+        if success:
+            print(f"[OK] Created: {output_file}")
+        sys.exit(0 if success else 1)
+    
     # Config file mode
     if args.config:
         config = load_config(args.config)
@@ -416,7 +559,8 @@ Config File Format (JSON):
                             print(f"  - {issue}")
                         continue
                 
-                kwargs = build_kwargs(args, item if isinstance(item, dict) else None)
+                is_markdown = output_format == 'markdown'
+                kwargs = build_kwargs(args, item if isinstance(item, dict) else None, include_markdown_opts=is_markdown)
                 # Override glossary if specified in config item
                 if 'glossary' in item:
                     kwargs['glossary_file'] = item['glossary']
@@ -434,7 +578,12 @@ Config File Format (JSON):
             results = {}
             for input_file, output_file, output_format, kwargs in file_tasks:
                 try:
-                    format_map = {'pdf': markdown_to_pdf, 'docx': markdown_to_docx, 'html': markdown_to_html}
+                    format_map = {
+                        'pdf': markdown_to_pdf,
+                        'docx': markdown_to_docx,
+                        'html': markdown_to_html,
+                        'markdown': export_to_markdown
+                    }
                     success = format_map[output_format](input_file, output_file, **kwargs)
                     results[input_file] = success
                     if success:
@@ -469,7 +618,8 @@ Config File Format (JSON):
             output_file = str(Path(input_file).with_suffix(f'.{args.format}'))
             output_file = resolve_output_path(output_file, args.output_dir)
             
-            kwargs = build_kwargs(args)
+            is_markdown = args.format == 'markdown'
+            kwargs = build_kwargs(args, include_markdown_opts=is_markdown)
             file_tasks.append((input_file, output_file, args.format, kwargs))
         
         if not file_tasks:
@@ -482,7 +632,12 @@ Config File Format (JSON):
             results = {}
             for input_file, output_file, output_format, kwargs in file_tasks:
                 try:
-                    format_map = {'pdf': markdown_to_pdf, 'docx': markdown_to_docx, 'html': markdown_to_html}
+                    format_map = {
+                        'pdf': markdown_to_pdf,
+                        'docx': markdown_to_docx,
+                        'html': markdown_to_html,
+                        'markdown': export_to_markdown
+                    }
                     success = format_map[output_format](input_file, output_file, **kwargs)
                     results[input_file] = success
                     if success:
@@ -504,6 +659,7 @@ Config File Format (JSON):
         print("\n[INFO] No input file specified.")
         print("[INFO] Use --batch for multiple files, --config for JSON config")
         print("[INFO] Use --glossary to highlight terminology")
+        print("[INFO] Use --format markdown to export as markdown")
         sys.exit(0)
     
     input_path = Path(args.input)
@@ -533,26 +689,37 @@ Config File Format (JSON):
     
     # Show conversion info
     print(f"\nConverting {args.input} to {output_file}...")
-    print(f"  Renderer: {args.renderer}")
-    if args.cover:
-        print(f"  Cover page: enabled")
-    if args.toc:
-        print(f"  Table of contents: enabled")
-    if args.profile:
-        print(f"  Profile: {args.profile}")
+    if args.format == 'pdf':
+        print(f"  Renderer: {args.renderer}")
+        if args.cover:
+            print(f"  Cover page: enabled")
+        if args.toc:
+            print(f"  Table of contents: enabled")
+        if args.profile:
+            print(f"  Profile: {args.profile}")
+    elif args.format == 'markdown':
+        if args.toc:
+            print(f"  Table of contents: enabled")
+    
     if args.glossary:
         print(f"  Glossary: {args.glossary}")
     
     # Build kwargs and convert
-    kwargs = build_kwargs(args)
+    is_markdown = args.format == 'markdown'
+    kwargs = build_kwargs(args, include_markdown_opts=is_markdown)
     
     try:
         if args.format == 'pdf':
             success = markdown_to_pdf(args.input, output_file, **kwargs)
         elif args.format == 'docx':
             success = markdown_to_docx(args.input, output_file, **kwargs)
-        else:
+        elif args.format == 'html':
             success = markdown_to_html(args.input, output_file, **kwargs)
+        elif args.format == 'markdown':
+            success = export_to_markdown(args.input, output_file, **kwargs)
+        else:
+            print(f"[ERROR] Unsupported format: {args.format}")
+            sys.exit(1)
         
         if success:
             print(f"[OK] Created: {output_file}")
