@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated Document</title>
+    
+    <!-- CRITICAL: Load CSS profile first (e.g., dark-pro) -->
+    <link rel="stylesheet" href="dark-pro.css">
+    
+    <!-- Optional: Additional CSS -->
+    <style>
+        /* Page setup - matches @page in CSS -->
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <!-- Content will be inserted here by Pandoc/your generator -->
+    <h1>Document Title</h1>
+    <p>Your markdown content goes here...</p>
+    
+    <!-- Mermaid diagrams will be rendered inside .mermaid divs -->
+    <div class="mermaid">
+    graph TD
+        A[Start] --> B[Process]
+        B --> C[End]
+    </div>
+    
+    <!-- 
+    ============================================================================
+    MERMAID 11 INITIALIZATION - CRITICAL FOR DARK-PRO THEMING
+    ============================================================================
+    
+    This script MUST be:
+    1. AFTER the .mermaid divs (or use contentLoaded())
+    2. AFTER dark-pro.css is loaded
+    3. Use theme: 'base' to read CSS custom properties
+    4. Use ES module import for Mermaid 11+
+    
+    DO NOT USE the old script tag approach:
+        ❌ <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+    
+    This loads the old API and ignores CSS variables.
+    ============================================================================
+    -->
+    
+    <script type="module">
+        // Import Mermaid 11 as ES module
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        
+        // Initialize with CSS-variable based theming
+        mermaid.initialize({
+            // ====== THEME CONFIGURATION ======
+            startOnLoad: true,              // Auto-render .mermaid divs
+            theme: 'base',                  // *** KEY: Use CSS custom properties ***
+            themeVariables: {},             // Leave EMPTY - CSS provides all colors
+            
+            // ====== SECURITY ======
+            securityLevel: 'strict',        // Recommended for PDFs
+            
+            // ====== DIAGRAM-SPECIFIC SETTINGS ======
+            flowchart: {
+                useMaxWidth: true,          // Responsive width
+                padding: 20,                // Node padding
+                htmlLabels: true,           // Better label rendering
+                nodeSpacing: 50,            // Space between nodes
+                rankSpacing: 50             // Space between ranks
+            },
+            sequence: {
+                useMaxWidth: true,
+                mirrorActors: true,         // Mirror actors on both sides
+                actorMargin: 50
+            },
+            gantt: {
+                useMaxWidth: true,
+                fontSize: 12
+            },
+            class: {
+                arrowMarkerAbsolute: true   // Better arrow rendering
+            },
+            state: {
+                dividerMargin: 3,
+                sizeUnit: 5
+            },
+            pie: {
+                useMaxWidth: true,
+                textPosition: 0.75
+            },
+            requirement: {
+                useMaxWidth: true
+            },
+            git: {
+                useMaxWidth: true
+            }
+        });
+        
+        // Trigger content loaded for Playwright (handles async HTML injection)
+        mermaid.contentLoaded();
+        
+        // Optional: Debug logging for troubleshooting
+        if (window.location.search.includes('debug')) {
+            console.log('[Mermaid Config]', mermaid.config);
+            const root = getComputedStyle(document.documentElement);
+            console.log('[CSS Variables]', {
+                primaryColor: root.getPropertyValue('--mermaid-primaryColor'),
+                textColor: root.getPropertyValue('--mermaid-textColor'),
+                lineColor: root.getPropertyValue('--mermaid-lineColor')
+            });
+        }
+    </script>
+    
+    <!-- 
+    ============================================================================
+    IMPORTANT NOTES:
+    ============================================================================
+    
+    1. CSS LOADING ORDER:
+       - dark-pro.css must load BEFORE Mermaid initializes
+       - Otherwise CSS custom properties won't be available
+    
+    2. THEME: 'BASE' IS REQUIRED:
+       - Tells Mermaid to read CSS custom properties (:root variables)
+       - Without this, Mermaid uses its built-in dark/default theme
+       - That's why your colors were wrong before!
+    
+    3. THEMEMVARIABLES MUST BE EMPTY:
+       - If you pass color values here, they override CSS
+       - We want CSS to be the single source of truth
+       - Leave it as: themeVariables: {}
+    
+    4. CONTENTLOADED() IS FOR PLAYWRIGHT:
+       - In server rendering, contentLoaded() ensures
+         diagrams render even if HTML is set async
+       - Not strictly necessary but recommended
+    
+    5. MODULE IMPORT vs SCRIPT TAG:
+       - Module import: Modern, tree-shakeable, efficient (Mermaid 11+)
+       - Script tag: Legacy, loads everything, not recommended
+       - Always use module import for new code
+    
+    6. DEBUG MODE:
+       - Add ?debug to URL to log theme configuration
+       - Helps troubleshoot CSS variable loading
+    
+    ============================================================================
+    -->
+</body>
+</html>
