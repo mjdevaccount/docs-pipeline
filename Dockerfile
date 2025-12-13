@@ -60,6 +60,10 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p /app/uploads /app/output /app/docs/examples/generated
 
+# Create non-root user for security (required for Puppeteer --no-sandbox flags)
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+USER appuser
+
 # Expose port
 EXPOSE 8080
 
