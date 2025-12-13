@@ -40,7 +40,9 @@ def markdown_to_pdf(
     watermark: Optional[str] = None,
     verbose: bool = False,
     profile: Optional[str] = None,
-    custom_metadata: Optional[Dict[str, Any]] = None
+    custom_metadata: Optional[Dict[str, Any]] = None,
+    use_native_renderer: bool = True,
+    enable_diagrams: bool = True
 ) -> bool:
     """
     Convert Markdown to PDF.
@@ -82,7 +84,9 @@ def markdown_to_pdf(
         'watermark': watermark,
         'verbose': verbose,
         'profile': profile,
-        'custom_metadata': custom_metadata or {}
+        'custom_metadata': custom_metadata or {},
+        'use_native_renderer': use_native_renderer,
+        'enable_diagrams': enable_diagrams
     }
     
     # Remove None values

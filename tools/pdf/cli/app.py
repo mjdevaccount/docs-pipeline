@@ -406,40 +406,40 @@ def phase_b():
     D --> E"""
     
     try:
-        with tempfile.TemporaryDirectory() as tmpdir:
-            renderer = MermaidNativeRenderer(
-                theme="neutral",
-                background="transparent"
-            )
-            
-            svg_file = Path(tmpdir) / "test.svg"
-            
-            console.print("[cyan]Rendering test diagram...[/cyan]")
-            start = time.time()
-            result = renderer.render(
-                test_diagram,
-                svg_file,
-                format=DiagramFormat.SVG
-            )
-            elapsed = time.time() - start
-            
-            if result.success:
-                svg_size = svg_file.stat().st_size
-                console.print(
-                    Panel(
-                        f"[green]✓ Phase B Working![/green]\n"
-                        f"Render time: [yellow]{elapsed*1000:.1f}ms[/yellow]\n"
-                        f"SVG size: [yellow]{svg_size} bytes[/yellow]",
-                        border_style="green",
+        from playwright.async_api import async_playwright
+        import asyncio
+        
+        async def test_render():
+            async with async_playwright() as p:
+                browser = await p.chromium.launch(headless=True)
+                context = await browser.new_context()
+                page = await context.new_page()
+                
+                try:
+                    renderer = MermaidNativeRenderer(page, verbose=True)
+                    
+                    console.print("[cyan]Rendering test diagram...[/cyan]")
+                    start = time.time()
+                    svg, metrics = await renderer.render(
+                        test_diagram,
+                        config=None,
+                        theme_name="dark"
                     )
-                )
-            else:
-                error_hint(
-                    "Phase B test failed",
-                    result.error_message or "Unknown error",
-                    "Check Playwright installation: python -m playwright install chromium"
-                )
-                raise typer.Exit(1)
+                    elapsed = time.time() - start
+                    
+                    svg_size = len(svg)
+                    console.print(
+                        Panel(
+                            f"[green]✓ Phase B Working![/green]\n"
+                            f"Render time: [yellow]{elapsed*1000:.1f}ms[/yellow]\n"
+                            f"SVG size: [yellow]{svg_size} bytes[/yellow]",
+                            border_style="green",
+                        )
+                    )
+                finally:
+                    await browser.close()
+        
+        asyncio.run(test_render())
     
     except Exception as e:
         error_hint(

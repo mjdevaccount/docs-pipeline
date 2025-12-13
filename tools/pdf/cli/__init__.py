@@ -1,18 +1,17 @@
 """
-PDF Generation CLI - Primary Entry Point
-=========================================
-
-This is THE command-line interface for PDF generation.
+PDF Generation CLI (v4.0.0) - Modern Typer-based CLI
+====================================================
 
 Usage:
-    python -m tools.pdf.cli.main input.md output.pdf
-    python -m tools.pdf.cli.main input.md --profile tech-whitepaper --cover --toc
-    python -m tools.pdf.cli.main --batch doc1.md doc2.md --threads 4
+    python -m tools.pdf.cli convert input.md output.pdf
+    python -m tools.pdf.cli batch docs/**/*.md --format pdf
+    python -m tools.pdf.cli diag env
     
 For library usage, import from core:
     from tools.pdf.core import markdown_to_pdf
 """
 
-from .main import main, parallel_batch_convert, __version__
+from .app import app
+from .app import __version__
 
-__all__ = ['main', 'parallel_batch_convert', '__version__']
+__all__ = ['app', '__version__']

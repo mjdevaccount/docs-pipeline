@@ -18,8 +18,10 @@ WORKDIR /app
 # Copy requirements first (for layer caching)
 COPY requirements.txt ./
 COPY tools/pdf/requirements-pdf.txt ./requirements-pdf.txt
+COPY tools/pdf/requirements-cli.txt ./requirements-cli.txt
 RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir -r requirements-pdf.txt
+    && pip install --no-cache-dir -r requirements-pdf.txt \
+    && pip install --no-cache-dir -r requirements-cli.txt
 
 # Install Playwright and Chromium browser (1.48.0+ for 2025 best practices)
 # Install system dependencies for Playwright and Puppeteer (mermaid-cli)
