@@ -20,6 +20,67 @@
 
 ---
 
+## 🚨 NEW: Modern CLI v4.0.0
+
+**The old CLI has been removed.** The new CLI is cleaner, faster, and more intuitive.
+
+### Install New CLI
+
+```bash
+pip install typer>=0.9.0 rich>=13.0.0
+```
+
+### Use New CLI
+
+```bash
+# Convert with default settings (Phase B enabled for 40-60% faster diagrams)
+python -m tools.pdf.cli convert input.md output.pdf
+
+# With options
+python -m tools.pdf.cli convert input.md output.pdf --cover --toc --profile tech-whitepaper
+
+# Batch process
+python -m tools.pdf.cli batch docs/**/*.md --output-dir output/
+
+# Check system
+python -m tools.pdf.cli diag env
+
+# Test Phase B renderer
+python -m tools.pdf.cli diag phase-b
+```
+
+### What's New
+
+✅ **Typer + Rich** - Modern CLI framework with beautiful output  
+✅ **Phase B Integrated** - Native Mermaid rendering (40-60% faster) enabled by default  
+✅ **Helpful Errors** - Actionable error messages with solutions  
+✅ **Built-in Diagnostics** - Check your environment setup easily  
+✅ **Better UX** - Progress bars, color, tables, clean formatting  
+
+### Migration from Old CLI
+
+**Old way:**
+```bash
+python -m tools.pdf.cli.main input.md output.pdf
+```
+
+**New way:**
+```bash
+python -m tools.pdf.cli convert input.md output.pdf
+```
+
+**See full migration guide:**
+```
+docs/CLI_UPGRADE_GUIDE.md
+```
+
+**See complete CLI documentation:**
+```
+docs/CLI_MODERN_REDESIGN.md
+```
+
+---
+
 ## 🎨 Automated Design System (NEW)
 
 **Phases 1-3 Complete**: Centralized token management, automated CSS generation, and pipeline integration.
@@ -31,7 +92,7 @@
 python tools/pdf/config/build_themes.py
 
 # Generate PDF with specific theme
-python -m tools.pdf.cli.main docs/ output.pdf --theme dark-pro
+python -m tools.pdf.cli convert docs/ output.pdf --profile dark-pro
 
 # List available themes
 python tools/pdf/config/profile_loader.py
@@ -83,7 +144,7 @@ python tools/pdf/config/profile_loader.py
 
 **Standard (Phase 1 - already optimized):**
 ```bash
-python -m tools.pdf.cli.main spec.md output.pdf --profile dark-pro --verbose
+python -m tools.pdf.cli convert spec.md output.pdf --profile dark-pro --verbose
 # Output: [INFO] Mermaid colors: X/Y SVGs modified
 ```
 
@@ -123,7 +184,7 @@ metrics = await apply_mermaid_colors_cssom(page, verbose=True)
 
 ```bash
 # First build: 2.5 seconds
-python -m tools.pdf.cli.main doc.md output.pdf
+python -m tools.pdf.cli convert doc.md output.pdf
 
 # Edit only text: 0.05 seconds ⚡ (50x faster)
 # Edit diagram: 0.2 seconds (8x faster)
@@ -138,7 +199,7 @@ python -m tools.pdf.cli.main doc.md output.pdf
 
 **See cache metrics:**
 ```bash
-python -m tools.pdf.cli.main doc.md output.pdf --verbose
+python -m tools.pdf.cli convert doc.md output.pdf --verbose
 
 # Output:
 # [INFO] Cache Performance Report
@@ -183,7 +244,7 @@ open coverage-dashboard.html
 
 ```bash
 # Use glossary to highlight terms
-python -m tools.pdf.cli.main tech-guide.md output.pdf --glossary technical.yaml
+python -m tools.pdf.cli convert tech-guide.md output.pdf --glossary technical.yaml
 
 # Validate glossary structure
 make glossary-validate
@@ -215,19 +276,19 @@ make glossary-report
 
 ```bash
 # PDF (professional publishing)
-python -m tools.pdf.cli.main doc.md output.pdf --profile tech-whitepaper
+python -m tools.pdf.cli convert doc.md output.pdf --profile tech-whitepaper
 
 # Word document (client deliverables)
-python -m tools.pdf.cli.main doc.md output.docx
+python -m tools.pdf.cli convert doc.md output.docx --format docx
 
 # Web-ready HTML (documentation sites)
-python -m tools.pdf.cli.main doc.md output.html
+python -m tools.pdf.cli convert doc.md output.html --format html
 
 # Markdown (archival, version control, re-processing)
-python -m tools.pdf.cli.main doc.md output.md --format markdown --toc
+python -m tools.pdf.cli convert doc.md output.md --format markdown --toc
 
 # EPUB (e-books for Kindle, iBooks, Kobo) ← NEW
-python -m tools.pdf.cli.main book.md book.epub --format epub --title "My Book" --author "Jane Doe"
+python -m tools.pdf.cli convert book.md book.epub --format epub --title "My Book" --author "Jane Doe"
 ```
 
 **Each Format Optimized For:**
@@ -276,10 +337,10 @@ python -m tools.pdf.cli.watch_mode book.md book.pdf
 
 ```bash
 # All profiles from identical source
-python -m tools.pdf.cli.main spec.md output.pdf --profile tech-whitepaper    # Technical
-python -m tools.pdf.cli.main spec.md output.pdf --profile dark-pro            # Modern
-python -m tools.pdf.cli.main spec.md output.pdf --profile minimalist          # Elegant
-python -m tools.pdf.cli.main spec.md output.pdf --profile enterprise-blue     # Corporate
+python -m tools.pdf.cli convert spec.md output.pdf --profile tech-whitepaper    # Technical
+python -m tools.pdf.cli convert spec.md output.pdf --profile dark-pro            # Modern
+python -m tools.pdf.cli convert spec.md output.pdf --profile minimalist          # Elegant
+python -m tools.pdf.cli convert spec.md output.pdf --profile enterprise-blue     # Corporate
 ```
 
 | Profile | Best For | Style |
@@ -331,7 +392,7 @@ Open http://localhost:8080 and upload a Markdown file.
 
 **Inside container, you can also use CLI:**
 ```bash
-docker exec -it docs-pipeline-web python -m tools.pdf.cli.main \
+docker exec -it docs-pipeline-web python -m tools.pdf.cli convert \
     docs/examples/advanced-markdown-showcase.md \
     output/showcase.pdf \
     --profile tech-whitepaper \
@@ -349,6 +410,7 @@ docker exec -it docs-pipeline-web python -m tools.pdf.cli.main \
 brew install pandoc node
 npm install -g @mermaid-js/mermaid-cli
 pip install -r requirements.txt -r tools/pdf/requirements-pdf.txt
+pip install typer>=0.9.0 rich>=13.0.0
 playwright install chromium
 ```
 
@@ -357,6 +419,7 @@ playwright install chromium
 sudo apt-get install -y pandoc nodejs libpango-1.0-0 libcairo2
 sudo npm install -g @mermaid-js/mermaid-cli
 pip install -r requirements.txt -r tools/pdf/requirements-pdf.txt
+pip install typer>=0.9.0 rich>=13.0.0
 playwright install chromium
 ```
 
@@ -365,6 +428,7 @@ playwright install chromium
 choco install pandoc nodejs
 npm install -g @mermaid-js/mermaid-cli
 pip install -r requirements.txt -r tools/pdf/requirements-pdf.txt
+pip install typer>=0.9.0 rich>=13.0.0
 playwright install chromium
 ```
 
@@ -374,34 +438,33 @@ playwright install chromium
 
 #### Generate a Professional Resume
 ```bash
-python -m tools.pdf.cli.main docs/examples/resume-template.md \
+python -m tools.pdf.cli convert docs/examples/resume-template.md \
     resume.pdf \
     --profile minimalist \
-    --version "2024.12" \
-    --generate-cover
+    --cover
 ```
 
 #### Create Multi-Format Documentation
 ```bash
 # PDF for printing
-python -m tools.pdf.cli.main architecture.md arch.pdf --profile tech-whitepaper
+python -m tools.pdf.cli convert architecture.md arch.pdf --profile tech-whitepaper
 
 # Markdown for GitHub
-python -m tools.pdf.cli.main architecture.md README.md --format markdown --toc
+python -m tools.pdf.cli convert architecture.md README.md --format markdown --toc
 
 # Word for sharing
-python -m tools.pdf.cli.main architecture.md arch.docx
+python -m tools.pdf.cli convert architecture.md arch.docx --format docx
 
 # EPUB for e-readers
-python -m tools.pdf.cli.main architecture.md arch.epub --format epub
+python -m tools.pdf.cli convert architecture.md arch.epub --format epub
 ```
 
 #### Batch Process with Glossary
 ```bash
-python -m tools.pdf.cli.main --batch *.md \
-    --format markdown \
+python -m tools.pdf.cli batch docs/**/*.md \
+    --format pdf \
     --glossary glossaries/technical.yaml \
-    --threads 4
+    --output-dir output/
 ```
 
 #### Watch Mode for Live Development
@@ -507,47 +570,49 @@ docs-pipeline/
 ├── 📦 tools/
 │   ├── pdf/
 │   │   ├── cli/
-│   │   │   ├── main.py                ← Primary CLI entry point
-│   │   │   └── watch_mode.py          ← Live dev loop (Priority 7)
+│   │   │   ├── app.py                  ← NEW Modern CLI (Typer + Rich)
+│   │   │   ├── __main__.py             ← Entry point
+│   │   │   └── watch_mode.py           ← Live dev loop (Priority 7)
 │   │   ├── core/
-│   │   │   ├── converter.py           ← Markdown to 5 formats
-│   │   │   ├── build_cache.py         ← Incremental builds (Priority 3)
+│   │   │   ├── converter.py            ← Markdown to 5 formats
+│   │   │   ├── build_cache.py          ← Incremental builds (Priority 3)
 │   │   │   ├── incremental_processor.py ← Smart change detection
-│   │   │   ├── glossary_processor.py  ← Term highlighting (Priority 4)
-│   │   │   ├── markdown_exporter.py   ← Markdown export (Priority 5)
-│   │   │   ├── epub_generator.py      ← EPUB generation (Priority 6)
-│   │   │   └── utils.py               ← Helpers
+│   │   │   ├── glossary_processor.py   ← Term highlighting (Priority 4)
+│   │   │   ├── markdown_exporter.py    ← Markdown export (Priority 5)
+│   │   │   ├── epub_generator.py       ← EPUB generation (Priority 6)
+│   │   │   └── utils.py                ← Helpers
 │   │   ├── config/
-│   │   │   ├── design-tokens.yml      ← Design tokens (NEW)
-│   │   │   ├── profiles.toml          ← Theme config (NEW)
-│   │   │   ├── build_themes.py        ← Build automation (NEW)
-│   │   │   └── *.py                   ← Design system tools (NEW)
+│   │   │   ├── design-tokens.yml       ← Design tokens (NEW)
+│   │   │   ├── profiles.toml           ← Theme config (NEW)
+│   │   │   ├── build_themes.py         ← Build automation (NEW)
+│   │   │   └── *.py                    ← Design system tools (NEW)
 │   │   ├── decorators/
-│   │   │   ├── mermaid_colors.py      ← Phase 1: Optimized
+│   │   │   ├── mermaid_colors.py       ← Phase 1: Optimized
 │   │   │   ├── mermaid_colors_cssom.py ← Phase 2: Optional variant (NEW)
-│   │   │   ├── wait_strategy.py       ← Phase 2: Testable patterns (NEW)
-│   │   │   └── *.py                   ← Other decorators
-│   │   ├── diagram_rendering/         ← Mermaid + caching
+│   │   │   ├── wait_strategy.py        ← Phase 2: Testable patterns (NEW)
+│   │   │   └── *.py                    ← Other decorators
+│   │   ├── diagram_rendering/          ← Mermaid + caching
 │   │   ├── renderers/
-│   │   │   └── playwright_renderer.py ← Pixel-perfect rendering
+│   │   │   └── playwright_renderer.py  ← Pixel-perfect rendering
 │   │   ├── styles/
-│   │   │   ├── generated/             ← Auto-generated CSS (NEW)
-│   │   │   └── *.css                  ← Theme stylesheets
+│   │   │   ├── generated/              ← Auto-generated CSS (NEW)
+│   │   │   └── *.css                   ← Theme stylesheets
 │   │   └── tests/
-│   │       ├── test_cache_metrics.py  ← Priority 1
-│   │       └── [130+ more tests]      ← Priority 2
+│   │       ├── test_cache_metrics.py   ← Priority 1
+│   │       └── [130+ more tests]       ← Priority 2
 │   │
-│   ├── docs_pipeline/cli.py          ← YAML pipeline processor
-│   └── prompts/agents/               ← AI enhancement (optional)
+│   ├── docs_pipeline/cli.py             ← YAML pipeline processor
+│   └── prompts/agents/                  ← AI enhancement (optional)
 │
 ├── glossaries/
-│   ├── technical.yaml                ← 40+ tech terms
-│   └── business.yaml                 ← 30+ business terms
+│   ├── technical.yaml                   ← 40+ tech terms
+│   └── business.yaml                    ← 30+ business terms
 │
-├── tests/                            ← 140KB comprehensive suite
-├── Makefile                          ← Automation (20+ targets)
-├── web_demo.py                       ← Flask interface (port 8080)
-├── PROGRESS_SUMMARY.md               ← All 7 priorities documented
+├── tests/                               ← 140KB comprehensive suite
+├── Makefile                             ← Automation (20+ targets)
+├── web_demo.py                          ← Flask interface (port 8080)
+├── requirements-cli.txt                 ← CLI dependencies (Typer, Rich)
+├── PROGRESS_SUMMARY.md                  ← All 7 priorities documented
 └── [documentation files]
 ```
 
@@ -581,15 +646,29 @@ docs-pipeline/
 
 ## 🔧 Command Reference
 
-### CLI Canonical Invocation
+### 🚀 NEW: Modern CLI v4.0.0 (Typer + Rich)
 
 ```bash
-# PRIMARY ENTRY POINT
-python -m tools.pdf.cli.main INPUT OUTPUT [OPTIONS]
+# Install CLI dependencies
+pip install typer>=0.9.0 rich>=13.0.0
 
-# Common usage
-python -m tools.pdf.cli.main document.md output.pdf [--flags]
+# Convert single file
+python -m tools.pdf.cli convert input.md output.pdf [OPTIONS]
+
+# Batch convert
+python -m tools.pdf.cli batch docs/**/*.md [OPTIONS]
+
+# Check environment
+python -m tools.pdf.cli diag env
+
+# Test Phase B renderer
+python -m tools.pdf.cli diag phase-b
 ```
+
+**See full CLI documentation: `docs/CLI_MODERN_REDESIGN.md`**  
+**See migration guide: `docs/CLI_UPGRADE_GUIDE.md`**
+
+---
 
 ### Design System Commands (NEW)
 
@@ -611,40 +690,12 @@ python tools/pdf/config/css_generator.py tools/pdf/styles/generated/
 
 ```bash
 # Standard (Phase 1 - already optimized)
-python -m tools.pdf.cli.main spec.md output.pdf --profile dark-pro --verbose
+python -m tools.pdf.cli convert spec.md output.pdf --profile dark-pro --verbose
 # Output: [INFO] Mermaid colors: X/Y SVGs modified
 
 # Test with optional CSSOM variant (Phase 2)
 from tools.pdf.playwright_pdf.decorators.mermaid_colors_cssom import apply_mermaid_colors_cssom
 metrics = await apply_mermaid_colors_cssom(page, verbose=True)
-```
-
-### Core Commands
-
-```bash
-# Single file (5 formats supported)
-python -m tools.pdf.cli.main doc.md output.pdf                    # PDF
-python -m tools.pdf.cli.main doc.md output.docx                   # Word
-python -m tools.pdf.cli.main doc.md output.html                   # HTML
-python -m tools.pdf.cli.main doc.md output.md --format markdown   # Markdown
-python -m tools.pdf.cli.main doc.md output.epub --format epub     # EPUB
-
-# With options
-python -m tools.pdf.cli.main doc.md output.pdf \
-    --profile tech-whitepaper \
-    --cover \
-    --toc \
-    --glossary glossary.yaml \
-    --verbose
-
-# Live watch mode (auto-rebuild on save)
-python -m tools.pdf.cli.watch_mode doc.md output.pdf
-
-# Batch processing
-python -m tools.pdf.cli.main --batch *.md --format markdown --threads 4
-
-# From config file
-python -m tools.pdf.cli.main --config pipeline.yaml
 ```
 
 ### Glossary Management
@@ -698,6 +749,11 @@ make ci                      # Full CI pipeline (lint + test + validate)
 
 ## 📚 Documentation
 
+### CLI Documentation
+- [**CLI Modern Redesign (v4.0.0)**](docs/CLI_MODERN_REDESIGN.md) - Complete guide, all commands, examples
+- [**CLI Upgrade Guide**](docs/CLI_UPGRADE_GUIDE.md) - Migrate from v3.x to v4.0.0
+- [**CLI Complete Summary**](docs/CLI_v4_COMPLETE.md) - Full overview and features
+
 ### Mermaid Optimization
 - [**ALL 7 Corrections Complete**](docs/ALL_7_CORRECTIONS_COMPLETE.md) - Full status
 - [**Phase 1 Completion Summary**](docs/PHASE_1_COMPLETION_SUMMARY.md) - Testing guide
@@ -750,7 +806,7 @@ make ci                      # Full CI pipeline (lint + test + validate)
 | **Architecture Docs** | minimalist | `--profile minimalist` |
 | **GitHub/Version Control** | markdown | `--format markdown --toc` |
 | **E-book Publishing** | epub | `--format epub --title "My Book" --author "Jane Doe"` |
-| **Portfolio Pieces** | dark-pro | `--profile dark-pro --generate-cover` |
+| **Portfolio Pieces** | dark-pro | `--profile dark-pro --cover` |
 
 ---
 
@@ -771,6 +827,8 @@ Building production-grade tools for technical documentation, AI agents, and dist
 - [Playwright](https://playwright.dev) - Browser rendering & optimization
 - [Pandoc](https://pandoc.org) - Markdown processing
 - [Mermaid](https://mermaid.js.org) - Diagram syntax
+- [Typer](https://typer.tiangolo.com) - Modern CLI framework
+- [Rich](https://rich.readthedocs.io) - Terminal formatting
 - [WeasyPrint](https://weasyprint.org) - CSS to PDF
 - [watchdog](https://github.com/gorakhargosh/watchdog) - File system events
 
