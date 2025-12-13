@@ -722,7 +722,7 @@ svg path.highlight {
             try:
                 css = self.generate_css(theme_name)
                 output_file = output_path / f"{theme_name}.css"
-                output_file.write_text(css)
+                output_file.write_text(css, encoding='utf-8')
                 results[theme_name] = True
                 print(f"[OK] Generated: {output_file}")
             except Exception as e:

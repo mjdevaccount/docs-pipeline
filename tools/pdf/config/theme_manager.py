@@ -207,7 +207,7 @@ class ThemeManager:
                 lines.append(f"- **CSS File**: `{theme_info.key}.css`")
                 lines.append("")
             
-            index_file.write_text("\n".join(lines))
+            index_file.write_text("\n".join(lines), encoding='utf-8')
             print(f"[OK] Created index: {index_file}")
             return True
         
