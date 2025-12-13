@@ -23,7 +23,6 @@ RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir -r requirements-pdf.txt \
     && pip install --no-cache-dir -r requirements-cli.txt
 
-# Install Playwright and Chromium browser (1.48.0+ for 2025 best practices)
 # Install system dependencies for Playwright and Puppeteer (mermaid-cli)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     fonts-unifont \
@@ -50,9 +49,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libasound2 \
     libatspi2.0-0 \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install 'playwright==1.48.0' \
-    && playwright install chromium
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Playwright (1.48.0+ for 2025 best practices)
+# Use shared browser path so it works for both root and non-root users
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/playwright-browsers
+RUN pip install 'playwright==1.48.0' \
+    && mkdir -p $PLAYWRIGHT_BROWSERS_PATH \
+    && playwright install chromium \
+    && chmod -R 755 $PLAYWRIGHT_BROWSERS_PATH
 
 # Copy application code
 COPY . .
@@ -60,9 +65,9 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p /app/uploads /app/output /app/docs/examples/generated
 
-# Create non-root user for security (required for Puppeteer --no-sandbox flags)
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-USER appuser
+# Create non-root user for security (but we'll run as root for simplicity with --no-sandbox)
+# RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+# USER appuser
 
 # Expose port
 EXPOSE 8080
