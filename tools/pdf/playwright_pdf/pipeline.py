@@ -14,6 +14,7 @@ from .styles import inject_fonts, inject_pagination_css, inject_custom_css
 from .decorators.cover import inject_cover_page
 from .decorators.toc import inject_toc
 from .decorators.watermark import add_watermark
+from .decorators.mermaid_colors import apply_mermaid_colors
 from .pdf_renderer import render_pdf, build_header_footer, DEFAULT_MARGINS
 from .postprocess import extract_headings_from_page, add_bookmarks_to_pdf, embed_metadata
 from .config import PdfGenerationConfig
@@ -25,9 +26,11 @@ try:
     colorama_init(autoreset=True)
     INFO = f"{Fore.CYAN}[INFO]{Style.RESET_ALL}"
     ERR = f"{Fore.RED}[ERROR]{Style.RESET_ALL}"
+    WARN = f"{Fore.YELLOW}[WARN]{Style.RESET_ALL}"
 except ImportError:
     INFO = "[INFO]"
     ERR = "[ERROR]"
+    WARN = "[WARN]"
 
 
 async def generate_pdf(config: PdfGenerationConfig) -> bool:
@@ -116,6 +119,12 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
             # Only inject if fonts are explicitly requested or if no profile CSS is present
             if config.font_families or not config.css_file:
                 await inject_fonts(page, font_families=config.font_families, verbose=config.verbose)
+            
+            # ★★★ CRITICAL STEP: Apply Mermaid colors AFTER CSS injection ★★★
+            # This MUST happen after inject_custom_css so CSS variables are available
+            # Mermaid diagrams were rendered with placeholder colors by Mermaid-CLI
+            # We now read the CSS variables and update the SVG style elements
+            await apply_mermaid_colors(page, verbose=config.verbose)
             
             # Inject pagination CSS last (needed for proper page break detection)
             await inject_pagination_css(page, verbose=config.verbose)
@@ -324,4 +333,3 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
             import traceback
             traceback.print_exc()
         return False
-
