@@ -74,14 +74,16 @@ async def measure_page_dimensions(
     margin_left = parse_margin(margin_config.get('left', '0.75in'))
     
     # Measure header/footer heights by creating test elements
+    # CRITICAL: Use actual viewport size, not hardcoded values
     measurements = await page.evaluate("""
         ([headerHtml, footerHtml]) => {
             // Create temporary container to measure header/footer
+            // Use actual viewport size for accurate CSS flow
             const container = document.createElement('div');
             container.style.position = 'absolute';
             container.style.visibility = 'hidden';
-            container.style.width = '794px'; // A4 width at 96dpi
-            container.style.height = '1122px'; // A4 height at 96dpi
+            container.style.width = `${window.innerWidth}px`; // Use actual viewport
+            container.style.height = `${window.innerHeight}px`; // Use actual viewport
             container.style.top = '-9999px';
             document.body.appendChild(container);
             
@@ -208,10 +210,22 @@ async def measure_page_dimensions(
         content_height=content_height
     )
     
+    # Verify viewport sync (for debugging)
+    viewport_info = await page.evaluate("""
+        () => ({
+            viewportWidth: window.innerWidth,
+            viewportHeight: window.innerHeight,
+            docWidth: document.documentElement.offsetWidth,
+            docHeight: document.documentElement.scrollHeight
+        })
+    """)
+    
     if verbose:
         format_name = page_format if page_format in PAGE_SIZES else f"Custom ({page_format})"
         print(f"[MEASURE] Page format: {format_name}")
         print(f"[MEASURE] Page dimensions: {result.page_width:.0f}px × {result.page_height:.0f}px")
+        print(f"[SYNC] Viewport: {viewport_info['viewportWidth']}×{viewport_info['viewportHeight']}px")
+        print(f"[SYNC] Document: {viewport_info['docWidth']}×{viewport_info['docHeight']}px")
         print(f"[MEASURE] Margins: top={result.margin_top:.0f}px, right={result.margin_right:.0f}px, "
               f"bottom={result.margin_bottom:.0f}px, left={result.margin_left:.0f}px")
         print(f"[MEASURE] Header height: {result.header_height:.2f}px")

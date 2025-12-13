@@ -58,7 +58,12 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
     """
     try:
         # Phase 1: Load HTML into Playwright page
-        async with open_page(config.html_file, verbose=config.verbose) as (browser, page):
+        async with open_page(
+            config.html_file, 
+            verbose=config.verbose,
+            page_format=config.page_format,
+            color_scheme=None,  # Let CSS @media (prefers-color-scheme) work
+        ) as (browser, page):
             # Extract metadata from HTML meta tags (always extract, fill in missing fields)
             # This ensures frontmatter like classification, version, type are captured
             html_metadata = await page.evaluate("""
