@@ -16,7 +16,7 @@ from typing import Dict, List, Tuple, Optional, Any
 from dataclasses import dataclass
 import yaml
 
-from pydantic import BaseModel, Field, field_validator, ValidationInfo
+from pydantic import BaseModel, Field, field_validator, ValidationInfo, ConfigDict
 
 try:
     from pydantic_extra_types.color import Color
@@ -163,7 +163,7 @@ class ThemeColors(BaseModel):
     status: Dict[str, str]          # success, warning, error, info
     component: Dict[str, str]
     syntax: Dict[str, str]
-    callout: Dict[str, Dict[str, Dict[str, str]]]  # [type][part][color]
+    callout: Dict[str, Dict[str, str]]  # [type][part] -> color (e.g., callout.note.bg)
     
     @field_validator('primary', 'text', 'background', 'border', 'status',
                      'component', 'syntax')
@@ -176,6 +176,19 @@ class ThemeColors(BaseModel):
                     f"Invalid hex color for {key}: {color}. "
                     f"Must be #RRGGBB or #RGB format."
                 )
+        return v
+    
+    @field_validator('callout')
+    @classmethod
+    def validate_callout_colors(cls, v: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, str]]:
+        """Validate all callout color values are valid hex."""
+        for callout_type, parts in v.items():
+            for part, color in parts.items():
+                if not parse_hex_color(color):
+                    raise ValueError(
+                        f"Invalid hex color for callout.{callout_type}.{part}: {color}. "
+                        f"Must be #RRGGBB or #RGB format."
+                    )
         return v
 
 
@@ -219,14 +232,13 @@ class Theme(BaseModel):
 
 class DesignTokens(BaseModel):
     """Root design tokens document."""
-    version: str = Field(..., pattern="^\d+\.\d+$")
+    version: str = Field(..., pattern=r"^\d+\.\d+$")
     title: str
     description: str
     global_: Dict[str, Any] = Field(alias='global')
     themes: Dict[str, Theme]
     
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # ============================================================================
@@ -270,21 +282,22 @@ class ValidationReport:
         print(f"\n{'='*70}")
         print(f"THEME VALIDATION REPORT")
         print(f"{'='*70}")
-        print(f"Status: {'✅ VALID' if self.is_valid else '❌ INVALID'}")
+        status_text = "VALID" if self.is_valid else "INVALID"
+        print(f"Status: {status_text}")
         print(f"\n{self.summary}")
         
         if self.errors:
-            print(f"\n❌ ERRORS ({len(self.errors)}):")
+            print(f"\nERRORS ({len(self.errors)}):")
             for err in self.errors:
                 print(f"  - {err}")
         
         if self.warnings:
-            print(f"\n⚠️  WARNINGS ({len(self.warnings)}):")
+            print(f"\nWARNINGS ({len(self.warnings)}):")
             for warn in self.warnings:
                 print(f"  - {warn}")
         
         if self.contrast_issues:
-            print(f"\n🎨 CONTRAST ISSUES ({len(self.contrast_issues)}):")
+            print(f"\nCONTRAST ISSUES ({len(self.contrast_issues)}):")
             for issue in self.contrast_issues:
                 print(f"  {issue}")
         
