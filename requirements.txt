@@ -4,6 +4,10 @@ click>=8.1.0
 flask>=3.0.0
 werkzeug>=3.0.0
 
+# CLI dependencies
+typer>=0.9.0
+rich>=13.0.0
+
 # Optional: Install specific tool dependencies
 # pip install -r tools/pdf/requirements-pdf.txt
 # pip install -r tools/prompts/requirements.txt
