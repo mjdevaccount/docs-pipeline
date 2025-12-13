@@ -116,7 +116,7 @@ class DiagramRenderingStep(PipelineStep):
             (modified_markdown, rendered_count)
         """
         try:
-            from diagram_rendering import MermaidNativeRenderer, DiagramCache, DiagramFormat
+            from ...diagram_rendering import MermaidNativeRenderer, DiagramCache, DiagramFormat
         except ImportError:
             self.log("MermaidNativeRenderer not available", context)
             return markdown_content, 0
@@ -286,7 +286,7 @@ class DiagramRenderingStep(PipelineStep):
         Log Phase B performance metrics if available.
         """
         try:
-            from diagram_rendering import MermaidNativeRenderer
+            from ...diagram_rendering import MermaidNativeRenderer
             metrics = MermaidNativeRenderer.get_metrics()
             if metrics:
                 self.log(f"  Phase B Metrics: {metrics}", context)
