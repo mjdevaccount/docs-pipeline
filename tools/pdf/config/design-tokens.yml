@@ -314,7 +314,7 @@ themes:
       text:
         primary: "#1e293b"            # Slate-900
         secondary: "#475569"          # Slate-600
-        muted: "#94a3b8"              # Slate-400
+        muted: "#475569"              # Slate-600 (WCAG AA compliant - better contrast)
       
       background:
         page: "#ffffff"                # White
@@ -466,7 +466,7 @@ themes:
       text:
         primary: "#0f172a"            # Slate-950
         secondary: "#475569"          # Slate-600
-        muted: "#94a3b8"              # Slate-400
+        muted: "#475569"              # Slate-600 (WCAG AA compliant - better contrast)
       
       background:
         page: "#ffffff"                # White
@@ -617,7 +617,7 @@ themes:
       text:
         primary: "#1f2937"            # Gray-800
         secondary: "#6b7280"          # Gray-500
-        muted: "#d1d5db"              # Gray-300
+        muted: "#6b7280"              # Gray-500 (WCAG AA compliant, same as secondary for minimalist)
       
       background:
         page: "#ffffff"                # White
@@ -768,7 +768,7 @@ themes:
       text:
         primary: "#0f172a"            # Slate-950
         secondary: "#475569"          # Slate-600
-        muted: "#94a3b8"              # Slate-400
+        muted: "#475569"              # Slate-600 (WCAG AA compliant - better contrast)
       
       background:
         page: "#ffffff"                # White

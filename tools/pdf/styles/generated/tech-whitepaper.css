@@ -107,7 +107,7 @@
     --color-syntax-number: #d97706;
     --color-syntax-string: #059669;
     --color-syntax-tag: #dc2626;
-    --color-text-muted: #94a3b8;
+    --color-text-muted: #475569;
     --color-text-primary: #0f172a;
     --color-text-secondary: #475569;
 
@@ -352,7 +352,7 @@ ul ul, ol ol, ul ol, ol ul {
 }
 
 ul {
-    list-style-type: 'â€¢';
+    list-style-type: '•';
 }
 
 li::marker {
@@ -561,4 +561,138 @@ svg tspan[fill="white"],
 svg tspan[fill="#fff"],
 svg tspan[fill="#ffffff"] {
     fill: var(--mermaid-text-color) !important;
+}
+
+/* ============================================================================
+   CLASSDEF COLOR OVERRIDES
+   
+   Override placeholder colors in classDef with CSS variables.
+   Mermaid classDef uses placeholder colors for parsing; CSS applies theme colors.
+   ========================================================================== */
+
+/* Config class - light blue theme */
+svg .config,
+svg g.config rect,
+svg g.config circle,
+svg g.config ellipse,
+svg g.config path {
+    fill: var(--mermaid-config-fill, #e0e7ff) !important;
+    stroke: var(--mermaid-config-stroke, #3b82f6) !important;
+}
+
+/* Core class - blue theme */
+svg .core,
+svg g.core rect,
+svg g.core circle,
+svg g.core ellipse,
+svg g.core path {
+    fill: var(--mermaid-core-fill, #dbeafe) !important;
+    stroke: var(--mermaid-core-stroke, #2563eb) !important;
+}
+
+/* Stream class - green theme */
+svg .stream,
+svg g.stream rect,
+svg g.stream circle,
+svg g.stream ellipse,
+svg g.stream path {
+    fill: var(--mermaid-stream-fill, #d1fae5) !important;
+    stroke: var(--mermaid-stream-stroke, #10b981) !important;
+}
+
+/* Storage class - amber theme */
+svg .storage,
+svg g.storage rect,
+svg g.storage circle,
+svg g.storage ellipse,
+svg g.storage path {
+    fill: var(--mermaid-storage-fill, #fef3c7) !important;
+    stroke: var(--mermaid-storage-stroke, #f59e0b) !important;
+}
+
+/* Output class - pink theme */
+svg .output,
+svg g.output rect,
+svg g.output circle,
+svg g.output ellipse,
+svg g.output path {
+    fill: var(--mermaid-output-fill, #fce7f3) !important;
+    stroke: var(--mermaid-output-stroke, #ec4899) !important;
+}
+
+/* Topic class - indigo theme */
+svg .topic,
+svg g.topic rect,
+svg g.topic circle,
+svg g.topic ellipse,
+svg g.topic path {
+    fill: var(--mermaid-topic-fill, #e0e7ff) !important;
+    stroke: var(--mermaid-topic-stroke, #6366f1) !important;
+}
+
+/* Highlight class - amber theme */
+svg .highlight,
+svg g.highlight rect,
+svg g.highlight circle,
+svg g.highlight ellipse,
+svg g.highlight path {
+    fill: var(--mermaid-highlight-fill, #fef3c7) !important;
+    stroke: var(--mermaid-highlight-stroke, #f59e0b) !important;
+}
+
+/* Alternative selectors for Mermaid's class application */
+svg rect.config,
+svg circle.config,
+svg ellipse.config,
+svg path.config {
+    fill: var(--mermaid-config-fill, #e0e7ff) !important;
+    stroke: var(--mermaid-config-stroke, #3b82f6) !important;
+}
+
+svg rect.core,
+svg circle.core,
+svg ellipse.core,
+svg path.core {
+    fill: var(--mermaid-core-fill, #dbeafe) !important;
+    stroke: var(--mermaid-core-stroke, #2563eb) !important;
+}
+
+svg rect.stream,
+svg circle.stream,
+svg ellipse.stream,
+svg path.stream {
+    fill: var(--mermaid-stream-fill, #d1fae5) !important;
+    stroke: var(--mermaid-stream-stroke, #10b981) !important;
+}
+
+svg rect.storage,
+svg circle.storage,
+svg ellipse.storage,
+svg path.storage {
+    fill: var(--mermaid-storage-fill, #fef3c7) !important;
+    stroke: var(--mermaid-storage-stroke, #f59e0b) !important;
+}
+
+svg rect.output,
+svg circle.output,
+svg ellipse.output,
+svg path.output {
+    fill: var(--mermaid-output-fill, #fce7f3) !important;
+    stroke: var(--mermaid-output-stroke, #ec4899) !important;
+}
+
+svg rect.topic,
+svg circle.topic,
+svg ellipse.topic,
+svg path.topic {
+    fill: var(--mermaid-topic-fill, #e0e7ff) !important;
+    stroke: var(--mermaid-topic-stroke, #6366f1) !important;
+}
+
+svg rect.highlight,
+svg circle.highlight,
+svg ellipse.highlight,
+svg path.highlight {
+    fill: var(--mermaid-highlight-fill, #fef3c7) !important;
+    stroke: var(--mermaid-highlight-stroke, #f59e0b) !important;
 }
