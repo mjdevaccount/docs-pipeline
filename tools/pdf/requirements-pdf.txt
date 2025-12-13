@@ -2,8 +2,8 @@
 # Professional Markdown to PDF conversion using Pandoc + Playwright + Mermaid-CLI
 
 # Python Dependencies
-playwright>=1.45.0  # FAANG-grade PDF renderer (perfect SVG rendering including foreignObject, better CSS support)
-pypdf>=3.0.0       # PDF metadata embedding (PyPDF2 successor, actively maintained)
+playwright==1.48.0  # 2025 upgrade: GPU rendering flags, color management, better SVG handling
+pypdf>=4.0.0       # PDF metadata embedding (latest stable, PyPDF2 successor)
 pyyaml>=6.0
 colorama>=0.4.6    # Optional: colored terminal output
 tqdm>=4.65.0       # Optional: progress bars for batch processing
@@ -19,11 +19,14 @@ pytest-watch>=4.2.0  # Watch mode for development
 #   Windows: choco install pandoc
 #   macOS: brew install pandoc
 #   Linux: sudo apt install pandoc
-#   Recommended: >=3.1.0 for better SVG and HTML5 output
+#   Recommended: >=3.3.0 for better SVG and HTML5 output
 #
 # - Mermaid-CLI (https://github.com/mermaid-js/mermaid-cli)
-#   npm install -g @mermaid-js/mermaid-cli
-#   Recommended: @11.2.0+ for CSS variable support
+#   npm install -g @mermaid-js/mermaid-cli@11.4.0
+#   Recommended: @11.4.0+ for CSS variable support + improved theming
 #
 # - Node.js (https://nodejs.org)
-#   Recommended: 20.x LTS (latest stable)
+#   Recommended: 22.x LTS (2025 latest stable)
+#
+# Playwright browser installation (automatic on first use):
+#   playwright install chromium
