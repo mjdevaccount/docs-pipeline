@@ -6,9 +6,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
     make \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
-    && npm install -g @mermaid-js/mermaid-cli@11 \
+    && npm install -g @mermaid-js/mermaid-cli@11.4.0 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -21,8 +21,8 @@ COPY tools/pdf/requirements-pdf.txt ./requirements-pdf.txt
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir -r requirements-pdf.txt
 
-# Install Playwright and Chromium browser (>=1.45.0 for better CSS support)
-RUN pip install 'playwright>=1.45.0' \
+# Install Playwright and Chromium browser (1.48.0+ for 2025 best practices)
+RUN pip install 'playwright==1.48.0' \
     && playwright install --with-deps chromium
 
 # Copy application code
