@@ -15,7 +15,7 @@ from playwright.async_api import Page, Browser
 from .browser import open_page
 from .dom_analyzer import analyze_layout
 from .layout_transformer import compute_scaling, apply_scaling
-from .styles import inject_fonts, inject_pagination_css, inject_custom_css, inject_print_background
+from .styles import inject_fonts, inject_pagination_css, inject_custom_css, inject_full_bleed_background
 from .decorators.cover import inject_cover_page
 from .decorators.toc import inject_toc
 from .decorators.watermark import add_watermark
@@ -24,7 +24,7 @@ from .pdf_renderer import render_pdf, build_header_footer, DEFAULT_MARGINS
 from .postprocess import extract_headings_from_page, add_bookmarks_to_pdf, embed_metadata
 from .config import PdfGenerationConfig
 from .page_measurements import measure_page_dimensions
-from .utils import extract_margins_from_css, detect_dark_mode
+from .utils import extract_margins_from_css, detect_dark_mode, extract_background_color
 
 try:
     from colorama import Fore, Style, init as colorama_init
@@ -58,11 +58,17 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
     """
     try:
         # Phase 1: Load HTML into Playwright page
+        # Detect dark mode from profile to set Playwright's colorScheme
+        # This enables @media (prefers-color-scheme: dark) in CSS
+        profile_name = getattr(config, 'profile', None)
+        detected_dark = detect_dark_mode(profile_name, config.css_file)
+        browser_color_scheme = 'dark' if detected_dark else 'light'
+        
         async with open_page(
             config.html_file, 
             verbose=config.verbose,
             page_format=config.page_format,
-            color_scheme=None,  # Let CSS @media (prefers-color-scheme) work
+            color_scheme=browser_color_scheme,  # Set based on profile theme
         ) as (browser, page):
             # Extract metadata from HTML meta tags (always extract, fill in missing fields)
             # This ensures frontmatter like classification, version, type are captured
@@ -234,23 +240,28 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
             # Phase 2.5: Measure actual page dimensions BEFORE analysis
             # Build header/footer templates to measure their actual heights
             
-            # Detect dark mode using shared utility
-            profile_name = getattr(config, 'profile', None)
-            is_dark_mode = detect_dark_mode(profile_name, config.css_file)
+            # Use dark mode detection from browser setup (detected_dark is set above)
+            is_dark_mode = detected_dark
             
             if config.verbose:
-                print(f"{INFO} Dark mode detection: profile={profile_name}, css={config.css_file}, result={is_dark_mode}")
+                print(f"{INFO} Dark mode: {is_dark_mode} (Playwright colorScheme={browser_color_scheme})")
             
-            # Inject print background CSS to ensure full-bleed backgrounds
-            # This fixes white margins on dark themes in PDF output
-            await inject_print_background(page, is_dark_mode, verbose=config.verbose)
+            # Extract background color from CSS for full-bleed backgrounds
+            bg_color = extract_background_color(config.css_file, default='#ffffff')
+            if config.verbose:
+                print(f"{INFO} Extracted background color from CSS: {bg_color}")
+            
+            # Inject full-bleed background CSS to ensure consistent PDF backgrounds
+            await inject_full_bleed_background(page, bg_color, margin_config, verbose=config.verbose)
             
             header_html, footer_html = build_header_footer(
                 title=config.title,
                 organization=config.organization,
                 author=config.author,
                 date=config.date,
-                dark_mode=is_dark_mode
+                dark_mode=is_dark_mode,
+                margin_left=margin_config.get('left', '1.8cm'),
+                margin_right=margin_config.get('right', '1.8cm')
             )
             
             # Measure actual page dimensions (header/footer heights, margins, etc.)

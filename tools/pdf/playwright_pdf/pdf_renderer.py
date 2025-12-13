@@ -38,23 +38,33 @@ async def render_pdf(
     verbose: bool = False
 ) -> bool:
     """
-    Render PDF using Playwright's page.pdf.
+    Render PDF using Playwright's page.pdf with full-bleed backgrounds.
+    
+    Uses zero left/right margins for full-bleed backgrounds, with small
+    top/bottom margins for Playwright header/footer templates.
     
     Args:
         page: Playwright page object
         pdf_file: Output PDF path
-        header_html: HTML template for header
-        footer_html: HTML template for footer
-        margin_config: Margin configuration (extracted from CSS or defaults)
+        header_html: HTML template for header (Playwright template)
+        footer_html: HTML template for footer (Playwright template)
+        margin_config: Margin configuration (top/bottom used for header/footer space)
         page_format: Page format (A4, Letter, etc.)
         verbose: Verbose output
     
     Returns:
         bool: True if PDF was created successfully
     """
-    # Use provided margin config or defaults
     if margin_config is None:
         margin_config = DEFAULT_MARGINS.copy()
+    
+    # Full-bleed: zero left/right margins, keep top/bottom for header/footer
+    pdf_margins = {
+        'top': margin_config.get('top', '2cm'),
+        'right': '0',  # Zero for full-bleed
+        'bottom': margin_config.get('bottom', '2cm'),
+        'left': '0'    # Zero for full-bleed
+    }
     
     # Handle page format - Playwright supports 'A4', 'Letter', 'Legal', or custom
     if page_format in ['A4', 'Letter', 'Legal']:
@@ -64,10 +74,9 @@ async def render_pdf(
         if verbose:
             print(f"[WARN] Custom page format '{page_format}' not fully supported, using A4")
     
-    # Playwright requires margins when using display_header_footer
-    # Headers/footers render in the margin space
     if verbose:
-        print(f"{OK} Passing margins to page.pdf(): {margin_config}")
+        print(f"{OK} Full-bleed: zero left/right margins, top/bottom for header/footer")
+        print(f"{OK} PDF margins: {pdf_margins}")
         print(f"{OK} Page format: {format_option}")
     
     options = {
@@ -76,7 +85,7 @@ async def render_pdf(
         'display_header_footer': True,
         'header_template': header_html,
         'footer_template': footer_html,
-        'margin': margin_config
+        'margin': pdf_margins
     }
     
     try:
@@ -102,9 +111,14 @@ async def render_pdf(
 
 def build_header_footer(title: str = None, organization: str = None, 
                         author: str = None, date: str = None,
-                        dark_mode: bool = False) -> tuple[str, str]:
+                        dark_mode: bool = False,
+                        margin_left: str = '1.8cm',
+                        margin_right: str = '1.8cm') -> tuple[str, str]:
     """
-    Build header and footer HTML templates.
+    Build header and footer HTML templates for Playwright PDF.
+    
+    Templates extend full page width for full-bleed backgrounds.
+    Content is padded to align with body content margins.
     
     Args:
         title: Document title
@@ -112,6 +126,8 @@ def build_header_footer(title: str = None, organization: str = None,
         author: Author name
         date: Date string
         dark_mode: Use dark theme styling
+        margin_left: Left margin for content padding
+        margin_right: Right margin for content padding
     
     Returns:
         tuple: (header_html, footer_html)
@@ -142,7 +158,8 @@ def build_header_footer(title: str = None, organization: str = None,
     
     header_content = ' | '.join(header_parts) if header_parts else '&nbsp;'
     
-    header_template = f'''<div style="font-size: 9px; width: 100%; text-align: center; padding: 8px 20px; background-color: {bg_color}; color: {text_color}; border-bottom: 1px solid {border_color}; -webkit-print-color-adjust: exact; print-color-adjust: exact;">{header_content}</div>'''
+    # Full-width header with content padding to match body margins
+    header_template = f'''<div style="font-size: 9px; width: 100%; margin: 0; text-align: center; padding: 8px {margin_right} 8px {margin_left}; background-color: {bg_color}; color: {text_color}; border-bottom: 1px solid {border_color}; -webkit-print-color-adjust: exact; print-color-adjust: exact; box-sizing: border-box;">{header_content}</div>'''
     
     # Build footer template
     footer_parts = []
@@ -153,6 +170,7 @@ def build_header_footer(title: str = None, organization: str = None,
     
     footer_left = ' | '.join(footer_parts) if footer_parts else ''
     
-    footer_template = f'''<div style="font-size: 9px; width: 100%; text-align: center; padding: 8px 20px; background-color: {bg_color}; color: {text_color}; -webkit-print-color-adjust: exact; print-color-adjust: exact;">{footer_left}<span style="margin-left: 20px; color: {accent_color};">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></div>'''
+    # Full-width footer with content padding to match body margins
+    footer_template = f'''<div style="font-size: 9px; width: 100%; margin: 0; text-align: center; padding: 8px {margin_right} 8px {margin_left}; background-color: {bg_color}; color: {text_color}; -webkit-print-color-adjust: exact; print-color-adjust: exact; box-sizing: border-box;">{footer_left}<span style="margin-left: 20px; color: {accent_color};">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></div>'''
     
     return header_template, footer_template

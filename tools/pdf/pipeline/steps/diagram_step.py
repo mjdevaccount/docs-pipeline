@@ -191,11 +191,15 @@ class DiagramRenderingStep(PipelineStep):
             (modified_markdown, rendered_count)
         """
         import subprocess
+        import shutil
         
         result = markdown_content
         rendered_count = 0
         profile = context.get_config('profile')
         theme = self._get_theme_for_profile(profile)
+        
+        # Find mmdc executable (Windows needs .cmd extension)
+        mmdc_exe = shutil.which('mmdc.cmd') or shutil.which('mmdc') or 'mmdc'
         
         # Process diagrams in reverse order to maintain position indices
         for idx, (start, end, code) in enumerate(reversed(diagram_blocks)):
@@ -211,7 +215,7 @@ class DiagramRenderingStep(PipelineStep):
                 # Call mermaid-cli with puppeteer config for Docker (no-sandbox)
                 puppeteer_config = Path(__file__).parent.parent.parent / 'config' / 'puppeteer-config.json'
                 cmd = [
-                    'mmdc',
+                    mmdc_exe,
                     '--input', str(mmd_file),
                     '--output', str(svg_file),
                     '--theme', theme,
@@ -219,11 +223,14 @@ class DiagramRenderingStep(PipelineStep):
                     '--puppeteerConfigFile', str(puppeteer_config)
                 ]
                 
+                # Windows needs shell=True for .cmd files
+                use_shell = mmdc_exe.endswith('.cmd')
                 proc_result = subprocess.run(
                     cmd,
                     capture_output=True,
                     text=True,
-                    timeout=10
+                    timeout=30,
+                    shell=use_shell
                 )
                 
                 if proc_result.returncode == 0 and svg_file.exists():

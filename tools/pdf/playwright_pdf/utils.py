@@ -94,6 +94,54 @@ def extract_margins_from_css(css_file: Path) -> Optional[Dict[str, str]]:
         return None
 
 
+def extract_background_color(css_file: Optional[Path] = None, default: str = '#ffffff') -> str:
+    """
+    Extract the page background color from a CSS file.
+    
+    Looks for:
+    1. --color-background-page CSS variable
+    2. body { background or background-color }
+    3. html { background or background-color }
+    
+    Args:
+        css_file: Path to CSS file
+        default: Default color if not found
+        
+    Returns:
+        Background color as hex string
+    """
+    if not css_file or not css_file.exists():
+        return default
+    
+    try:
+        css_content = css_file.read_text(encoding='utf-8')
+        
+        # Priority 1: CSS variable --color-background-page
+        match = re.search(r'--color-background-page\s*:\s*([^;]+);', css_content)
+        if match:
+            return match.group(1).strip()
+        
+        # Priority 2: body background
+        match = re.search(r'body\s*\{[^}]*background(?:-color)?\s*:\s*([^;}\s]+)', css_content)
+        if match:
+            color = match.group(1).strip()
+            # Skip var() references, we want actual colors
+            if not color.startswith('var('):
+                return color
+        
+        # Priority 3: html background
+        match = re.search(r'html\s*\{[^}]*background(?:-color)?\s*:\s*([^;}\s]+)', css_content)
+        if match:
+            color = match.group(1).strip()
+            if not color.startswith('var('):
+                return color
+        
+        return default
+        
+    except Exception:
+        return default
+
+
 def detect_dark_mode(profile_name: Optional[str] = None, css_file: Optional[Path] = None) -> bool:
     """
     Detect if dark mode should be used based on profile name, CSS filename, or CSS content.

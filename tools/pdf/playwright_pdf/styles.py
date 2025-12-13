@@ -108,60 +108,65 @@ async def inject_custom_css(page: Page, css_file: str, verbose: bool = False) ->
             print(f"{INFO} Custom CSS file not found: {css_file}")
 
 
-async def inject_print_background(page: Page, is_dark_mode: bool, bg_color: str = None, verbose: bool = False) -> None:
+async def inject_full_bleed_background(
+    page: Page, 
+    bg_color: str,
+    margin_config: dict = None,
+    verbose: bool = False
+) -> None:
     """
-    Inject CSS to ensure background colors extend to print margins (full bleed).
+    Inject CSS for full-bleed backgrounds in PDF printing.
     
-    In PDF printing, margins are created by Playwright's print settings and the page 
-    background doesn't extend into those margins - only content does. This fix uses
-    a fixed pseudo-element to ensure backgrounds extend to the edges.
+    PDF uses zero left/right margins (with top/bottom for header/footer).
+    This CSS adds left/right padding to body to create visual margins.
+    Background extends to left/right paper edges.
     
     Args:
         page: Playwright page object
-        is_dark_mode: Whether dark mode is active
-        bg_color: Optional explicit background color (defaults based on mode)
+        bg_color: Background color to use (extracted from CSS)
+        margin_config: Margin configuration (left/right used for padding)
         verbose: Enable verbose logging
     """
-    if is_dark_mode:
-        color = bg_color or '#0f172a'  # Slate-950 (matches dark-pro)
-        css = f"""
-        @media print {{
-            html, body {{
-                background-color: {color} !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }}
-            
-            /* Full-bleed background using fixed positioning */
-            body::before {{
-                content: '';
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background-color: {color};
-                z-index: -1000;
-                pointer-events: none;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }}
+    # Only need left/right padding (top/bottom handled by PDF margins + header/footer)
+    pad_right = margin_config.get('right', '1.8cm') if margin_config else '1.8cm'
+    pad_left = margin_config.get('left', '1.8cm') if margin_config else '1.8cm'
+    
+    css = f"""
+    /* Full-bleed background - zero left/right PDF margins, CSS padding for content */
+    @media print {{
+        html {{
+            background: {bg_color} !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }}
-        """
-    else:
-        color = bg_color or '#ffffff'
-        css = f"""
-        @media print {{
-            html, body {{
-                background-color: {color} !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }}
+        
+        body {{
+            background: {bg_color} !important;
+            margin: 0 !important;
+            /* Left/right padding for content alignment (top/bottom via PDF margins) */
+            padding-left: {pad_left} !important;
+            padding-right: {pad_right} !important;
+            box-sizing: border-box !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }}
-        """
+        
+        /* Ensure content respects box-sizing */
+        *, *::before, *::after {{
+            box-sizing: border-box;
+        }}
+    }}
+    
+    /* Screen preview consistency */
+    @media screen {{
+        html, body {{
+            background: {bg_color};
+        }}
+    }}
+    """
     
     await page.add_style_tag(content=css)
     
     if verbose:
-        print(f"{INFO} Injected print background CSS (dark_mode={is_dark_mode}, color={color})")
+        print(f"{INFO} Full-bleed CSS: bg={bg_color}, left/right padding={pad_left}/{pad_right}")
 
