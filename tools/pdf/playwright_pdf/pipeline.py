@@ -1,8 +1,13 @@
 """
-Pipeline Orchestrator
-======================
+Pipeline Orchestrator - December 2025 Optimized
+==============================================
 High-level orchestration of the PDF generation pipeline.
-Wires all phases together in the correct order.
+Wires all phases together in the correct order with modern best practices.
+
+Optimizations:
+- Replaced manual wait_for_timeout() with Playwright auto-waiting
+- Use requestAnimationFrame for paint cycles
+- Explicit condition-based waits
 """
 from pathlib import Path
 from playwright.async_api import Page, Browser
@@ -106,8 +111,15 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
             except Exception:
                 pass  # Continue if no SVGs found
             
-            # Additional buffer for layout stabilization
-            await page.wait_for_timeout(1000)
+            # December 2025: Wait for paint cycles using requestAnimationFrame
+            # More reliable than arbitrary timeout
+            await page.evaluate("""
+                () => new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(resolve);
+                    });
+                })
+            """)
             
             # Phase 2: Inject fonts, CSS, and decorators FIRST
             # This ensures cover page and TOC exist before we analyze layout
@@ -120,11 +132,18 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
             if config.font_families or not config.css_file:
                 await inject_fonts(page, font_families=config.font_families, verbose=config.verbose)
             
-            # ★★★ CRITICAL STEP: Apply Mermaid colors AFTER CSS injection ★★★
+            # Wait for CSS cascade to complete (Playwright auto-waiting + RAF)
+            await page.evaluate("""
+                () => new Promise(resolve => {
+                    requestAnimationFrame(resolve);
+                })
+            """)
+            
+            # ⭐⭐⭐ CRITICAL STEP: Apply Mermaid colors AFTER CSS injection ⭐⭐⭐
             # This MUST happen after inject_custom_css so CSS variables are available
             # Mermaid diagrams were rendered with placeholder colors by Mermaid-CLI
             # We now read the CSS variables and update the SVG style elements
-            await apply_mermaid_colors(page, verbose=config.verbose)
+            color_metrics = await apply_mermaid_colors(page, verbose=config.verbose)
             
             # Inject pagination CSS last (needed for proper page break detection)
             await inject_pagination_css(page, verbose=config.verbose)
@@ -199,7 +218,13 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
                 await inject_toc(page, verbose=config.verbose)
             
             # Wait for cover/TOC to be fully rendered
-            await page.wait_for_timeout(500)
+            await page.evaluate("""
+                () => new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(resolve);
+                    });
+                })
+            """)
             
             # Phase 2.5: Measure actual page dimensions BEFORE analysis
             # Build header/footer templates to measure their actual heights
@@ -235,14 +260,26 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
             decisions = compute_scaling(analysis)
             if decisions:
                 await apply_scaling(page, decisions, verbose=config.verbose)
-                await page.wait_for_timeout(300)  # Wait for resize to take effect
+                # Use requestAnimationFrame instead of arbitrary timeout
+                await page.evaluate("""
+                    () => new Promise(resolve => {
+                        requestAnimationFrame(resolve);
+                    })
+                """)
             
             # Add watermark if requested
             if config.watermark:
                 await add_watermark(page, config.watermark, verbose=config.verbose)
             
             # Wait for fonts, images, and async content to load
-            await page.wait_for_timeout(1000)
+            await page.evaluate("""
+                () => new Promise(resolve => {
+                    Promise.all([
+                        new Promise(r => requestAnimationFrame(r)),
+                        document.fonts.ready
+                    ]).then(resolve);
+                })
+            """)
             
             # Post-scaling sanity pass: re-analyze after scaling is applied
             # Scaling changes diagram sizes, which can affect layout
@@ -289,7 +326,12 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
                         if config.verbose:
                             print(f"{INFO} Post-scaling analysis found {len(new_decisions)} additional diagrams needing adjustment")
                         await apply_scaling(page, new_decisions, verbose=config.verbose)
-                        await page.wait_for_timeout(300)
+                        # Use requestAnimationFrame instead of timeout
+                        await page.evaluate("""
+                            () => new Promise(resolve => {
+                                requestAnimationFrame(resolve);
+                            })
+                        """)
             
             # Phase 5: Extract headings for bookmarks BEFORE generating PDF
             headings = await extract_headings_from_page(page)
