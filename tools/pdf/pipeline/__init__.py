@@ -67,6 +67,9 @@ from .steps import (
     # Enhancement
     MermaidEnhancementStep,
     
+    # Path Correction (NEW)
+    ImagePathCorrectionStep,
+    
     # Post-processing
     CSSStrippingStep,
     TitlePageInjectionStep,
@@ -95,6 +98,7 @@ __all__ = [
     'DiagramRenderingStep',
     'PandocConversionStep',
     'MermaidEnhancementStep',
+    'ImagePathCorrectionStep',
     'CSSStrippingStep',
     'TitlePageInjectionStep',
     'MetadataInjectionStep',
@@ -112,6 +116,20 @@ __all__ = [
 def create_pdf_pipeline(include_math: bool = True, include_glossary: bool = True) -> Pipeline:
     """
     Create a standard PDF generation pipeline.
+    
+    Step Order (FIXED):
+    1. ReadContentStep - Read markdown
+    2. MetadataExtractionStep - Extract YAML
+    3. GlossaryExpansionStep - Expand glossary terms
+    4. MathRenderingStep - Pre-render LaTeX
+    5. DiagramRenderingStep - Render Mermaid diagrams
+    6. PandocConversionStep - Convert Markdown to HTML
+    7. ImagePathCorrectionStep - FIX: Correct diagram paths after Pandoc
+    8. MermaidEnhancementStep - Inject Mermaid 11 CSS variables
+    9. CSSStrippingStep - Remove inline styles
+    10. TitlePageInjectionStep - Inject cover page
+    11. MetadataInjectionStep - Inject metadata tags
+    12. PdfRenderingStep - Generate PDF via Playwright
     
     Args:
         include_math: Include KaTeX math rendering step
@@ -143,7 +161,8 @@ def create_pdf_pipeline(include_math: bool = True, include_glossary: bool = True
     steps.extend([
         DiagramRenderingStep(),
         PandocConversionStep(),
-        MermaidEnhancementStep(),      # NEW: Mermaid 11 CSS variable theming
+        ImagePathCorrectionStep(),  # NEW: Fix diagram paths after Pandoc
+        MermaidEnhancementStep(),
         CSSStrippingStep(),
         TitlePageInjectionStep(),
         MetadataInjectionStep(),
@@ -204,7 +223,8 @@ def create_html_pipeline(include_math: bool = True, include_glossary: bool = Tru
     steps.extend([
         DiagramRenderingStep(),
         PandocConversionStep(),
-        MermaidEnhancementStep(),      # NEW: Mermaid 11 CSS variable theming
+        ImagePathCorrectionStep(),  # NEW: Fix diagram paths
+        MermaidEnhancementStep(),
         CSSStrippingStep(),
         HtmlRenderingStep(),
     ])
