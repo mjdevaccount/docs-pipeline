@@ -8,99 +8,91 @@ alwaysApply: false
 ---
 # PDF Generation CLI & Caching
 
-## Primary CLI Command
+## Primary CLI Command (v4.0.0)
 
-**Entry Point**: `python -m tools.pdf.cli.main`
+**Entry Point**: `python -m tools.pdf.cli`
+
+**Installation**: `pip install typer rich` (or `pip install -r tools/pdf/requirements-cli.txt`)
 
 ### Basic Usage
 
 ```bash
-# Single file conversion
-python -m tools.pdf.cli.main input.md output.pdf
+# Single file conversion (Phase B enabled by default)
+python -m tools.pdf.cli convert input.md output.pdf
 
 # Auto-detect output format
-python -m tools.pdf.cli.main input.md
+python -m tools.pdf.cli convert input.md
+
+# Convert to different formats
+python -m tools.pdf.cli convert input.md output.docx --format docx
+python -m tools.pdf.cli convert input.md output.html --format html
 ```
 
-### Full-Featured Generation (All Themes)
+### Full-Featured Generation
 
 ```bash
-# Generate PDF with title page, TOC, verbose output, specific theme
-python -m tools.pdf.cli.main input.md output.pdf \
-  --profile <theme> \
+# Generate PDF with cover, TOC, specific theme
+python -m tools.pdf.cli convert input.md output.pdf \
+  --profile dark-pro \
   --cover \
   --toc \
   --verbose
 
-# Available themes:
-# - dark-pro
-# - tech-whitepaper
-# - enterprise-blue
-# - minimalist
+# Available themes: dark-pro, tech-whitepaper, enterprise-blue, minimalist
 ```
-
-### Windows PowerShell (Encoding Fix)
-
-```powershell
-# Set UTF-8 encoding to avoid character encoding errors
-$env:PYTHONIOENCODING='utf-8'
-python -m tools.pdf.cli.main input.md output.pdf --profile dark-pro --cover --toc --verbose
-```
-
-### Generate All Theme Versions
-
-```bash
-# Generate for all available themes
-for theme in dark-pro tech-whitepaper enterprise-blue minimalist; do
-  python -m tools.pdf.cli.main input.md output-${theme}.pdf \
-    --profile ${theme} \
-    --cover \
-    --toc \
-    --verbose
-done
-```
-
-## Key CLI Flags
-
-### Output Control
-- `--format pdf|docx|html|markdown|epub` - Output format (default: pdf)
-- `--output-dir DIR` - Centralized output location
-- `--profile <name>` - Style profile (dark-pro, tech-whitepaper, enterprise-blue, minimalist)
-
-### Document Features
-- `--cover` / `--generate-cover` - Generate title page from frontmatter
-- `--toc` / `--generate-toc` - Generate table of contents
-- `--watermark TEXT` - Add watermark text (e.g., "DRAFT")
-
-### Metadata Overrides
-- `--title TEXT` - Document title (overrides frontmatter)
-- `--author TEXT` - Author name
-- `--organization TEXT` - Organization name
-- `--date TEXT` - Document date
-- `--doc-version TEXT` - Document version
-- `--classification TEXT` - Classification level
-- `--doc-type TEXT` - Document type
-
-### Styling
-- `--css PATH` - Custom CSS file
-- `--logo PATH` - Logo image path (PDF only)
-- `--highlight <style>` - Code highlighting style (default: pygments)
-
-### Performance & Caching
-- `--no-cache` - Disable diagram caching (default: enabled)
-- `--cache-dir DIR` - Custom cache directory (default: `tools/pdf/output/pdf-diagrams/`)
-- `--threads N` - Parallel processing for batch (default: 1)
 
 ### Batch Processing
-- `--batch file1.md file2.md ...` - Convert multiple files
-- `--config config.json` - JSON config file for batch
-- `--threads N` - Parallel workers (2-4x speedup)
+
+```bash
+# Convert multiple files
+python -m tools.pdf.cli batch docs/**/*.md --format pdf
+
+# Output to specific directory
+python -m tools.pdf.cli batch docs/**/*.md --output-dir output/
+
+# Disable Phase B (use mmdc fallback)
+python -m tools.pdf.cli batch docs/**/*.md --no-native
+```
 
 ### Diagnostics
-- `--verbose` / `-v` - Verbose output with metrics and tracebacks
-- `--check` - Check dependencies and exit
-- `--lint` - Validate Markdown and YAML frontmatter
-- `--log FILE` - File logging for CI/automation
+
+```bash
+# Check environment setup
+python -m tools.pdf.cli diag env
+
+# Test Phase B native renderer
+python -m tools.pdf.cli diag phase-b
+```
+
+## CLI Commands & Flags
+
+### `convert` Command
+
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--format`, `-f` | pdf \| docx \| html | pdf | Output format |
+| `--profile`, `-p` | string | None | Style profile (dark-pro, tech-whitepaper, etc.) |
+| `--native` / `--no-native` | flag | `--native` | Use Phase B native renderer (40-60% faster) |
+| `--diagrams` / `--no-diagrams` | flag | `--diagrams` | Render Mermaid diagrams |
+| `--cover` | flag | False | Generate cover page (PDF only) |
+| `--toc` | flag | False | Generate table of contents |
+| `--cache` / `--no-cache` | flag | `--cache` | Cache diagram renders |
+| `--verbose`, `-v` | normal \| verbose \| debug | normal | Logging level |
+
+### `batch` Command
+
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--format`, `-f` | pdf \| docx \| html | pdf | Output format |
+| `--output-dir`, `-o` | path | current dir | Output directory |
+| `--profile`, `-p` | string | None | Style profile |
+| `--native` / `--no-native` | flag | `--native` | Use Phase B renderer |
+| `--verbose`, `-v` | normal \| verbose | normal | Logging level |
+
+### `diag` Commands
+
+- `diag env` - Check environment (Python, Playwright, Node, Phase B status)
+- `diag phase-b` - Test Phase B native renderer performance
 
 ## Caching System
 
@@ -124,13 +116,10 @@ done
 **Usage**:
 ```bash
 # Caching enabled by default
-python -m tools.pdf.cli.main doc.md doc.pdf
+python -m tools.pdf.cli convert doc.md doc.pdf
 
 # Disable caching
-python -m tools.pdf.cli.main doc.md doc.pdf --no-cache
-
-# Custom cache directory
-python -m tools.pdf.cli.main doc.md doc.pdf --cache-dir ./my-cache
+python -m tools.pdf.cli convert doc.md doc.pdf --no-cache
 ```
 
 **Cache Metrics** (shown in `--verbose` mode):
@@ -188,80 +177,46 @@ if processor.needs_rebuild('doc.md'):
 - **Subsequent Runs**: Unchanged diagrams loaded from cache (2-5x faster)
 - **Cache Location**: `tools/pdf/output/pdf-diagrams/` by default
 
-### Parallel Processing
-- Use `--threads N` for batch conversions
-- 2-4x speedup on multi-core systems
-- Example: `python -m tools.pdf.cli.main --batch *.md --threads 4`
-
-### Incremental Builds
-- Build cache tracks file changes
-- Only re-renders modified diagrams
-- 3-5x faster for unchanged content
+### Batch Processing
+- Use `batch` command for multiple files
+- Supports glob patterns: `docs/**/*.md`
+- Automatic progress tracking with Rich
 
 ### Best Practices
 ```bash
-# Fast batch conversion with all optimizations
-python -m tools.pdf.cli.main \
-  --config pdf-config.json \
-  --threads 4 \
-  --cache-dir ./cache \
+# Fast batch conversion with Phase B
+python -m tools.pdf.cli batch docs/**/*.md \
+  --format pdf \
+  --profile dark-pro \
+  --native \
   --verbose
 ```
 
 ## Common Patterns
 
-### Generate All Themes for a Document
+### Generate All Themes
 
 ```bash
 # PowerShell
 $themes = @('dark-pro', 'tech-whitepaper', 'enterprise-blue', 'minimalist')
 foreach ($theme in $themes) {
-  $env:PYTHONIOENCODING='utf-8'
-  python -m tools.pdf.cli.main `
-    uploads/document.md `
-    output/document-${theme}.pdf `
-    --profile $theme `
-    --cover `
-    --toc `
+  python -m tools.pdf.cli convert input.md output-${theme}.pdf \
+    --profile $theme \
+    --cover \
+    --toc \
     --verbose
 }
 ```
 
-### Batch Processing with Config
-
-```json
-{
-  "files": [
-    {
-      "input": "doc1.md",
-      "output": "doc1.pdf",
-      "profile": "tech-whitepaper",
-      "cover": true,
-      "toc": true
-    },
-    {
-      "input": "doc2.md",
-      "output": "doc2.pdf",
-      "profile": "dark-pro"
-    }
-  ],
-  "threads": 4,
-  "cache_dir": "./cache"
-}
-```
+### Docker Usage
 
 ```bash
-python -m tools.pdf.cli.main --config config.json --verbose
-```
-
-### Watch Mode (Development)
-
-```bash
-python -m tools.pdf.cli.watch_mode input.md output.pdf \
-  --profile tech-whitepaper \
-  --cover \
-  --toc \
-  --verbose
+docker run --rm \
+  -v $(pwd)/docs:/input:ro \
+  -v $(pwd)/output:/output:rw \
+  docs-pipeline:latest \
+  python -m tools.pdf.cli convert /input/doc.md /output/doc.pdf \
+    --profile dark-pro --cover --toc
 ```
 
 ## Pipeline Steps
@@ -295,25 +250,25 @@ When using `--verbose`, cache metrics are reported:
 
 ## Troubleshooting
 
-### Encoding Errors (Windows)
+### Troubleshooting
+
+**Encoding Errors (Windows)**:
 ```powershell
-# Set UTF-8 encoding before running
 $env:PYTHONIOENCODING='utf-8'
-python -m tools.pdf.cli.main ...
+python -m tools.pdf.cli convert input.md output.pdf
 ```
 
-### Cache Issues
+**Cache Issues**:
 ```bash
 # Clear cache and rebuild
 rm -rf tools/pdf/output/pdf-diagrams/
-python -m tools.pdf.cli.main doc.md doc.pdf --verbose
+python -m tools.pdf.cli convert doc.md doc.pdf --verbose
 ```
 
-### Performance Issues
-- Enable caching: `--cache-dir ./cache` (explicit)
-- Use parallel processing: `--threads 4`
-- Check cache hit ratio in verbose output
-- Consider incremental builds for large document sets
+**Performance**:
+- Phase B enabled by default (40-60% faster)
+- Use `--no-native` to disable if issues occur
+- Check environment: `python -m tools.pdf.cli diag env`
 
 ## Playwright Browser Configuration (Phase A + B)
 
@@ -323,189 +278,54 @@ python -m tools.pdf.cli.main doc.md doc.pdf --verbose
 
 **Performance Gain**: +15-25% faster rendering, 100% platform consistency
 
-**Implementation**:
-```python
-# Browser launch configuration (Phase A)
-PLAYWRIGHT_OPTIMIZATION_FLAGS = [
-    '--disable-gpu',                          # CPU rendering (faster, consistent)
-    '--disable-gpu-rasterization',            # Consistency across platforms
-    '--disable-gpu-compositing',              # Reduce memory overhead
-    '--disable-lcd-text',                     # Consistent font rendering
-    '--force-device-scale-factor=1',          # DPI consistency (prevents scaling issues)
-    '--force-color-profile=srgb',             # Color profile normalization
-    '--disable-font-subpixel-positioning',    # Consistent text metrics
-    '--no-sandbox',                           # Required in containers
-    '--disable-dev-shm-usage',                # Reduce memory pressure
-    '--disable-web-security',                 # Allow local file access
-]
+**Implementation**: See `tools/pdf/playwright_pdf/browser.py`
 
-browser = await playwright.chromium.launch(
-    headless=True,
-    args=PLAYWRIGHT_OPTIMIZATION_FLAGS,
-    locale='en-US',  # Consistent locale across systems
-)
-```
+**Key Settings**:
+- Viewport: 1920x1080 (Full HD)
+- Color scheme: Auto-detected from profile
+- PDF format: A4 with CSS-defined margins
+- Headless: True (required)
 
-**Context Configuration**:
-```python
-# Create browser context with optimized settings
-context = await browser.new_context(
-    viewport={'width': 1920, 'height': 1080},  # Full HD for diagram quality
-    color_scheme='dark',  # or 'light' - auto-switches based on context
-    timezone_id='UTC',  # Consistent timezone
-    locale='en-US',
-)
-```
+**Key Flags**: `--disable-gpu`, `--force-color-profile=srgb`, `--force-device-scale-factor=1`
 
-**PDF Rendering Options**:
-```python
-# Recommended PDF generation options
-pdf_options = {
-    'format': 'A4',
-    'margin': {
-        'top': '0.5in',
-        'bottom': '0.5in',
-        'left': '0.5in',
-        'right': '0.5in',
-    },
-    'printBackground': True,      # Include diagram backgrounds
-    'preferCSSPageSize': True,   # Respect CSS @page rules
-    'timeout': 30000,            # 30 second timeout
-    'scale': 1.0,                # DPI: 96 DPI standard
-    'displayHeaderFooter': False,  # No headers/footers
-    'pageRanges': '',            # All pages
-}
+**Benefits**: 15-25% faster, 100% platform consistency, normalized colors, fixed DPI
 
-pdf_bytes = await page.pdf(**pdf_options)
-```
+### Phase B: Native Mermaid Renderer (✅ ENABLED BY DEFAULT)
 
-**What Each Flag Does**:
-
-| Flag | Purpose | Benefit |
-|------|---------|---------|
-| `--disable-gpu` | Force CPU rendering | 15-25% faster on headless, consistent cross-platform |
-| `--disable-gpu-rasterization` | Use CPU for rasterization | Platform consistency |
-| `--disable-gpu-compositing` | CPU composite operations | Memory reduction |
-| `--disable-lcd-text` | No LCD text subpixel rendering | Font consistency |
-| `--force-device-scale-factor=1` | Fixed DPI | Prevents unintended scaling |
-| `--force-color-profile=srgb` | Normalize color profile | Consistent colors across systems |
-| `--disable-font-subpixel-positioning` | Discrete font positioning | Text metric consistency |
-
-**Benefits**:
-- Native browser color scheme detection
-- Automatic `prefers-color-scheme` media query support
-- No CSS injection overhead
-- Consistent with system theme preferences
-- Full diagram width (prevents truncation)
-- Proper aspect ratio scaling
-- Maximum output quality
-
-### Phase B: Native Mermaid Renderer (🚀 READY)
-
-**Status**: Implemented in `tools/pdf/diagram_rendering/mermaid_native_renderer.py`, ready for integration
+**Status**: Integrated and enabled by default in v4.0.0
 
 **Performance Gain**: +40-60% per-diagram improvement (50-100ms → 10-30ms)
 
-**Usage**:
-```python
-from tools.pdf.diagram_rendering.mermaid_native_renderer import (
-    MermaidNativeRenderer,
-    render_mermaid_native
-)
+**Control**: Use `--native` (default) or `--no-native` to disable
 
-# Option 1: Using convenience function
-svg, metrics = await render_mermaid_native(
-    page=page,
-    diagram_code="graph TD\n    A[Start] --> B[End]",
-    config=None,  # Optional config overrides
-    theme_name="dark",
-    verbose=True
-)
+**Usage**: Enabled by default in CLI. Control with `--native` (default) or `--no-native`.
 
-# Option 2: Using class for batch processing
-renderer = MermaidNativeRenderer(page, verbose=True)
-svg, metrics = await renderer.render(
-    diagram_code="graph TD\n    A[Start] --> B[End]",
-    config=None,
-    theme_name="dark"
-)
-
-# Batch rendering
-diagrams = [
-    ("graph TD\n    A --> B", None, "dark"),
-    ("sequenceDiagram\n    A->>B: Hello", None, "dark"),
-]
-results = await renderer.render_multiple(diagrams)
-
-# Get performance metrics
-summary = renderer.get_metrics_summary()
-# Returns: {
-#     'total_renders': 2,
-#     'average_time_ms': 25.5,
-#     'min_time_ms': 20.0,
-#     'max_time_ms': 31.0,
-#     'total_time_ms': 51.0
-# }
-```
-
-**Advantages over CLI**:
-- No subprocess overhead (40-60% faster)
-- Direct config binding (no string replacement)
-- Full browser control (viewports, scaling, colors)
-- Better error messages and debugging
+**Advantages**:
+- 40-60% faster (no subprocess overhead)
+- Direct browser control
 - Automatic theme integration
-- Built-in performance metrics collection
-
-**Backward Compatible**:
-- Returns SVG string (same as CLI version)
-- Can be used as drop-in replacement
-- Fallback to CLI if needed
-
-**Default Mermaid Config**:
-```python
-DEFAULT_CONFIG = {
-    "startOnLoad": False,
-    "logLevel": "error",
-    "securityLevel": "loose",  # Required for full theming
-    "theme": "dark",
-    "themeVariables": {
-        "primaryColor": "#164e63",
-        "primaryTextColor": "#ffffff",
-        "primaryBorderColor": "#0891b2",
-        "lineColor": "#06b6d4",
-        "secondBkgColor": "#0f172a",
-        "tertiaryColor": "#0e7490",
-        "textColor": "#e2e8f0",
-        "fontFamily": "Inter, system-ui, sans-serif",
-    },
-    "flowchart": {
-        "htmlLabels": True,
-        "useMaxWidth": False,  # Prevents cut-off
-        "padding": "20",
-        "nodeSpacing": "50",
-        "rankSpacing": "50",
-    },
-}
-```
+- Transparent fallback to mmdc if needed
 
 ### Version Information
 
-**Updated Dependencies** (Phase A + B):
-- `playwright==1.48.0` - 2025 best practices
-- `@mermaid-js/mermaid-cli@11.4.0+` - Node.js package
-- `Node.js 22.x LTS` - 2025 latest stable
-- `Pandoc 3.3.0+` - Better SVG and HTML5 output
+**Dependencies**:
+- `playwright==1.48.0` - Browser automation
+- `@mermaid-js/mermaid-cli@11.12.0` - Fallback renderer (bundles Puppeteer)
+- `typer>=0.9.0` + `rich>=13.0.0` - Modern CLI framework
+- `Node.js 22.x LTS` - Mermaid rendering
+- `Pandoc 3.3.0+` - Markdown conversion
 
 **Installation**:
 ```bash
-# Docker (Automatic)
-docker build -t docs-pipeline:phase-a .
+# CLI dependencies
+pip install typer rich
 
-# Local (Manual)
-pip install playwright==1.48.0
+# Or from requirements
+pip install -r tools/pdf/requirements-cli.txt
+
+# System dependencies (Docker handles automatically)
 playwright install chromium
-node --version  # Verify 22.x or higher
-npm install -g @mermaid-js/mermaid-cli@11.4.0
+npm install -g @mermaid-js/mermaid-cli@11.12.0
 ```
 
 ### Performance Baseline
@@ -517,9 +337,9 @@ npm install -g @mermaid-js/mermaid-cli@11.4.0
 - Color accuracy: sRGB normalized
 - Memory usage: -10-15% more efficient
 
-**Phase B (Ready to Test)**:
+**Phase B (Enabled by Default)**:
 - Per-diagram: 50-100ms → 10-30ms (40-60% faster)
-- Batch processing: 2-4x speedup potential
+- Batch processing: 2-4x speedup
 - No subprocess overhead
 - Direct browser control
 
@@ -528,18 +348,21 @@ npm install -g @mermaid-js/mermaid-cli@11.4.0
 - 10 diagrams: 2.3x faster
 - 25 diagrams: 4.15x faster
 
-### Testing Phase A
+### Testing
 
 ```bash
-# Rebuild Docker with Phase A improvements
-docker build -t docs-pipeline:phase-a .
+# Test Phase B renderer
+python -m tools.pdf.cli diag phase-b
 
-# Test with verbose output to see rendering metrics
+# Check environment
+python -m tools.pdf.cli diag env
+
+# Docker test
 docker run --rm \
-  -v $(pwd)/docs/examples/streaming-architecture-spec.md:/input.md:ro \
+  -v $(pwd)/docs:/input:ro \
   -v $(pwd)/output:/output:rw \
-  docs-pipeline:phase-a \
-  python -m tools.pdf.cli.main /input.md /output/test.pdf \
+  docs-pipeline:latest \
+  python -m tools.pdf.cli convert /input/doc.md /output/test.pdf \
     --profile dark-pro --verbose
 ```
 

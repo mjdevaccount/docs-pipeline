@@ -43,9 +43,14 @@ This project uses modular rules in `.cursor/rules/` directory. See those files f
 - Use pytest fixtures for reusable test data
 - Pre-commit hooks for code quality
 
-## CLI Entry Point
+## CLI Entry Points
 
-Primary command: `python -m docs_pipeline.cli generate --source-path <path> --output-path <path>`
+**Main Pipeline**: `python -m docs_pipeline.cli generate --source-path <path> --output-path <path>`
+
+**PDF Generation (v4.0.0)**: `python -m tools.pdf.cli convert input.md output.pdf`
+- Commands: `convert`, `batch`, `diag env`, `diag phase-b`
+- Phase B enabled by default (40-60% faster diagram rendering)
+- Requires: `pip install typer rich`
 
 Exit codes: 0 (success), 1 (runtime error), 2 (config error), 130 (interrupted)
 
