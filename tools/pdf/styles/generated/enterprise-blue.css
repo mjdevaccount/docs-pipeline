@@ -352,7 +352,7 @@ ul ul, ol ol, ul ol, ol ul {
 }
 
 ul {
-    list-style-type: '•';
+    list-style-type: disc;
 }
 
 li::marker {

@@ -146,26 +146,28 @@ async def apply_mermaid_colors(page: Page, verbose: bool = False) -> MermaidColo
                             colorClasses.forEach(cls => {
                                 const {fill, stroke} = colorMap[cls];
                                 
-                                // Match .classNameN selectors and replace colors
-                                const classRegex = new RegExp(`(\\.${cls}\\d*)\\s*\\{([^}]*)\\}`, 'g');
+                                // Match various selector patterns:
+                                // .config{...}, .config>*{...}, .config span{...}
+                                // Mermaid 11+ uses patterns like: #my-svg .config>*{...}
+                                const classRegex = new RegExp(`(\\.${cls}(?:\\d*)?(?:[>\\s][\\w*]+)?)\\s*\\{([^}]*)\\}`, 'g');
                                 
                                 styleContent = styleContent.replace(classRegex, (match, selector, styles) => {
                                     let newStyles = styles;
                                     
-                                    // Replace fill color
+                                    // Replace fill color (handles #hex and !important)
                                     newStyles = newStyles.replace(
-                                        /fill\s*:\s*#[0-9a-fA-F]{6}/gi,
-                                        `fill: ${fill}`
+                                        /fill\s*:\s*#[0-9a-fA-F]{3,8}(?:\s*!important)?/gi,
+                                        `fill: ${fill} !important`
                                     );
                                     
-                                    // Replace stroke color
+                                    // Replace stroke color (handles #hex and !important)
                                     newStyles = newStyles.replace(
-                                        /stroke\s*:\s*#[0-9a-fA-F]{6}/gi,
-                                        `stroke: ${stroke}`
+                                        /stroke\s*:\s*#[0-9a-fA-F]{3,8}(?:\s*!important)?/gi,
+                                        `stroke: ${stroke} !important`
                                     );
                                     
                                     if (newStyles !== styles) modified = true;
-                                    return `${selector} {${newStyles}}`;
+                                    return `${selector}{${newStyles}}`;
                                 });
                             });
                             

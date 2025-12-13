@@ -208,13 +208,15 @@ class DiagramRenderingStep(PipelineStep):
                 mmd_file = Path(f.name)
             
             try:
-                # Call mermaid-cli
+                # Call mermaid-cli with puppeteer config for Docker (no-sandbox)
+                puppeteer_config = Path(__file__).parent.parent.parent / 'config' / 'puppeteer-config.json'
                 cmd = [
                     'mmdc',
                     '--input', str(mmd_file),
                     '--output', str(svg_file),
                     '--theme', theme,
-                    '--backgroundColor', 'transparent'
+                    '--backgroundColor', 'transparent',
+                    '--puppeteerConfigFile', str(puppeteer_config)
                 ]
                 
                 proc_result = subprocess.run(

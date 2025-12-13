@@ -99,7 +99,7 @@ class ImagePathCorrectionStep(PipelineStep):
         corrections = 0
         
         # Pattern to find img tags: <img src="..." ...>
-        img_pattern = r'<img\s+([^>]*?)src=["\']([^"\']*)["\'']([^>]*)>'
+        img_pattern = r'<img\s+([^>]*?)src=["\']([^"\']*)["\']([^>]*)>'
         
         def replace_img_src(match):
             nonlocal corrections

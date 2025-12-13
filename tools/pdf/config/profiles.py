@@ -41,7 +41,7 @@ PROFILES: Dict[str, DocumentProfile] = {
     "tech-whitepaper": DocumentProfile(
         name="tech-whitepaper",
         logo=None,
-        css=_rel_from_repo_root("tools", "pdf", "styles", "tech-whitepaper.css"),
+        css=_rel_from_repo_root("tools", "pdf", "styles", "generated", "tech-whitepaper.css"),
         theme_config=_rel_from_repo_root("tools", "pdf", "pdf-mermaid-theme.json"),
         reference_docx=None,
     ),
@@ -51,7 +51,7 @@ PROFILES: Dict[str, DocumentProfile] = {
     "dark-pro": DocumentProfile(
         name="dark-pro",
         logo=None,
-        css=_rel_from_repo_root("tools", "pdf", "styles", "dark-pro.css"),
+        css=_rel_from_repo_root("tools", "pdf", "styles", "generated", "dark-pro.css"),
         theme_config=_rel_from_repo_root("tools", "pdf", "pdf-mermaid-theme.json"),
         reference_docx=None,
     ),
@@ -61,7 +61,7 @@ PROFILES: Dict[str, DocumentProfile] = {
     "minimalist": DocumentProfile(
         name="minimalist",
         logo=None,
-        css=_rel_from_repo_root("tools", "pdf", "styles", "minimalist.css"),
+        css=_rel_from_repo_root("tools", "pdf", "styles", "generated", "minimalist.css"),
         theme_config=_rel_from_repo_root("tools", "pdf", "pdf-mermaid-theme.json"),
         reference_docx=None,
     ),
@@ -71,7 +71,7 @@ PROFILES: Dict[str, DocumentProfile] = {
     "enterprise-blue": DocumentProfile(
         name="enterprise-blue",
         logo=None,
-        css=_rel_from_repo_root("tools", "pdf", "styles", "enterprise-blue.css"),
+        css=_rel_from_repo_root("tools", "pdf", "styles", "generated", "enterprise-blue.css"),
         theme_config=_rel_from_repo_root("tools", "pdf", "pdf-mermaid-theme.json"),
         reference_docx=None,
     ),
