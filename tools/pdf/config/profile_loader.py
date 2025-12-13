@@ -111,10 +111,10 @@ class ProfileLoader:
                 )
                 self.profiles[theme_key] = profile
             
-            print(f"✅ Loaded {len(self.profiles)} profiles from profiles.toml")
+            print(f"[OK] Loaded {len(self.profiles)} profiles from profiles.toml")
         
         except Exception as e:
-            print(f"❌ Error loading profiles.toml: {e}")
+            print(f"[ERROR] Error loading profiles.toml: {e}")
             raise
     
     def _load_python(self) -> None:
@@ -143,10 +143,10 @@ class ProfileLoader:
                 )
                 self.profiles[theme_key] = profile
             
-            print(f"✅ Loaded {len(self.profiles)} profiles from profiles.py (legacy)")
+            print(f"[OK] Loaded {len(self.profiles)} profiles from profiles.py (legacy)")
         
         except Exception as e:
-            print(f"❌ Error loading profiles.py: {e}")
+            print(f"[ERROR] Error loading profiles.py: {e}")
             raise
     
     def list_themes(self) -> List[str]:
@@ -200,11 +200,11 @@ class ProfileLoader:
             if css_path:
                 exists = Path(css_path).exists()
                 results[theme_name] = exists
-                status = "✅" if exists else "❌"
+                status = "[OK]" if exists else "[ERROR]"
                 print(f"{status} {theme_name}: {css_path}")
             else:
                 results[theme_name] = False
-                print(f"❌ {theme_name}: Profile not found")
+                print(f"[ERROR] {theme_name}: Profile not found")
         
         return results
     
@@ -250,13 +250,13 @@ def main():
         total = len(results)
         
         print(f"\n{'='*70}")
-        print(f"✅ {valid_count}/{total} CSS files found")
+        print(f"[OK] {valid_count}/{total} CSS files found")
         print(f"{'='*70}\n")
         
         sys.exit(0 if valid_count == total else 1)
     
     except Exception as e:
-        print(f"\n❌ Error: {e}\n")
+        print(f"\n[ERROR] Error: {e}\n")
         sys.exit(1)
 
 

@@ -185,7 +185,7 @@ async def test_page_dimensions():
                 if abs(block.available_height - expected_available) < 50:
                     print(f"  ✓ Available height reasonable ({block.available_height:.0f}px)")
                 else:
-                    print(f"  ⚠ Available height differs from expected: {block.available_height:.0f}px vs ~{expected_available}px")
+                    print(f"  [WARN] Available height differs from expected: {block.available_height:.0f}px vs ~{expected_available}px")
                 
                 # Check content above measurement
                 if breakdown.get('contentAboveHeading', 0) >= 0:

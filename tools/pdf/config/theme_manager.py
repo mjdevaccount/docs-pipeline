@@ -166,7 +166,7 @@ class ThemeManager:
         # Validate first if requested
         if validate_first:
             if not self.validate(wcag_level):
-                print("\n❌ Validation failed. Fix issues before generating.")
+                print("\n[ERROR] Validation failed. Fix issues before generating.")
                 if self.validation_report:
                     self.validation_report.print_report()
                 return {name: False for name in self.list_themes()}
@@ -208,11 +208,11 @@ class ThemeManager:
                 lines.append("")
             
             index_file.write_text("\n".join(lines))
-            print(f"✅ Created index: {index_file}")
+            print(f"[OK] Created index: {index_file}")
             return True
         
         except Exception as e:
-            print(f"❌ Failed to create index: {e}")
+            print(f"[ERROR] Failed to create index: {e}")
             return False
     
     def _count_colors(self, colors_dict: Dict) -> int:
@@ -269,18 +269,18 @@ def main():
         print(manager.summary())
         
         # Validate
-        print("\n🔍 Validating tokens...")
+        print("\n[INFO] Validating tokens...")
         if not manager.validate(wcag_level="AA"):
-            print("\n❌ Validation FAILED")
+            print("\n[ERROR] Validation FAILED")
             report = manager.get_validation_report()
             if report:
                 report.print_report()
             sys.exit(1)
         
-        print("✅ Validation PASSED\n")
+        print("[OK] Validation PASSED\n")
         
         # Generate
-        print(f"\n🙺 Generating CSS files to: {output_dir}")
+        print(f"\n[INFO] Generating CSS files to: {output_dir}")
         results = manager.generate_all(output_dir, validate_first=False)
         
         # Create index
@@ -289,13 +289,13 @@ def main():
         # Summary
         success = sum(1 for v in results.values() if v)
         print(f"\n{'='*70}")
-        print(f"✅ Generated {success}/{len(results)} CSS files successfully")
+        print(f"[OK] Generated {success}/{len(results)} CSS files successfully")
         print(f"{'='*70}\n")
         
         sys.exit(0 if success == len(results) else 1)
     
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\n[ERROR] Error: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

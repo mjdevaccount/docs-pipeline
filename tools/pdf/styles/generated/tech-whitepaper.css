@@ -1,0 +1,564 @@
+/**
+ * Tech Whitepaper Theme
+ * 
+ * Professional engineering documentation. Clean, blue accents, generous margins.
+ * Mode: Light
+ * 
+ * Auto-generated from design-tokens.yml
+ * Do NOT edit manually - changes will be overwritten
+ * 
+ * Generated: 2025-12-12
+ * Version: 1.0
+ */
+
+
+
+:root {
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 500ms;
+    --easing-ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --easing-ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --easing-standard: cubic-bezier(0.16, 1, 0.3, 1);
+    --font-sizes-2xl: 20px;
+    --font-sizes-3xl: 24px;
+    --font-sizes-4xl: 30px;
+    --font-sizes-base: 14px;
+    --font-sizes-lg: 16px;
+    --font-sizes-md: 14px;
+    --font-sizes-sm: 12px;
+    --font-sizes-xl: 18px;
+    --font-sizes-xs: 11px;
+    --font-weights-bold: 600;
+    --font-weights-medium: 500;
+    --font-weights-normal: 400;
+    --font-weights-semibold: 550;
+    --fonts-body: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --fonts-mono: JetBrains Mono, 'SF Mono', Monaco, Menlo, 'Courier New', monospace;
+    --fonts-ui: Inter, sans-serif;
+    --letter-spacing-normal: 0em;
+    --letter-spacing-tight: -0.01em;
+    --letter-spacing-wide: 0.05em;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.7;
+    --line-height-tight: 1.2;
+    --radius-base: 6px;
+    --radius-full: 12px;
+    --radius-lg: 10px;
+    --radius-md: 8px;
+    --radius-sm: 4px;
+    --shadows-inset: inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+    --shadows-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+    --shadows-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+    --shadows-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    --shadows-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
+    --spacing-0: 0;
+    --spacing-1: 1px;
+    --spacing-10: 10px;
+    --spacing-12: 12px;
+    --spacing-16: 16px;
+    --spacing-2: 2px;
+    --spacing-20: 20px;
+    --spacing-24: 24px;
+    --spacing-32: 32px;
+    --spacing-4: 4px;
+    --spacing-6: 6px;
+    --spacing-8: 8px;
+
+    --color-background-page: #ffffff;
+    --color-background-subtle: #f1f5f9;
+    --color-background-surface: #f8fafc;
+    --color-border-primary: #e2e8f0;
+    --color-border-subtle: #cbd5e1;
+    --color-callout-danger-bg: #fef2f2;
+    --color-callout-danger-border: #dc2626;
+    --color-callout-danger-text: #7f1d1d;
+    --color-callout-info-bg: #ecfdfd;
+    --color-callout-info-border: #0369a1;
+    --color-callout-info-text: #164e63;
+    --color-callout-note-bg: #ecfdfd;
+    --color-callout-note-border: #0369a1;
+    --color-callout-note-text: #0c4a6e;
+    --color-callout-tip-bg: #f0fdf4;
+    --color-callout-tip-border: #059669;
+    --color-callout-tip-text: #14532d;
+    --color-callout-warning-bg: #fefce8;
+    --color-callout-warning-border: #ca8a04;
+    --color-callout-warning-text: #451a03;
+    --color-component-blockquote-bg: #ecfdfd;
+    --color-component-blockquote-border: #0369a1;
+    --color-component-blockquote-text: #0c4a6e;
+    --color-component-code-bg: #f1f5f9;
+    --color-component-code-text: #0f172a;
+    --color-component-pre-bg: #1e293b;
+    --color-component-pre-text: #f8fafc;
+    --color-primary-base: #0369a1;
+    --color-primary-dark: #0c4a6e;
+    --color-primary-light: #06b6d4;
+    --color-primary-muted: #cffafe;
+    --color-status-error: #dc2626;
+    --color-status-info: #0369a1;
+    --color-status-success: #059669;
+    --color-status-warning: #ca8a04;
+    --color-syntax-attribute: #7c3aed;
+    --color-syntax-comment: #64748b;
+    --color-syntax-function: #0369a1;
+    --color-syntax-keyword: #7c3aed;
+    --color-syntax-number: #d97706;
+    --color-syntax-string: #059669;
+    --color-syntax-tag: #dc2626;
+    --color-text-muted: #94a3b8;
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #475569;
+
+    --mermaid-actor-bkg: #ffffff;
+    --mermaid-actor-border: #0369a1;
+    --mermaid-actor-line-color: #0369a1;
+    --mermaid-actor-text-color: #0f172a;
+    --mermaid-border-color: #0369a1;
+    --mermaid-branch-text-color: #0f172a;
+    --mermaid-class-text-color: #0f172a;
+    --mermaid-classifier-bkg-color: #ffffff;
+    --mermaid-classifier-border: #0369a1;
+    --mermaid-commit-text-color: #ffffff;
+    --mermaid-config-fill: #ecfdfd;
+    --mermaid-config-stroke: #0369a1;
+    --mermaid-core-fill: #ffffff;
+    --mermaid-core-stroke: #0369a1;
+    --mermaid-crit: #dc2626;
+    --mermaid-crit-border: #b91c1c;
+    --mermaid-crit-text-color: #ffffff;
+    --mermaid-done-task-bkg: #059669;
+    --mermaid-done-task-border: #047857;
+    --mermaid-entity-bkg: #f8fafc;
+    --mermaid-entity-border: #0369a1;
+    --mermaid-entity-text-color: #0f172a;
+    --mermaid-flowchart-bkg-color: #f8fafc;
+    --mermaid-flowchart-border-color: #0369a1;
+    --mermaid-git-bkg: #f8fafc;
+    --mermaid-git-border: #0369a1;
+    --mermaid-git-inv: #ffffff;
+    --mermaid-git-label: #0f172a;
+    --mermaid-grid-color: #cbd5e1;
+    --mermaid-highlight-fill: #ffffff;
+    --mermaid-highlight-stroke: #0369a1;
+    --mermaid-label-box-bkg-color: #f8fafc;
+    --mermaid-label-box-border-color: #0369a1;
+    --mermaid-label-text-color: #0f172a;
+    --mermaid-line-color: #0369a1;
+    --mermaid-marker-accent: #0369a1;
+    --mermaid-message-label-background: #f8fafc;
+    --mermaid-node-text-color: #0f172a;
+    --mermaid-note-bkg-color: #ecfdfd;
+    --mermaid-note-border-color: #0369a1;
+    --mermaid-note-text-color: #0c4a6e;
+    --mermaid-output-fill: #f8fafc;
+    --mermaid-output-stroke: #0369a1;
+    --mermaid-primary-border-color: #0369a1;
+    --mermaid-primary-color: #ffffff;
+    --mermaid-primary-text-color: #0f172a;
+    --mermaid-relationship-text-color: #475569;
+    --mermaid-second-bkg-color: #f8fafc;
+    --mermaid-section-bkg-color: #f8fafc;
+    --mermaid-section-bkg-color-2: #f1f5f9;
+    --mermaid-state-bkg: #f8fafc;
+    --mermaid-state-border: #0369a1;
+    --mermaid-state-text-color: #0f172a;
+    --mermaid-storage-fill: #e2e8f0;
+    --mermaid-storage-stroke: #0369a1;
+    --mermaid-stream-fill: #f8fafc;
+    --mermaid-stream-stroke: #0369a1;
+    --mermaid-tag-text-color: #0f172a;
+    --mermaid-task-bkg: #0369a1;
+    --mermaid-task-border: #0c4a6e;
+    --mermaid-task-text-color: #ffffff;
+    --mermaid-tertiary-border-color: #cbd5e1;
+    --mermaid-tertiary-color: #e2e8f0;
+    --mermaid-tertiary-text-color: #0f172a;
+    --mermaid-text-color: #0f172a;
+    --mermaid-title-color: #0c4a6e;
+    --mermaid-today-line-color: #ca8a04;
+    --mermaid-topic-fill: #e2e8f0;
+    --mermaid-topic-stroke: #0369a1;
+    --mermaid-transition-text-color: #475569;
+}
+
+
+
+/* ============================================================================
+   PAGE SETUP - Margins: 2cm all sides
+   ========================================================================== */
+
+@page {
+    size: A4;
+    margin: 2cm 1.8cm 2cm 1.8cm;
+    background-color: var(--color-background-page);
+}
+
+
+
+/* ============================================================================
+   BASE TYPOGRAPHY & LAYOUT
+   ========================================================================== */
+
+html {
+    background: var(--color-background-page) !important;
+    font-family: var(--fonts-body);
+    font-size: var(--font-sizes-base);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'liga' 1, 'calt' 1;
+}
+
+body {
+    background: var(--color-background-page) !important;
+    color: var(--color-text-secondary);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: none;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+
+/* ============================================================================
+   HEADINGS
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: var(--font-weights-semibold);
+    color: var(--color-text-primary);
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tight);
+}
+
+h1 {
+    font-size: var(--font-sizes-4xl);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    border-bottom: 2px solid var(--color-border-primary);
+    padding-bottom: 0.4em;
+    margin-top: 0.5em;
+}
+
+h2 {
+    font-size: var(--font-sizes-3xl);
+    border-bottom: 1px solid var(--color-border-primary);
+    padding-bottom: 0.3em;
+}
+
+h3 {
+    font-size: var(--font-sizes-2xl);
+}
+
+h4 {
+    font-size: var(--font-sizes-xl);
+}
+
+h5 {
+    font-size: var(--font-sizes-lg);
+}
+
+h6 {
+    font-size: var(--font-sizes-md);
+}
+
+/* ============================================================================
+   PARAGRAPHS & LINKS
+   ========================================================================== */
+
+p {
+    margin: 0.5em 0 1em 0;
+    color: var(--color-text-secondary);
+    text-align: left;
+    orphans: 3;
+    widows: 3;
+}
+
+a {
+    color: var(--color-primary-base);
+    text-decoration: none;
+    font-weight: var(--font-weights-medium);
+    transition: color 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+a:hover {
+    color: var(--color-primary-light);
+    text-decoration: underline;
+}
+
+/* ============================================================================
+   CODE & PREFORMATTED TEXT
+   ========================================================================== */
+
+code {
+    font-family: var(--fonts-mono);
+    font-size: 0.88em;
+    background: var(--color-component-code-bg);
+    color: var(--color-component-code-text);
+    padding: 0.2em 0.4em;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+pre {
+    background: var(--color-component-pre-bg);
+    border-left: 4px solid var(--color-primary-base);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin: 1.5em 0;
+    overflow-x: auto;
+    box-shadow: var(--shadows-lg);
+    width: 100%;
+    max-width: none;
+}
+
+pre code {
+    background: transparent;
+    color: var(--color-component-pre-text);
+    padding: 0;
+    border: none;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    font-variant-ligatures: common-ligatures contextual;
+}
+
+/* ============================================================================
+   LISTS
+   ========================================================================== */
+
+ul, ol {
+    margin: 1rem 0;
+    padding-left: 1.75rem;
+    width: 100%;
+    max-width: none;
+}
+
+li {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+}
+
+ul ul, ol ol, ul ol, ol ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+ul {
+    list-style-type: '•';
+}
+
+li::marker {
+    color: var(--color-primary-base);
+    font-weight: var(--font-weights-medium);
+    margin-right: 0.75em;
+}
+
+/* ============================================================================
+   TABLES
+   ========================================================================== */
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.925rem;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    margin: 1.5em 0;
+    background: var(--color-background-surface);
+    box-sizing: border-box;
+}
+
+thead {
+    background: var(--color-background-subtle);
+    font-weight: var(--font-weights-bold);
+}
+
+th {
+    padding: 0.875rem 1rem;
+    text-align: left;
+    color: var(--color-text-primary);
+    border-bottom: 2px solid var(--color-primary-base);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--color-border-primary);
+    color: var(--color-text-secondary);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background: rgba(96, 165, 250, 0.05);
+}
+
+tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* ============================================================================
+   BLOCKQUOTES
+   ========================================================================== */
+
+blockquote {
+    border-left: 4px solid var(--color-component-blockquote-border);
+    background: var(--color-component-blockquote-bg);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5em 0;
+    width: 100%;
+    max-width: none;
+    font-style: italic;
+    color: var(--color-component-blockquote-text);
+    border-radius: 0 0.25rem 0.25rem 0;
+    box-sizing: border-box;
+    line-height: 1.6;
+    box-shadow: var(--shadows-md);
+}
+
+blockquote p {
+    margin: 0.5rem 0;
+}
+
+blockquote > :first-child {
+    margin-top: 0;
+}
+
+blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================================
+   PRINT-SPECIFIC ADJUSTMENTS
+   ========================================================================== */
+
+@media print {
+    body {
+        background: var(--color-background-page);
+        color: var(--color-text-secondary);
+    }
+    
+    a {
+        color: var(--color-primary-base);
+        text-decoration: none;
+    }
+    
+    pre, blockquote {
+        background: var(--color-background-surface);
+    }
+    
+    svg {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    svg text, svg tspan {
+        fill: var(--mermaid-text-color) !important;
+    }
+}
+
+
+
+/* ============================================================================
+   MERMAID DIAGRAM STYLING
+   
+   NOTE: Mermaid text colors are driven by design tokens:
+   - --mermaid-text-color (from design-tokens.yml mermaid.text_color)
+   - --mermaid-title-color (from design-tokens.yml mermaid.title_color)
+   - All colors defined per-theme in design-tokens.yml
+   ========================================================================== */
+
+svg {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+}
+
+/* Apply theme text color to all SVG text elements */
+svg text {
+    fill: var(--mermaid-text-color) !important;
+    color: var(--mermaid-text-color) !important;
+    font-family: var(--fonts-body) !important;
+    font-size: 0.9rem !important;
+    font-weight: var(--font-weights-medium) !important;
+}
+
+/* Specific text classes inherit from parent SVG text color */
+svg text.label,
+svg text.nodeLabel,
+svg text.edgeLabel,
+svg text.title,
+svg text.sectionTitle,
+svg text.mainTitle,
+svg tspan {
+    fill: var(--mermaid-text-color) !important;
+    color: var(--mermaid-text-color) !important;
+}
+
+/* Mermaid container text elements */
+.mermaid text,
+.mermaid tspan,
+.mermaid foreignObject text {
+    fill: var(--mermaid-text-color) !important;
+    color: var(--mermaid-text-color) !important;
+}
+
+.mermaid .nodeLabel,
+.mermaid .label,
+.mermaid .edgeLabel,
+.mermaid .flowchart-label,
+.mermaid .taskText,
+.mermaid .taskTextOutsideRight,
+.mermaid .taskTextOutsideLeft {
+    fill: var(--mermaid-text-color) !important;
+}
+
+/* Diagram element borders use primary color */
+svg rect[class*="diagram"],
+svg circle[class*="diagram"],
+svg ellipse[class*="diagram"],
+svg path[class*="diagram"] {
+    stroke: var(--mermaid-primary-border-color) !important;
+    stroke-width: 2px !important;
+}
+
+/* Chart and axis labels */
+svg .axis-label,
+svg .legend-label,
+svg .chart-label,
+svg .data-label,
+svg .tick,
+svg [text-anchor] {
+    fill: var(--mermaid-text-color) !important;
+}
+
+/* Catch-all for any SVG text without explicit fill */
+svg text:not([fill]),
+svg tspan:not([fill]) {
+    fill: var(--mermaid-text-color) !important;
+}
+
+/* Override hard-coded fill colors to use theme color */
+svg text[fill="white"],
+svg text[fill="#fff"],
+svg text[fill="#ffffff"],
+svg text[fill="#f0f0f0"],
+svg text[fill="#e0e0e0"],
+svg tspan[fill="white"],
+svg tspan[fill="#fff"],
+svg tspan[fill="#ffffff"] {
+    fill: var(--mermaid-text-color) !important;
+}

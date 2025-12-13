@@ -180,9 +180,9 @@ async def main():
     if fits_count == total_count:
         print("🎉 SUCCESS: All diagrams fit naturally! No scaling needed.")
     elif fits_count > 0:
-        print(f"✅ GOOD: {fits_count} diagrams fit naturally. {total_count - fits_count} need minor scaling.")
+        print(f"[OK] GOOD: {fits_count} diagrams fit naturally. {total_count - fits_count} need minor scaling.")
     else:
-        print("⚠️  NEEDS WORK: All diagrams still require scaling. Consider:")
+        print("[WARN] NEEDS WORK: All diagrams still require scaling. Consider:")
         print("   - Further reducing nodeSpacing/rankSpacing")
         print("   - Simplifying diagram content (fewer nodes, shorter labels)")
         print("   - Using ultra-compact profile for complex diagrams")
@@ -196,7 +196,7 @@ async def main():
     avg_height = sum(s['height'] for s in sizes_new) / len(sizes_new)
     
     if avg_height > available_height:
-        print("1. ⚠️  Average diagram height exceeds page height")
+        print("1. [WARN] Average diagram height exceeds page height")
         print("   → Consider per-diagram optimization with %%{init: {...}}%% directives")
         print()
     
@@ -209,7 +209,7 @@ async def main():
         print()
     
     if fits_count == total_count:
-        print("✅ All diagrams optimized! Consider:")
+        print("[OK] All diagrams optimized! Consider:")
         print("   - Documenting this theme as the standard")
         print("   - Creating diagram templates for consistency")
         print("   - Adding linting to enforce compact patterns")

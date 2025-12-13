@@ -215,10 +215,10 @@ def test_pipeline_integration():
                 print("✓ Pipeline integration test PASSED\n")
                 return True
             else:
-                print("⚠️  Output PDF not created (dependencies may be missing)")
+                print("[WARN] Output PDF not created (dependencies may be missing)")
                 return False
         except Exception as e:
-            print(f"\n⚠️  Pipeline test failed (expected if dependencies missing): {e}")
+            print(f"\n[WARN] Pipeline test failed (expected if dependencies missing): {e}")
             return False
 
 

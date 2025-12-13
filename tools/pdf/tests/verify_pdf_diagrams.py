@@ -21,19 +21,19 @@ def main():
     
     # Check if PDF exists
     if not PDF_FILE.exists():
-        print(f"❌ PDF not found: {PDF_FILE}")
+        print(f"[ERROR] PDF not found: {PDF_FILE}")
         print("Run: python tools/pdf/tests/test_project_docs_layout.py")
         print("Or update PDF_FILE path in this script to point to your generated PDF")
         return
     
-    print(f"✅ PDF found: {PDF_FILE}")
+    print(f"[OK] PDF found: {PDF_FILE}")
     print(f"   Size: {PDF_FILE.stat().st_size / 1024:.1f} KB")
     print()
     
     # Check diagram cache
     if CACHE_DIR.exists():
         svg_files = list(CACHE_DIR.glob("*.svg"))
-        print(f"✅ Diagram cache: {len(svg_files)} SVG files")
+        print(f"[OK] Diagram cache: {len(svg_files)} SVG files")
         print()
         
         # Show SVG sizes
@@ -60,11 +60,11 @@ def main():
     print(f"1. Open PDF: {PDF_FILE}")
     print()
     print("2. Check each page for diagrams:")
-    print("   ✅ Diagrams are visible (not missing)")
-    print("   ✅ Text is readable (11px font)")
-    print("   ✅ Spacing looks professional (not too loose)")
-    print("   ✅ Diagrams fit on pages (not cut off)")
-    print("   ✅ Colors are correct (blue, green, orange)")
+    print("   [OK] Diagrams are visible (not missing)")
+    print("   [OK] Text is readable (11px font)")
+    print("   [OK] Spacing looks professional (not too loose)")
+    print("   [OK] Diagrams fit on pages (not cut off)")
+    print("   [OK] Colors are correct (blue, green, orange)")
     print()
     print("3. Expected diagrams:")
     print("   - Page 3-4: Current System Overview (flowchart)")
@@ -74,16 +74,16 @@ def main():
     print("   - Page 8-9: Failure Detection (state diagram)")
     print()
     print("4. If diagrams are MISSING:")
-    print("   ❌ Check if HTML has broken image references")
-    print("   ❌ Check if SVG files are in wrong location")
-    print("   ❌ Check Playwright console for errors")
+    print("   [ERROR] Check if HTML has broken image references")
+    print("   [ERROR] Check if SVG files are in wrong location")
+    print("   [ERROR] Check Playwright console for errors")
     print()
     print("5. If diagrams are TOO SMALL:")
-    print("   ❌ Theme settings may be too aggressive")
-    print("   ❌ Try increasing nodeSpacing/rankSpacing")
+    print("   [ERROR] Theme settings may be too aggressive")
+    print("   [ERROR] Try increasing nodeSpacing/rankSpacing")
     print()
     print("6. If diagrams are TOO LARGE:")
-    print("   ✅ This is what we fixed! Should be compact now.")
+    print("   [OK] This is what we fixed! Should be compact now.")
     print()
     print("=" * 80)
     print("QUICK TEST")

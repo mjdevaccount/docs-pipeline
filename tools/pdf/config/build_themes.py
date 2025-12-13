@@ -66,45 +66,45 @@ class ThemeBuildProcess:
         print(f"{'='*70}\n")
         
         # Step 1: Initialize manager
-        print("🔎 Step 1: Initialize theme manager...")
+        print("Step 1: Initialize theme manager...")
         try:
             self.manager = ThemeManager(str(self.tokens_file))
             print(self.manager.summary())
         except Exception as e:
-            print(f"❌ Failed: {e}")
+            print(f"Failed: {e}")
             return False
         
         # Step 2: Validate tokens
-        print("🔍 Step 2: Validate design tokens...")
+        print("Step 2: Validate design tokens...")
         if not self.manager.validate(wcag_level):
-            print("❌ Validation FAILED")
+            print("Validation FAILED")
             report = self.manager.get_validation_report()
             if report:
                 report.print_report()
             return False
         
-        print("✅ Tokens validated successfully\n")
+        print("Tokens validated successfully\n")
         
         # Step 3: Generate CSS
-        print(f"🙺 Step 3: Generate CSS to {output_dir}...")
+        print(f"Step 3: Generate CSS to {output_dir}...")
         results = self.manager.generate_all(output_dir, validate_first=False)
         
         success_count = sum(1 for v in results.values() if v)
         if success_count == 0:
-            print("❌ No CSS files generated")
+            print("No CSS files generated")
             return False
         
-        print(f"✅ Generated {success_count}/{len(results)} CSS files\n")
+        print(f"Generated {success_count}/{len(results)} CSS files\n")
         
         # Step 4: Create index
-        print(f"📄 Step 4: Create theme index...")
+        print(f"Step 4: Create theme index...")
         if self.manager.create_index(output_dir):
-            print("✅ Index created successfully\n")
+            print("Index created successfully\n")
         else:
-            print("⚠️  Warning: Could not create index\n")
+            print("Warning: Could not create index\n")
         
         # Step 5: Load and validate profiles
-        print("📂 Step 5: Load and validate profiles...")
+        print("Step 5: Load and validate profiles...")
         try:
             self.loader = ProfileLoader(str(self.config_dir))
             print(self.loader.summary())
@@ -115,15 +115,15 @@ class ThemeBuildProcess:
             
             css_valid = sum(1 for v in css_results.values() if v)
             if css_valid != len(css_results):
-                print(f"\n⚠️  Warning: {css_valid}/{len(css_results)} CSS files found")
+                print(f"\nWarning: {css_valid}/{len(css_results)} CSS files found")
         except Exception as e:
-            print(f"⚠️  Warning: {e}")
+            print(f"Warning: {e}")
         
         # Step 6: Summary
         print(f"\n{'='*70}")
         print("BUILD COMPLETE")
         print(f"{'='*70}")
-        print(f"\n✅ All theme artifacts generated successfully!")
+        print(f"\nAll theme artifacts generated successfully!")
         print(f"\n   Tokens file: {self.tokens_file}")
         print(f"   CSS output:  {output_dir}")
         print(f"   Profiles:    {self.config_dir / 'profiles.toml'}")
@@ -152,11 +152,11 @@ def main():
         sys.exit(0 if success else 1)
     
     except KeyboardInterrupt:
-        print("\n\n⚠️  Build cancelled by user")
+        print("\n\nBuild cancelled by user")
         sys.exit(1)
     
     except Exception as e:
-        print(f"\n❌ Fatal error: {e}")
+        print(f"\nFatal error: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

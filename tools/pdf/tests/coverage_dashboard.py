@@ -47,7 +47,7 @@ class FileCoverage:
         """Get coverage status badge."""
         pct = self.coverage_percent
         if pct >= 90:
-            return "✅ Excellent"
+            return "Excellent"
         elif pct >= 75:
             return "🟢 Good"
         elif pct >= 50:
@@ -78,7 +78,7 @@ class CoverageSummary:
         """Get overall status badge."""
         pct = self.overall_percent
         if pct >= 90:
-            return "✅ Excellent"
+            return "Excellent"
         elif pct >= 75:
             return "🟢 Good"
         elif pct >= 50:
@@ -353,7 +353,7 @@ class CoverageDashboard:
 <body>
     <div class="container">
         <header>
-            <h1>📊 Test Coverage Dashboard</h1>
+            <h1>Test Coverage Dashboard</h1>
             <p class="timestamp">Generated: {summary.timestamp}</p>
         </header>
         
@@ -402,7 +402,7 @@ class CoverageDashboard:
         
         # Add file coverage data
         for file in summary.file_coverage:
-            status_class = f"status-{file.status.split()[0].lower()}".replace('✅', 'excellent').replace('🟢', 'good').replace('🟡', 'fair').replace('🔴', 'poor')
+            status_class = f"status-{file.status.split()[0].lower()}".replace('Excellent', 'excellent').replace('Good', 'good').replace('Fair', 'fair').replace('Poor', 'poor')
             
             # Determine color for progress bar
             if file.coverage_percent >= 90:
@@ -527,7 +527,7 @@ Examples:
         output_path = dashboard.generate(args.output, args.trend)
         
         if args.verbose:
-            print(f"\n✅ Dashboard ready: {output_path}")
+            print(f"\n[OK] Dashboard ready: {output_path}")
             print(f"   Open in browser: file://{output_path.absolute()}")
         
     except FileNotFoundError as e:
