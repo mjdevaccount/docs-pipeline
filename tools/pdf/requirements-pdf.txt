@@ -22,8 +22,9 @@ pytest-watch>=4.2.0  # Watch mode for development
 #   Recommended: >=3.3.0 for better SVG and HTML5 output
 #
 # - Mermaid-CLI (https://github.com/mermaid-js/mermaid-cli)
-#   npm install -g @mermaid-js/mermaid-cli@11.4.0
-#   Recommended: @11.4.0+ for CSS variable support + improved theming
+#   npm install -g @mermaid-js/mermaid-cli@11.12.0
+#   Recommended: @11.12.0+ (latest, includes updated Puppeteer)
+#   Note: Puppeteer is bundled with mermaid-cli (not installed separately)
 #
 # - Node.js (https://nodejs.org)
 #   Recommended: 22.x LTS (2025 latest stable)

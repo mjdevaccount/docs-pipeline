@@ -96,7 +96,7 @@ async def apply_mermaid_colors(page: Page, verbose: bool = False) -> MermaidColo
     
     try:
         # JavaScript with single getComputedStyle call (cached)
-        result = await page.evaluate("""
+        result = await page.evaluate(r"""
             () => {
                 const stats = {
                     svgsFound: 0,

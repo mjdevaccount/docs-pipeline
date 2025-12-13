@@ -13,7 +13,7 @@ import time
 import asyncio
 from typing import Dict, Optional, Tuple
 from pathlib import Path
-from playwright.async_api import Page, Browser, Context
+from playwright.async_api import Page, Browser
 
 try:
     from colorama import Fore, Style, init as colorama_init
@@ -116,9 +116,11 @@ class MermaidNativeRenderer:
         
         try:
             # Inject Mermaid library and config
+            # Escape backticks in diagram code for JavaScript template literal
+            escaped_diagram = diagram_code.replace('`', '\\`')
             inject_script = f"""
             window.mermaidConfig = {json.dumps(mermaid_config)};
-            window.mermaidDiagram = `{diagram_code.replace('`', '\\`')}`;
+            window.mermaidDiagram = `{escaped_diagram}`;
             window.renderComplete = false;
             window.renderError = null;
             """

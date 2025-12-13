@@ -57,9 +57,8 @@ async def open_page(html_file: Path, verbose: bool = False):
             print(f"{INFO} Launching Chromium browser (Phase A optimizations enabled)...")
         
         browser = await playwright.chromium.launch(
-            headless=True,
+            headless=True,  # Headless mode for PDF generation (required)
             args=PLAYWRIGHT_OPTIMIZATION_FLAGS,
-            locale='en-US',  # Consistent locale across systems
         )
         
         # Create context with color scheme support
