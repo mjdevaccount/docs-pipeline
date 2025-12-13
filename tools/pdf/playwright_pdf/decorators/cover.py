@@ -139,15 +139,18 @@ async def inject_cover_page(page: Page, config: CoverConfig, verbose: bool = Fal
                 <h1 class="cover-title" style="
                     width: 100%;
                     max-width: none;
-                    font-size: 42pt;
+                    font-size: 36pt;
                     margin: 0 0 24px 0;
-                    padding: 0 1in;
+                    padding: 0 0.5in;
                     font-weight: 700;
-                    line-height: 1.15;
-                    letter-spacing: 0.04em;
+                    line-height: 1.2;
+                    letter-spacing: 0.02em;
                     text-transform: uppercase;
                     text-align: center;
                     box-sizing: border-box;
+                    word-break: keep-all;
+                    overflow-wrap: normal;
+                    hyphens: none;
                 ">
                     {title}
                 </h1>
