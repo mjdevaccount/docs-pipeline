@@ -15,7 +15,7 @@ from playwright.async_api import Page, Browser
 from .browser import open_page
 from .dom_analyzer import analyze_layout
 from .layout_transformer import compute_scaling, apply_scaling
-from .styles import inject_fonts, inject_pagination_css, inject_custom_css
+from .styles import inject_fonts, inject_pagination_css, inject_custom_css, inject_print_background
 from .decorators.cover import inject_cover_page
 from .decorators.toc import inject_toc
 from .decorators.watermark import add_watermark
@@ -237,6 +237,13 @@ async def generate_pdf(config: PdfGenerationConfig) -> bool:
             # Detect dark mode using shared utility
             profile_name = getattr(config, 'profile', None)
             is_dark_mode = detect_dark_mode(profile_name, config.css_file)
+            
+            if config.verbose:
+                print(f"{INFO} Dark mode detection: profile={profile_name}, css={config.css_file}, result={is_dark_mode}")
+            
+            # Inject print background CSS to ensure full-bleed backgrounds
+            # This fixes white margins on dark themes in PDF output
+            await inject_print_background(page, is_dark_mode, verbose=config.verbose)
             
             header_html, footer_html = build_header_footer(
                 title=config.title,

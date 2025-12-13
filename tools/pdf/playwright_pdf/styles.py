@@ -107,3 +107,61 @@ async def inject_custom_css(page: Page, css_file: str, verbose: bool = False) ->
         if verbose:
             print(f"{INFO} Custom CSS file not found: {css_file}")
 
+
+async def inject_print_background(page: Page, is_dark_mode: bool, bg_color: str = None, verbose: bool = False) -> None:
+    """
+    Inject CSS to ensure background colors extend to print margins (full bleed).
+    
+    In PDF printing, margins are created by Playwright's print settings and the page 
+    background doesn't extend into those margins - only content does. This fix uses
+    a fixed pseudo-element to ensure backgrounds extend to the edges.
+    
+    Args:
+        page: Playwright page object
+        is_dark_mode: Whether dark mode is active
+        bg_color: Optional explicit background color (defaults based on mode)
+        verbose: Enable verbose logging
+    """
+    if is_dark_mode:
+        color = bg_color or '#0f172a'  # Slate-950 (matches dark-pro)
+        css = f"""
+        @media print {{
+            html, body {{
+                background-color: {color} !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }}
+            
+            /* Full-bleed background using fixed positioning */
+            body::before {{
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: {color};
+                z-index: -1000;
+                pointer-events: none;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }}
+        }}
+        """
+    else:
+        color = bg_color or '#ffffff'
+        css = f"""
+        @media print {{
+            html, body {{
+                background-color: {color} !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }}
+        }}
+        """
+    
+    await page.add_style_tag(content=css)
+    
+    if verbose:
+        print(f"{INFO} Injected print background CSS (dark_mode={is_dark_mode}, color={color})")
+

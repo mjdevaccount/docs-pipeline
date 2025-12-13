@@ -96,15 +96,42 @@ def extract_margins_from_css(css_file: Path) -> Optional[Dict[str, str]]:
 
 def detect_dark_mode(profile_name: Optional[str] = None, css_file: Optional[Path] = None) -> bool:
     """
-    Detect if dark mode should be used based on profile name or CSS file.
+    Detect if dark mode should be used based on profile name, CSS filename, or CSS content.
+    
+    Detection order:
+    1. Profile name contains 'dark'
+    2. CSS filename contains 'dark'
+    3. CSS content has dark background colors on body/html
     """
+    # Check profile name
     if profile_name and 'dark' in profile_name.lower():
         return True
     
+    # Check CSS filename
     if css_file:
         css_str = str(css_file).lower()
         if 'dark' in css_str:
             return True
+        
+        # Check CSS content for dark backgrounds
+        if css_file.exists():
+            try:
+                css_content = css_file.read_text(encoding='utf-8')
+                
+                # Look for dark background colors on body/html
+                # Common dark theme patterns: #0f172a, #1a1a1a, #000, rgb(0-50, 0-50, 0-50)
+                dark_bg_patterns = [
+                    r'(?:body|html)\s*\{[^}]*background(?:-color)?\s*:\s*#(?:0[0-9a-f]{5}|1[0-9a-f]{5}|[0-2][0-9a-f]{4})',  # #0xxxxx, #1xxxxx
+                    r'(?:body|html)\s*\{[^}]*background(?:-color)?\s*:\s*rgb\s*\(\s*[0-4][0-9]?\s*,',  # rgb(0-49, ...)
+                    r'--color-bg-page\s*:\s*#(?:0[0-9a-f]{5}|1[0-9a-f]{5})',  # CSS variable with dark color
+                ]
+                
+                for pattern in dark_bg_patterns:
+                    if re.search(pattern, css_content, re.IGNORECASE):
+                        return True
+                        
+            except Exception:
+                pass  # Fallback to False if CSS can't be read
     
     return False
 
