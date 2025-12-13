@@ -23,7 +23,7 @@ try:
     from rich.panel import Panel
     from rich.syntax import Syntax
     from rich.progress import Progress, SpinnerColumn, TextColumn
-    from rich.box import ROUNDED
+    from rich.box import ROUNDED, ASCII
 except ImportError:
     print("ERROR: Modern CLI requires: pip install typer rich")
     sys.exit(2)
@@ -42,7 +42,25 @@ app = typer.Typer(
     pretty_exceptions_enable=True,
 )
 
-console = Console()
+# Configure console for Windows compatibility
+# Force UTF-8 encoding to handle Unicode characters (checkmarks, etc.)
+import platform
+import io
+
+if platform.system() == 'Windows':
+    # Ensure stdout uses UTF-8 encoding on Windows
+    if hasattr(sys.stdout, 'reconfigure'):
+        try:
+            sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        except (AttributeError, OSError):
+            pass
+    if hasattr(sys.stderr, 'reconfigure'):
+        try:
+            sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+        except (AttributeError, OSError):
+            pass
+
+console = Console(force_terminal=True)
 
 
 class OutputFormat(str, Enum):
