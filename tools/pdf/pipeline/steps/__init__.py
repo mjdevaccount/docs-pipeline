@@ -16,6 +16,9 @@ Conversion Steps:
 Enhancement Steps:
     - MermaidEnhancementStep: Inject Mermaid 11 with CSS variable theming
 
+Path Correction Steps:
+    - ImagePathCorrectionStep: Fix relative paths for diagram references
+
 Post-processing Steps:
     - CSSStrippingStep: Strip inline styles from HTML
     - TitlePageInjectionStep: Inject title page HTML
@@ -39,6 +42,8 @@ from .diagram_step import DiagramRenderingStep
 from .pandoc_step import PandocConversionStep
 
 from .mermaid_enhancement_step import MermaidEnhancementStep
+
+from .image_path_correction import ImagePathCorrectionStep
 
 from .postprocessing import (
     CSSStrippingStep,
@@ -65,6 +70,9 @@ __all__ = [
     
     # Enhancement
     'MermaidEnhancementStep',
+    
+    # Path Correction
+    'ImagePathCorrectionStep',
     
     # Post-processing
     'CSSStrippingStep',
