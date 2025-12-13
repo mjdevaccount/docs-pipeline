@@ -1,0 +1,8 @@
+# Modern CLI Framework (2025 Standards)
+typer>=0.9.0        # Type-safe CLI with auto completion
+rich>=13.0.0        # Beautiful terminal formatting
+click>=8.1.0        # Required by Typer
+
+# For file watching (optional, for future watch mode)
+watchdog>=3.0.0
+python-dotenv>=1.0.0
